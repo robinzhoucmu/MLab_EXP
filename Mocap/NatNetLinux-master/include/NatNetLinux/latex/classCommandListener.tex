@@ -1,0 +1,88 @@
+\hypertarget{classCommandListener}{\section{\-Command\-Listener \-Class \-Reference}
+\label{classCommandListener}\index{\-Command\-Listener@{\-Command\-Listener}}
+}
+
+
+\-Thread to listen for command responses.  
+
+
+
+
+{\ttfamily \#include $<$\-Command\-Listener.\-h$>$}
+
+\subsection*{\-Public \-Member \-Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classCommandListener_a7a53d67e8f22014cd84e27681445af0a}{\-Command\-Listener} (int sd=-\/1)
+\begin{DoxyCompactList}\small\item\em \-Constructor. \end{DoxyCompactList}\item 
+\hypertarget{classCommandListener_a543c8694cf5bb6a15e76389a812c68a7}{void \hyperlink{classCommandListener_a543c8694cf5bb6a15e76389a812c68a7}{start} ()}\label{classCommandListener_a543c8694cf5bb6a15e76389a812c68a7}
+
+\begin{DoxyCompactList}\small\item\em \-Begin the listening in new thread. \-Non-\/blocking. \end{DoxyCompactList}\item 
+\hypertarget{classCommandListener_a071496d6650f9a451aa401d6a57d9f28}{void \hyperlink{classCommandListener_a071496d6650f9a451aa401d6a57d9f28}{stop} ()}\label{classCommandListener_a071496d6650f9a451aa401d6a57d9f28}
+
+\begin{DoxyCompactList}\small\item\em \-Cause the thread to stop. \-Non-\/blocking. \end{DoxyCompactList}\item 
+\hypertarget{classCommandListener_acc56f5ae79bc38527d04e6dc478031c2}{bool \hyperlink{classCommandListener_acc56f5ae79bc38527d04e6dc478031c2}{running} ()}\label{classCommandListener_acc56f5ae79bc38527d04e6dc478031c2}
+
+\begin{DoxyCompactList}\small\item\em \-Return true iff the listener thread is running. \-Non-\/blocking. \end{DoxyCompactList}\item 
+\hypertarget{classCommandListener_a5eca6e5aae23e3570ab739e29ac46c9d}{void \hyperlink{classCommandListener_a5eca6e5aae23e3570ab739e29ac46c9d}{join} ()}\label{classCommandListener_a5eca6e5aae23e3570ab739e29ac46c9d}
+
+\begin{DoxyCompactList}\small\item\em \-Wait for the listening thread to stop. \-Blocking. \end{DoxyCompactList}\item 
+void \hyperlink{classCommandListener_a44bc66c418f33aef21c9558eb4b8811c}{get\-Nat\-Net\-Version} (unsigned char $\ast$major, unsigned char $\ast$minor)
+\begin{DoxyCompactList}\small\item\em \-Get \hyperlink{classNatNet}{\-Nat\-Net} major and minor version numbers. \-Blocking. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{\-Detailed \-Description}
+\-Thread to listen for command responses. 
+
+\begin{DoxyAuthor}{\-Author}
+\-Philip \-G. \-Lee
+\end{DoxyAuthor}
+\-This class spawns a new thread to listen for command responses. \-This class is needed to retrieve the \hyperlink{classNatNet}{\-Nat\-Net} protocol version in use by the server. 
+
+\subsection{\-Constructor \& \-Destructor \-Documentation}
+\hypertarget{classCommandListener_a7a53d67e8f22014cd84e27681445af0a}{\index{\-Command\-Listener@{\-Command\-Listener}!\-Command\-Listener@{\-Command\-Listener}}
+\index{\-Command\-Listener@{\-Command\-Listener}!CommandListener@{\-Command\-Listener}}
+\subsubsection[{\-Command\-Listener}]{\setlength{\rightskip}{0pt plus 5cm}{\bf \-Command\-Listener\-::\-Command\-Listener} (
+\begin{DoxyParamCaption}
+\item[{int}]{sd = {\ttfamily -\/1}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classCommandListener_a7a53d67e8f22014cd84e27681445af0a}
+
+
+\-Constructor. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em sd} & \-The socket on which to listen. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{\-Member \-Function \-Documentation}
+\hypertarget{classCommandListener_a44bc66c418f33aef21c9558eb4b8811c}{\index{\-Command\-Listener@{\-Command\-Listener}!get\-Nat\-Net\-Version@{get\-Nat\-Net\-Version}}
+\index{get\-Nat\-Net\-Version@{get\-Nat\-Net\-Version}!CommandListener@{\-Command\-Listener}}
+\subsubsection[{get\-Nat\-Net\-Version}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf \-Command\-Listener\-::get\-Nat\-Net\-Version} (
+\begin{DoxyParamCaption}
+\item[{unsigned char $\ast$}]{major, }
+\item[{unsigned char $\ast$}]{minor}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classCommandListener_a44bc66c418f33aef21c9558eb4b8811c}
+
+
+\-Get \hyperlink{classNatNet}{\-Nat\-Net} major and minor version numbers. \-Blocking. 
+
+\begin{DoxyWarning}{\-Warning}
+this call blocks until the first ping response packet is heard, and afterwards does not block. \-The reason is that the ping response packet is the only one that contains the \hyperlink{classNatNet}{\-Nat\-Net} version string. \-So, you {\bfseries \-M\-U\-S\-T} send a ping to the server before calling this to avoid deadlock.
+\end{DoxyWarning}
+
+\begin{DoxyParams}{\-Parameters}
+{\em major} & output \hyperlink{classNatNet}{\-Nat\-Net} major version \\
+\hline
+{\em minor} & output \hyperlink{classNatNet}{\-Nat\-Net} minor version \\
+\hline
+\end{DoxyParams}
+
+
+\-The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+\-Command\-Listener.\-h\end{DoxyCompactItemize}

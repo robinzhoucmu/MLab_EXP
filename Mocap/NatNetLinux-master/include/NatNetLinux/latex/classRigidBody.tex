@@ -1,0 +1,82 @@
+\hypertarget{classRigidBody}{\section{\-Rigid\-Body \-Class \-Reference}
+\label{classRigidBody}\index{\-Rigid\-Body@{\-Rigid\-Body}}
+}
+
+
+\-Rigid body.  
+
+
+
+
+{\ttfamily \#include $<$\-Nat\-Net.\-h$>$}
+
+\subsection*{\-Public \-Member \-Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classRigidBody_a28203d38d278da0695ace20c66ee5f0a}{\hyperlink{classRigidBody_a28203d38d278da0695ace20c66ee5f0a}{\-Rigid\-Body} ()}\label{classRigidBody_a28203d38d278da0695ace20c66ee5f0a}
+
+\begin{DoxyCompactList}\small\item\em \-Default constructor. \end{DoxyCompactList}\item 
+\hypertarget{classRigidBody_a21f6709d0695b1bbbc53b3c4ecc65805}{\hyperlink{classRigidBody_a21f6709d0695b1bbbc53b3c4ecc65805}{\-Rigid\-Body} (\hyperlink{classRigidBody}{\-Rigid\-Body} const \&other)}\label{classRigidBody_a21f6709d0695b1bbbc53b3c4ecc65805}
+
+\begin{DoxyCompactList}\small\item\em \-Copy constructor. \end{DoxyCompactList}\item 
+\hypertarget{classRigidBody_afa52b4614ec2a06d4c296e2decb15863}{\hyperlink{classRigidBody}{\-Rigid\-Body} \& \hyperlink{classRigidBody_afa52b4614ec2a06d4c296e2decb15863}{operator=} (\hyperlink{classRigidBody}{\-Rigid\-Body} const \&other)}\label{classRigidBody_afa52b4614ec2a06d4c296e2decb15863}
+
+\begin{DoxyCompactList}\small\item\em \-Assignment operator. \end{DoxyCompactList}\item 
+\hypertarget{classRigidBody_a14a65e35826b8298f7248d02e09a1e91}{int \hyperlink{classRigidBody_a14a65e35826b8298f7248d02e09a1e91}{id} () const }\label{classRigidBody_a14a65e35826b8298f7248d02e09a1e91}
+
+\begin{DoxyCompactList}\small\item\em \-I\-D of this \hyperlink{classRigidBody}{\-Rigid\-Body}. \end{DoxyCompactList}\item 
+\hypertarget{classRigidBody_a5dd602d6ad2263f72ac284394b19983c}{\hyperlink{classPoint3f}{\-Point3f} \hyperlink{classRigidBody_a5dd602d6ad2263f72ac284394b19983c}{location} () const }\label{classRigidBody_a5dd602d6ad2263f72ac284394b19983c}
+
+\begin{DoxyCompactList}\small\item\em \-Location of this \hyperlink{classRigidBody}{\-Rigid\-Body}. \end{DoxyCompactList}\item 
+\hypertarget{classRigidBody_a63dd7b3d272ebb6a231de1c7fba9d1b1}{\hyperlink{classQuaternion4f}{\-Quaternion4f} \hyperlink{classRigidBody_a63dd7b3d272ebb6a231de1c7fba9d1b1}{orientation} () const }\label{classRigidBody_a63dd7b3d272ebb6a231de1c7fba9d1b1}
+
+\begin{DoxyCompactList}\small\item\em \-Orientation of this \hyperlink{classRigidBody}{\-Rigid\-Body}. \end{DoxyCompactList}\item 
+\hypertarget{classRigidBody_ad9a2b2fd5b8bcda1209c52534e1c731e}{std\-::vector$<$ \hyperlink{classPoint3f}{\-Point3f} $>$ const \& \hyperlink{classRigidBody_ad9a2b2fd5b8bcda1209c52534e1c731e}{markers} () const }\label{classRigidBody_ad9a2b2fd5b8bcda1209c52534e1c731e}
+
+\begin{DoxyCompactList}\small\item\em \-Vector of markers that make up this \hyperlink{classRigidBody}{\-Rigid\-Body}. \end{DoxyCompactList}\item 
+\hypertarget{classRigidBody_aadc9990e94a810c9f425aca4f1e8c989}{bool \hyperlink{classRigidBody_aadc9990e94a810c9f425aca4f1e8c989}{tracking\-Valid} () const }\label{classRigidBody_aadc9990e94a810c9f425aca4f1e8c989}
+
+\begin{DoxyCompactList}\small\item\em \-True if the tracking is valid. \-Used in \hyperlink{classNatNet}{\-Nat\-Net} version $>$= 2.\-6. \end{DoxyCompactList}\item 
+char const $\ast$ \hyperlink{classRigidBody_ac2670bcfaee0e6224a3a21c32668f415}{unpack} (char const $\ast$data, char nn\-Major, char nn\-Minor)
+\begin{DoxyCompactList}\small\item\em \-Unpack rigid body data from raw packed data. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{\-Detailed \-Description}
+\-Rigid body. 
+
+\begin{DoxyAuthor}{\-Author}
+\-Philip \-G. \-Lee
+\end{DoxyAuthor}
+\-This class is a composition of markers that describe a rigid body. \-The basic traits of the rigid body are its 3\-D \hyperlink{classRigidBody_a5dd602d6ad2263f72ac284394b19983c}{location()} and \hyperlink{classRigidBody_a63dd7b3d272ebb6a231de1c7fba9d1b1}{orientation()}. \-Rigid bodies can be created in \-Optitrack's \-Motive\-:\-Tracker software. 
+
+\subsection{\-Member \-Function \-Documentation}
+\hypertarget{classRigidBody_ac2670bcfaee0e6224a3a21c32668f415}{\index{\-Rigid\-Body@{\-Rigid\-Body}!unpack@{unpack}}
+\index{unpack@{unpack}!RigidBody@{\-Rigid\-Body}}
+\subsubsection[{unpack}]{\setlength{\rightskip}{0pt plus 5cm}char const$\ast$ {\bf \-Rigid\-Body\-::unpack} (
+\begin{DoxyParamCaption}
+\item[{char const $\ast$}]{data, }
+\item[{char}]{nn\-Major, }
+\item[{char}]{nn\-Minor}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classRigidBody_ac2670bcfaee0e6224a3a21c32668f415}
+
+
+\-Unpack rigid body data from raw packed data. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em data} & pointer to packed data representing a \hyperlink{classRigidBody}{\-Rigid\-Body} \\
+\hline
+{\em nn\-Major} & major version of \hyperlink{classNatNet}{\-Nat\-Net} used to construct the packed data \\
+\hline
+{\em nn\-Minor} & \-Minor version of \hyperlink{classNatNet}{\-Nat\-Net} packets used to read this frame \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{\-Returns}
+pointer to data immediately following the \hyperlink{classRigidBody}{\-Rigid\-Body} data 
+\end{DoxyReturn}
+
+
+\-The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+\-Nat\-Net.\-h\end{DoxyCompactItemize}

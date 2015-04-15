@@ -1,0 +1,67 @@
+\hypertarget{classSkeleton}{\section{\-Skeleton \-Class \-Reference}
+\label{classSkeleton}\index{\-Skeleton@{\-Skeleton}}
+}
+
+
+\-A composition of rigid bodies.  
+
+
+
+
+{\ttfamily \#include $<$\-Nat\-Net.\-h$>$}
+
+\subsection*{\-Public \-Member \-Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classSkeleton_a274c98bf3296e2812e40696c092e7b94}{{\bfseries \-Skeleton} (\hyperlink{classSkeleton}{\-Skeleton} const \&other)}\label{classSkeleton_a274c98bf3296e2812e40696c092e7b94}
+
+\item 
+\hypertarget{classSkeleton_ad4d0cae31c1627a045a9a1d44b1fc895}{int \hyperlink{classSkeleton_ad4d0cae31c1627a045a9a1d44b1fc895}{id} () const }\label{classSkeleton_ad4d0cae31c1627a045a9a1d44b1fc895}
+
+\begin{DoxyCompactList}\small\item\em \-I\-D of this skeleton. \end{DoxyCompactList}\item 
+\hypertarget{classSkeleton_a9204c7a748ee645a4c453e1dda2f5b00}{std\-::vector$<$ \hyperlink{classRigidBody}{\-Rigid\-Body} $>$ const \& \hyperlink{classSkeleton_a9204c7a748ee645a4c453e1dda2f5b00}{rigid\-Bodies} () const }\label{classSkeleton_a9204c7a748ee645a4c453e1dda2f5b00}
+
+\begin{DoxyCompactList}\small\item\em \-Vector of rigid bodies in this skeleton. \end{DoxyCompactList}\item 
+char const $\ast$ \hyperlink{classSkeleton_ae33215cf30ae6ce68588128f6c713e49}{unpack} (char const $\ast$data, char nn\-Major, char nn\-Minor)
+\begin{DoxyCompactList}\small\item\em \-Unpack skeleton data from raw packed data. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{\-Detailed \-Description}
+\-A composition of rigid bodies. 
+
+\begin{DoxyAuthor}{\-Author}
+\-Philip \-G. \-Lee
+\end{DoxyAuthor}
+\-A skeleton is simply a collection of \hyperlink{classRigidBody}{\-Rigid\-Body} elements. 
+
+\subsection{\-Member \-Function \-Documentation}
+\hypertarget{classSkeleton_ae33215cf30ae6ce68588128f6c713e49}{\index{\-Skeleton@{\-Skeleton}!unpack@{unpack}}
+\index{unpack@{unpack}!Skeleton@{\-Skeleton}}
+\subsubsection[{unpack}]{\setlength{\rightskip}{0pt plus 5cm}char const$\ast$ {\bf \-Skeleton\-::unpack} (
+\begin{DoxyParamCaption}
+\item[{char const $\ast$}]{data, }
+\item[{char}]{nn\-Major, }
+\item[{char}]{nn\-Minor}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classSkeleton_ae33215cf30ae6ce68588128f6c713e49}
+
+
+\-Unpack skeleton data from raw packed data. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em data} & pointer to packed data representing a \hyperlink{classSkeleton}{\-Skeleton} \\
+\hline
+{\em nn\-Major} & major version of \hyperlink{classNatNet}{\-Nat\-Net} used to construct the packed data \\
+\hline
+{\em nn\-Minor} & \-Minor version of \hyperlink{classNatNet}{\-Nat\-Net} packets used to read this frame \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{\-Returns}
+pointer to data immediately following the \hyperlink{classSkeleton}{\-Skeleton} data 
+\end{DoxyReturn}
+
+
+\-The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+\-Nat\-Net.\-h\end{DoxyCompactItemize}

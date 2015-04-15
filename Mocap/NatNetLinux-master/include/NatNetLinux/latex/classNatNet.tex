@@ -1,0 +1,119 @@
+\hypertarget{classNatNet}{\section{\-Nat\-Net \-Class \-Reference}
+\label{classNatNet}\index{\-Nat\-Net@{\-Nat\-Net}}
+}
+
+
+\-Encapsulates basic \hyperlink{classNatNet}{\-Nat\-Net} communication functionality.  
+
+
+
+
+{\ttfamily \#include $<$\-Nat\-Net.\-h$>$}
+
+\subsection*{\-Static \-Public \-Member \-Functions}
+\begin{DoxyCompactItemize}
+\item 
+static struct sockaddr\-\_\-in \hyperlink{classNatNet_a1fd6d626e9c90af62fb3c7b881fb88ee}{create\-Address} (uint32\-\_\-t in\-Addr, uint16\-\_\-t port=\hyperlink{classNatNet_ab80fffaea8be5cb6630ee55ddb4d308b}{command\-Port})
+\begin{DoxyCompactList}\small\item\em \-Create a socket \-I\-Pv4 address structure. \end{DoxyCompactList}\item 
+static int \hyperlink{classNatNet_a98dd9ad26ce6baf0444f51f51812626a}{create\-Command\-Socket} (uint32\-\_\-t in\-Addr, uint16\-\_\-t port=\hyperlink{classNatNet_ab80fffaea8be5cb6630ee55ddb4d308b}{command\-Port})
+\begin{DoxyCompactList}\small\item\em \-Creates a socket for receiving commands. \end{DoxyCompactList}\item 
+static int \hyperlink{classNatNet_a33b6d6f52a107f1c0a6aaa2023b3be60}{create\-Data\-Socket} (uint32\-\_\-t in\-Addr, uint16\-\_\-t port=\hyperlink{classNatNet_ab9dfa191387ad103b5260f5a9642878d}{data\-Port}, uint32\-\_\-t multicast\-Addr=inet\-\_\-addr(\char`\"{}239.\-255.\-42.\-99\char`\"{}))
+\begin{DoxyCompactList}\small\item\em \-Creates a socket to read data from the server. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{\-Static \-Public \-Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classNatNet_ab80fffaea8be5cb6630ee55ddb4d308b}{static const uint16\-\_\-t \hyperlink{classNatNet_ab80fffaea8be5cb6630ee55ddb4d308b}{command\-Port} = 1510}\label{classNatNet_ab80fffaea8be5cb6630ee55ddb4d308b}
+
+\begin{DoxyCompactList}\small\item\em \-Default \hyperlink{classNatNet}{\-Nat\-Net} command port. \end{DoxyCompactList}\item 
+\hypertarget{classNatNet_ab9dfa191387ad103b5260f5a9642878d}{static const uint16\-\_\-t \hyperlink{classNatNet_ab9dfa191387ad103b5260f5a9642878d}{data\-Port} = 1511}\label{classNatNet_ab9dfa191387ad103b5260f5a9642878d}
+
+\begin{DoxyCompactList}\small\item\em \-Default \hyperlink{classNatNet}{\-Nat\-Net} data port. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{\-Detailed \-Description}
+\-Encapsulates basic \hyperlink{classNatNet}{\-Nat\-Net} communication functionality. 
+
+\begin{DoxyAuthor}{\-Author}
+\-Philip \-G. \-Lee 
+\end{DoxyAuthor}
+
+
+\subsection{\-Member \-Function \-Documentation}
+\hypertarget{classNatNet_a1fd6d626e9c90af62fb3c7b881fb88ee}{\index{\-Nat\-Net@{\-Nat\-Net}!create\-Address@{create\-Address}}
+\index{create\-Address@{create\-Address}!NatNet@{\-Nat\-Net}}
+\subsubsection[{create\-Address}]{\setlength{\rightskip}{0pt plus 5cm}static struct sockaddr\-\_\-in {\bf \-Nat\-Net\-::create\-Address} (
+\begin{DoxyParamCaption}
+\item[{uint32\-\_\-t}]{in\-Addr, }
+\item[{uint16\-\_\-t}]{port = {\ttfamily {\bf command\-Port}}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline, static, read\mbox{]}}}}\label{classNatNet_a1fd6d626e9c90af62fb3c7b881fb88ee}
+
+
+\-Create a socket \-I\-Pv4 address structure. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em in\-Addr} & \-I\-Pv4 address that the returned structure describes \\
+\hline
+{\em port} & port that the returned structure describes \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{\-Returns}
+an \-I\-Pv4 socket address structure that describes a given address and port 
+\end{DoxyReturn}
+\hypertarget{classNatNet_a98dd9ad26ce6baf0444f51f51812626a}{\index{\-Nat\-Net@{\-Nat\-Net}!create\-Command\-Socket@{create\-Command\-Socket}}
+\index{create\-Command\-Socket@{create\-Command\-Socket}!NatNet@{\-Nat\-Net}}
+\subsubsection[{create\-Command\-Socket}]{\setlength{\rightskip}{0pt plus 5cm}static int {\bf \-Nat\-Net\-::create\-Command\-Socket} (
+\begin{DoxyParamCaption}
+\item[{uint32\-\_\-t}]{in\-Addr, }
+\item[{uint16\-\_\-t}]{port = {\ttfamily {\bf command\-Port}}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline, static\mbox{]}}}}\label{classNatNet_a98dd9ad26ce6baf0444f51f51812626a}
+
+
+\-Creates a socket for receiving commands. 
+
+\-To use this socket to send data, you must use {\ttfamily sendto()} with an appropriate destination address.
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em in\-Addr} & our local address \\
+\hline
+{\em port} & command port, defaults to 1510 \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{\-Returns}
+socket descriptor bound to {\ttfamily port} and {\ttfamily in\-Addr} 
+\end{DoxyReturn}
+\hypertarget{classNatNet_a33b6d6f52a107f1c0a6aaa2023b3be60}{\index{\-Nat\-Net@{\-Nat\-Net}!create\-Data\-Socket@{create\-Data\-Socket}}
+\index{create\-Data\-Socket@{create\-Data\-Socket}!NatNet@{\-Nat\-Net}}
+\subsubsection[{create\-Data\-Socket}]{\setlength{\rightskip}{0pt plus 5cm}static int {\bf \-Nat\-Net\-::create\-Data\-Socket} (
+\begin{DoxyParamCaption}
+\item[{uint32\-\_\-t}]{in\-Addr, }
+\item[{uint16\-\_\-t}]{port = {\ttfamily {\bf data\-Port}}, }
+\item[{uint32\-\_\-t}]{multicast\-Addr = {\ttfamily inet\-\_\-addr(\char`\"{}239.255.42.99\char`\"{})}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline, static\mbox{]}}}}\label{classNatNet_a33b6d6f52a107f1c0a6aaa2023b3be60}
+
+
+\-Creates a socket to read data from the server. 
+
+\-The socket returned from this function is bound to {\ttfamily port} and {\ttfamily \-I\-N\-A\-D\-D\-R\-\_\-\-A\-N\-Y}, and is added to the multicast group given by {\ttfamily multicast\-Addr}.
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em in\-Addr} & our local address \\
+\hline
+{\em port} & port to bind to, defaults to 1511 \\
+\hline
+{\em multicast\-Addr} & multicast address to subscribe to. \-Defaults to 239.\-255.\-42.\-99. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{\-Returns}
+socket bound as described above 
+\end{DoxyReturn}
+
+
+\-The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+\-Nat\-Net.\-h\end{DoxyCompactItemize}

@@ -1,0 +1,127 @@
+\hypertarget{classFrameListener}{\section{\-Frame\-Listener \-Class \-Reference}
+\label{classFrameListener}\index{\-Frame\-Listener@{\-Frame\-Listener}}
+}
+
+
+\-Thread to listen for \hyperlink{classMocapFrame}{\-Mocap\-Frame} data.  
+
+
+
+
+{\ttfamily \#include $<$\-Frame\-Listener.\-h$>$}
+
+\subsection*{\-Public \-Member \-Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classFrameListener_a8e0bb687e9b09dc7b4e0b5dd7472e243}{\-Frame\-Listener} (int sd=-\/1, unsigned char nn\-Major=0, unsigned char nn\-Minor=0, size\-\_\-t buffer\-Size=64)
+\begin{DoxyCompactList}\small\item\em \-Constructor. \end{DoxyCompactList}\item 
+\hypertarget{classFrameListener_a6475196523f3e1dea5caf3a3abfb010b}{void \hyperlink{classFrameListener_a6475196523f3e1dea5caf3a3abfb010b}{start} ()}\label{classFrameListener_a6475196523f3e1dea5caf3a3abfb010b}
+
+\begin{DoxyCompactList}\small\item\em \-Begin the listening in new thread. \-Non-\/blocking. \end{DoxyCompactList}\item 
+\hypertarget{classFrameListener_a70be59362226bcf428b426ef137b32d3}{void \hyperlink{classFrameListener_a70be59362226bcf428b426ef137b32d3}{stop} ()}\label{classFrameListener_a70be59362226bcf428b426ef137b32d3}
+
+\begin{DoxyCompactList}\small\item\em \-Cause the thread to stop. \-Non-\/blocking. \end{DoxyCompactList}\item 
+\hypertarget{classFrameListener_a88c18f95e806f091162b627876f47c0a}{bool \hyperlink{classFrameListener_a88c18f95e806f091162b627876f47c0a}{running} ()}\label{classFrameListener_a88c18f95e806f091162b627876f47c0a}
+
+\begin{DoxyCompactList}\small\item\em \-Return true iff the listener thread is running. \-Non-\/blocking. \end{DoxyCompactList}\item 
+\hypertarget{classFrameListener_a5b07340a6aa4406367224b388663b461}{void \hyperlink{classFrameListener_a5b07340a6aa4406367224b388663b461}{join} ()}\label{classFrameListener_a5b07340a6aa4406367224b388663b461}
+
+\begin{DoxyCompactList}\small\item\em \-Wait for the listening thread to stop. \-Blocking. \end{DoxyCompactList}\item 
+std\-::pair$<$ \hyperlink{classMocapFrame}{\-Mocap\-Frame}, struct \*
+timespec $>$ \hyperlink{classFrameListener_a44a4272610cf1661ea17c4c88b866998}{pop} (bool $\ast$success=0)
+\begin{DoxyCompactList}\small\item\em \-Get the latest frame and remove it from the internal buffer. \-Thread-\/safe. \end{DoxyCompactList}\item 
+std\-::pair$<$ \hyperlink{classMocapFrame}{\-Mocap\-Frame}, struct \*
+timespec $>$ \hyperlink{classFrameListener_a7935ea8156438edcf0135a5c0c868ca2}{try\-Pop} (bool $\ast$success=0)
+\begin{DoxyCompactList}\small\item\em \-Get the latest frame and remove it from the internal buffer. \-Thread-\/safe $\ast$non-\/blocking$\ast$. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{\-Detailed \-Description}
+\-Thread to listen for \hyperlink{classMocapFrame}{\-Mocap\-Frame} data. 
+
+\begin{DoxyAuthor}{\-Author}
+\-Philip \-G. \-Lee
+\end{DoxyAuthor}
+\-This class listens for \hyperlink{classMocapFrame}{\-Mocap\-Frame} data on a given socket. \-It uses a circular buffer to store the frame data, and provides a thread-\/safe interface to query for the most recent frames. 
+
+\subsection{\-Constructor \& \-Destructor \-Documentation}
+\hypertarget{classFrameListener_a8e0bb687e9b09dc7b4e0b5dd7472e243}{\index{\-Frame\-Listener@{\-Frame\-Listener}!\-Frame\-Listener@{\-Frame\-Listener}}
+\index{\-Frame\-Listener@{\-Frame\-Listener}!FrameListener@{\-Frame\-Listener}}
+\subsubsection[{\-Frame\-Listener}]{\setlength{\rightskip}{0pt plus 5cm}{\bf \-Frame\-Listener\-::\-Frame\-Listener} (
+\begin{DoxyParamCaption}
+\item[{int}]{sd = {\ttfamily -\/1}, }
+\item[{unsigned char}]{nn\-Major = {\ttfamily 0}, }
+\item[{unsigned char}]{nn\-Minor = {\ttfamily 0}, }
+\item[{size\-\_\-t}]{buffer\-Size = {\ttfamily 64}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classFrameListener_a8e0bb687e9b09dc7b4e0b5dd7472e243}
+
+
+\-Constructor. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em sd} & \-The socket on which to listen. \\
+\hline
+{\em nn\-Major} & \hyperlink{classNatNet}{\-Nat\-Net} major version. \\
+\hline
+{\em nn\-Minor} & \hyperlink{classNatNet}{\-Nat\-Net} minor version. \\
+\hline
+{\em buffer\-Size} & number of frames in the {\ttfamily frames()} buffer. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{\-Member \-Function \-Documentation}
+\hypertarget{classFrameListener_a44a4272610cf1661ea17c4c88b866998}{\index{\-Frame\-Listener@{\-Frame\-Listener}!pop@{pop}}
+\index{pop@{pop}!FrameListener@{\-Frame\-Listener}}
+\subsubsection[{pop}]{\setlength{\rightskip}{0pt plus 5cm}std\-::pair$<${\bf \-Mocap\-Frame}, struct timespec$>$ {\bf \-Frame\-Listener\-::pop} (
+\begin{DoxyParamCaption}
+\item[{bool $\ast$}]{success = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classFrameListener_a44a4272610cf1661ea17c4c88b866998}
+
+
+\-Get the latest frame and remove it from the internal buffer. \-Thread-\/safe. 
+
+\-This function may block while reading the buffer. {\ttfamily success} will be false only if there is no more data in the internal buffer.
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em success} & input parameter. \-If not null, its value is set to true if the return value is valid, and false otherwise. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{\-Returns}
+most recent frame/timestamp pair if the internal buffer has data. \-Otherwise, returns an invalid frame. \-The timestamp is the result of {\ttfamily clock\-\_\-gettime}( {\ttfamily \-C\-L\-O\-C\-K\-\_\-\-R\-E\-A\-L\-T\-I\-M\-E}, ...) when the data is read from the \-U\-D\-P interface.
+\end{DoxyReturn}
+\begin{DoxySeeAlso}{\-See also}
+\hyperlink{classFrameListener_a7935ea8156438edcf0135a5c0c868ca2}{try\-Pop()} 
+\end{DoxySeeAlso}
+\hypertarget{classFrameListener_a7935ea8156438edcf0135a5c0c868ca2}{\index{\-Frame\-Listener@{\-Frame\-Listener}!try\-Pop@{try\-Pop}}
+\index{try\-Pop@{try\-Pop}!FrameListener@{\-Frame\-Listener}}
+\subsubsection[{try\-Pop}]{\setlength{\rightskip}{0pt plus 5cm}std\-::pair$<${\bf \-Mocap\-Frame}, struct timespec$>$ {\bf \-Frame\-Listener\-::try\-Pop} (
+\begin{DoxyParamCaption}
+\item[{bool $\ast$}]{success = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classFrameListener_a7935ea8156438edcf0135a5c0c868ca2}
+
+
+\-Get the latest frame and remove it from the internal buffer. \-Thread-\/safe $\ast$non-\/blocking$\ast$. 
+
+\-This function is just like {\ttfamily \hyperlink{classFrameListener_a44a4272610cf1661ea17c4c88b866998}{pop()}}, but never blocks. \-If you are willing to wait to acquire the lock to read the internal data buffer, then use the blocking version {\ttfamily \hyperlink{classFrameListener_a44a4272610cf1661ea17c4c88b866998}{pop()}}. \-If you use {\ttfamily \hyperlink{classFrameListener_a7935ea8156438edcf0135a5c0c868ca2}{try\-Pop()}}, it will not block, but {\ttfamily success} will be false if either the buffer is currently being written, $\ast$or$\ast$ if there is no more data.
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em success} & input parameter. \-If not null, its value is set to true if the return value is valid, and false otherwise. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{\-Returns}
+most recent frame/timestamp pair if the internal buffer has data $\ast$and$\ast$ is available for reading immediately. \-Otherwise, returns an invalid frame. \-The timestamp is the result of {\ttfamily clock\-\_\-gettime}( {\ttfamily \-C\-L\-O\-C\-K\-\_\-\-R\-E\-A\-L\-T\-I\-M\-E}, ...) when the data is read from the \-U\-D\-P interface.
+\end{DoxyReturn}
+\begin{DoxySeeAlso}{\-See also}
+\hyperlink{classFrameListener_a44a4272610cf1661ea17c4c88b866998}{pop()} 
+\end{DoxySeeAlso}
+
+
+\-The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+\-Frame\-Listener.\-h\end{DoxyCompactItemize}

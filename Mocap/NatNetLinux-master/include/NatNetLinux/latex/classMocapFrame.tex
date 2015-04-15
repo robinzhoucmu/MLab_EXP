@@ -1,0 +1,172 @@
+\hypertarget{classMocapFrame}{\section{\-Mocap\-Frame \-Class \-Reference}
+\label{classMocapFrame}\index{\-Mocap\-Frame@{\-Mocap\-Frame}}
+}
+
+
+\-A complete frame of motion capture data.  
+
+
+
+
+{\ttfamily \#include $<$\-Nat\-Net.\-h$>$}
+
+\subsection*{\-Public \-Member \-Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classMocapFrame_ae374819e609e2e32d49a3816e0955f0c}{\-Mocap\-Frame} (unsigned char nn\-Major=0, unsigned char nn\-Minor=0)
+\begin{DoxyCompactList}\small\item\em \-Constructor. \end{DoxyCompactList}\item 
+\hypertarget{classMocapFrame_aaf32d0e6a7ad581690325c5886f0c96f}{\hyperlink{classMocapFrame_aaf32d0e6a7ad581690325c5886f0c96f}{\-Mocap\-Frame} (\hyperlink{classMocapFrame}{\-Mocap\-Frame} const \&other)}\label{classMocapFrame_aaf32d0e6a7ad581690325c5886f0c96f}
+
+\begin{DoxyCompactList}\small\item\em \-Copy constructor. \end{DoxyCompactList}\item 
+\hypertarget{classMocapFrame_a9649550bd0d15aa01e377857c098319f}{\hyperlink{classMocapFrame}{\-Mocap\-Frame} \& \hyperlink{classMocapFrame_a9649550bd0d15aa01e377857c098319f}{operator=} (\hyperlink{classMocapFrame}{\-Mocap\-Frame} const \&other)}\label{classMocapFrame_a9649550bd0d15aa01e377857c098319f}
+
+\begin{DoxyCompactList}\small\item\em \-Assignment operator. \end{DoxyCompactList}\item 
+int \hyperlink{classMocapFrame_a646c39de6dc91cd3f1acb8b90cfc90c1}{frame\-Num} () const 
+\begin{DoxyCompactList}\small\item\em \-Frame number. \end{DoxyCompactList}\item 
+\hypertarget{classMocapFrame_a0cf3cb2de725cb46186cedb13ff0a71c}{std\-::vector$<$ \hyperlink{classMarkerSet}{\-Marker\-Set} $>$ const \& \hyperlink{classMocapFrame_a0cf3cb2de725cb46186cedb13ff0a71c}{marker\-Sets} () const }\label{classMocapFrame_a0cf3cb2de725cb46186cedb13ff0a71c}
+
+\begin{DoxyCompactList}\small\item\em \-All the sets of markers except unidentified ones. \end{DoxyCompactList}\item 
+\hypertarget{classMocapFrame_a70c364d5725dd792b2ab1e7ab66104cb}{std\-::vector$<$ \hyperlink{classPoint3f}{\-Point3f} $>$ const \& \hyperlink{classMocapFrame_a70c364d5725dd792b2ab1e7ab66104cb}{un\-Id\-Markers} () const }\label{classMocapFrame_a70c364d5725dd792b2ab1e7ab66104cb}
+
+\begin{DoxyCompactList}\small\item\em \-Set of unidentified markers. \end{DoxyCompactList}\item 
+\hypertarget{classMocapFrame_a07a3a094cd6cc30e7b0ad0a52bf8a03f}{std\-::vector$<$ \hyperlink{classRigidBody}{\-Rigid\-Body} $>$ const \& \hyperlink{classMocapFrame_a07a3a094cd6cc30e7b0ad0a52bf8a03f}{rigid\-Bodies} () const }\label{classMocapFrame_a07a3a094cd6cc30e7b0ad0a52bf8a03f}
+
+\begin{DoxyCompactList}\small\item\em \-All the rigid bodies. \end{DoxyCompactList}\item 
+float \hyperlink{classMocapFrame_aa5a43b1f1ac04329e15784f8131d7328}{latency} () const 
+\begin{DoxyCompactList}\small\item\em \-Either latency or timecode for the current frame. \end{DoxyCompactList}\item 
+void \hyperlink{classMocapFrame_a2cc6b360c320b0119403fb79f1cd1ef2}{timecode} (uint32\-\_\-t \&\hyperlink{classMocapFrame_a2cc6b360c320b0119403fb79f1cd1ef2}{timecode}, uint32\-\_\-t \&subframe) const 
+\begin{DoxyCompactList}\small\item\em \-S\-M\-T\-P\-E timecode and sub-\/timecode. \end{DoxyCompactList}\item 
+void \hyperlink{classMocapFrame_ad56edd4018b93a966f8e817c80e69894}{timecode} (int \&hour, int \&minute, int \&second, int \&frame, int \&sub\-Frame) const 
+\begin{DoxyCompactList}\small\item\em \-Timecode decoded. \end{DoxyCompactList}\item 
+char const $\ast$ \hyperlink{classMocapFrame_a4c1ef6be087c822ce82991349c13e20a}{unpack} (char const $\ast$data)
+\begin{DoxyCompactList}\small\item\em \-Unpack frame data from a packed buffer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{\-Detailed \-Description}
+\-A complete frame of motion capture data. 
+
+\begin{DoxyAuthor}{\-Author}
+\-Philip \-G. \-Lee 
+\end{DoxyAuthor}
+
+
+\subsection{\-Constructor \& \-Destructor \-Documentation}
+\hypertarget{classMocapFrame_ae374819e609e2e32d49a3816e0955f0c}{\index{\-Mocap\-Frame@{\-Mocap\-Frame}!\-Mocap\-Frame@{\-Mocap\-Frame}}
+\index{\-Mocap\-Frame@{\-Mocap\-Frame}!MocapFrame@{\-Mocap\-Frame}}
+\subsubsection[{\-Mocap\-Frame}]{\setlength{\rightskip}{0pt plus 5cm}{\bf \-Mocap\-Frame\-::\-Mocap\-Frame} (
+\begin{DoxyParamCaption}
+\item[{unsigned char}]{nn\-Major = {\ttfamily 0}, }
+\item[{unsigned char}]{nn\-Minor = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classMocapFrame_ae374819e609e2e32d49a3816e0955f0c}
+
+
+\-Constructor. 
+
+\-Unless you want bad things to happen, specify the \hyperlink{classNatNet}{\-Nat\-Net} version numbers correctly before you try to {\ttfamily \hyperlink{classMocapFrame_a4c1ef6be087c822ce82991349c13e20a}{unpack()}}.
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em nn\-Major} & \-Major version of \hyperlink{classNatNet}{\-Nat\-Net} packets used to read this frame \\
+\hline
+{\em nn\-Minor} & \-Minor version of \hyperlink{classNatNet}{\-Nat\-Net} packets used to read this frame \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{\-Member \-Function \-Documentation}
+\hypertarget{classMocapFrame_a646c39de6dc91cd3f1acb8b90cfc90c1}{\index{\-Mocap\-Frame@{\-Mocap\-Frame}!frame\-Num@{frame\-Num}}
+\index{frame\-Num@{frame\-Num}!MocapFrame@{\-Mocap\-Frame}}
+\subsubsection[{frame\-Num}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf \-Mocap\-Frame\-::frame\-Num} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classMocapFrame_a646c39de6dc91cd3f1acb8b90cfc90c1}
+
+
+\-Frame number. 
+
+\-Dustin \-Jakes at \-Natural\-Point says this is undefined in live capture mode, and is the actual frame number in playback mode. \hypertarget{classMocapFrame_aa5a43b1f1ac04329e15784f8131d7328}{\index{\-Mocap\-Frame@{\-Mocap\-Frame}!latency@{latency}}
+\index{latency@{latency}!MocapFrame@{\-Mocap\-Frame}}
+\subsubsection[{latency}]{\setlength{\rightskip}{0pt plus 5cm}float {\bf \-Mocap\-Frame\-::latency} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classMocapFrame_aa5a43b1f1ac04329e15784f8131d7328}
+
+
+\-Either latency or timecode for the current frame. 
+
+\-Dustin \-Jakes at \-Natural\-Point says that this is an internal timecode from \-Motive that represents the time at which the entire framegroup has arrived from all the cameras. \hypertarget{classMocapFrame_a2cc6b360c320b0119403fb79f1cd1ef2}{\index{\-Mocap\-Frame@{\-Mocap\-Frame}!timecode@{timecode}}
+\index{timecode@{timecode}!MocapFrame@{\-Mocap\-Frame}}
+\subsubsection[{timecode}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf \-Mocap\-Frame\-::timecode} (
+\begin{DoxyParamCaption}
+\item[{uint32\-\_\-t \&}]{timecode, }
+\item[{uint32\-\_\-t \&}]{subframe}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classMocapFrame_a2cc6b360c320b0119403fb79f1cd1ef2}
+
+
+\-S\-M\-T\-P\-E timecode and sub-\/timecode. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em timecode} & output timecode \\
+\hline
+{\em subframe} & output subframe \\
+\hline
+\end{DoxyParams}
+\hypertarget{classMocapFrame_ad56edd4018b93a966f8e817c80e69894}{\index{\-Mocap\-Frame@{\-Mocap\-Frame}!timecode@{timecode}}
+\index{timecode@{timecode}!MocapFrame@{\-Mocap\-Frame}}
+\subsubsection[{timecode}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf \-Mocap\-Frame\-::timecode} (
+\begin{DoxyParamCaption}
+\item[{int \&}]{hour, }
+\item[{int \&}]{minute, }
+\item[{int \&}]{second, }
+\item[{int \&}]{frame, }
+\item[{int \&}]{sub\-Frame}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classMocapFrame_ad56edd4018b93a966f8e817c80e69894}
+
+
+\-Timecode decoded. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em hour} & output timecode hour \\
+\hline
+{\em minute} & output timecode minute \\
+\hline
+{\em second} & output timecode second \\
+\hline
+{\em frame} & output timecode frame \\
+\hline
+{\em sub\-Frame} & output timecode subframe \\
+\hline
+\end{DoxyParams}
+\hypertarget{classMocapFrame_a4c1ef6be087c822ce82991349c13e20a}{\index{\-Mocap\-Frame@{\-Mocap\-Frame}!unpack@{unpack}}
+\index{unpack@{unpack}!MocapFrame@{\-Mocap\-Frame}}
+\subsubsection[{unpack}]{\setlength{\rightskip}{0pt plus 5cm}char const$\ast$ {\bf \-Mocap\-Frame\-::unpack} (
+\begin{DoxyParamCaption}
+\item[{char const $\ast$}]{data}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classMocapFrame_a4c1ef6be087c822ce82991349c13e20a}
+
+
+\-Unpack frame data from a packed buffer. 
+
+{\bfseries \-W\-A\-R\-N\-I\-N\-G\-:} the \hyperlink{classNatNet}{\-Nat\-Net} version numbers must be correctly specified in the constructor for this function to properly read the data, as the data format depends on those version numbers.
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em data} & input data buffer \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{\-Returns}
+pointer to data immediately following the frame data 
+\end{DoxyReturn}
+
+
+\-The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+\-Nat\-Net.\-h\end{DoxyCompactItemize}

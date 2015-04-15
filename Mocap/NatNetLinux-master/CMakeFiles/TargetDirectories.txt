@@ -1,0 +1,3 @@
+/home/simplehands/Desktop/TestNatNet/NatNetLinux-master/doc/CMakeFiles/doc.dir
+/home/simplehands/Desktop/TestNatNet/NatNetLinux-master/doc/CMakeFiles/doc-doxygen.dir
+/home/simplehands/Desktop/TestNatNet/NatNetLinux-master/src/CMakeFiles/simple-example.dir

@@ -1,0 +1,21 @@
+<package>
+  <description brief="Mocap">
+
+     Mocap
+
+  </description>
+  <author>Jiaji Zhou</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/Mocap</url>
+  <depend package="std_msgs"/>
+  <depend package="geometry_msgs"/>
+  <depend package="roscpp"/>
+  <depend package="rospy"/>
+  <depend package="robot_comm"/>
+  <export>
+    <cpp cflags="-I${prefix}/include" lflags="-L${prefix}/lib -lmocap_comm_lib"/>
+  </export>
+</package>
+
+

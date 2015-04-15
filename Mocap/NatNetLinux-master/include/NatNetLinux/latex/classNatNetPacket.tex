@@ -1,0 +1,167 @@
+\hypertarget{classNatNetPacket}{\section{\-Nat\-Net\-Packet \-Class \-Reference}
+\label{classNatNetPacket}\index{\-Nat\-Net\-Packet@{\-Nat\-Net\-Packet}}
+}
+
+
+\-Encapsulates \hyperlink{classNatNet}{\-Nat\-Net} packets.  
+
+
+
+
+{\ttfamily \#include $<$\-Nat\-Net\-Packet.\-h$>$}
+
+\subsection*{\-Public \-Types}
+\begin{DoxyCompactItemize}
+\item 
+enum \hyperlink{classNatNetPacket_af9a3198d39270f9703a36c414079ab51}{\-Nat\-Net\-Message\-I\-D} \{ \*
+{\bfseries \-N\-A\-T\-\_\-\-P\-I\-N\-G} =  0, 
+{\bfseries \-N\-A\-T\-\_\-\-P\-I\-N\-G\-R\-E\-S\-P\-O\-N\-S\-E} =  1, 
+{\bfseries \-N\-A\-T\-\_\-\-R\-E\-Q\-U\-E\-S\-T} =  2, 
+{\bfseries \-N\-A\-T\-\_\-\-R\-E\-S\-P\-O\-N\-S\-E} =  3, 
+\*
+{\bfseries \-N\-A\-T\-\_\-\-R\-E\-Q\-U\-E\-S\-T\-\_\-\-M\-O\-D\-E\-L\-D\-E\-F} =  4, 
+{\bfseries \-N\-A\-T\-\_\-\-M\-O\-D\-E\-L\-D\-E\-F} =  5, 
+{\bfseries \-N\-A\-T\-\_\-\-R\-E\-Q\-U\-E\-S\-T\-\_\-\-F\-R\-A\-M\-E\-O\-F\-D\-A\-T\-A} =  6, 
+{\bfseries \-N\-A\-T\-\_\-\-F\-R\-A\-M\-E\-O\-F\-D\-A\-T\-A} =  7, 
+\*
+{\bfseries \-N\-A\-T\-\_\-\-M\-E\-S\-S\-A\-G\-E\-S\-T\-R\-I\-N\-G} =  8, 
+{\bfseries \-N\-A\-T\-\_\-\-U\-N\-R\-E\-C\-O\-G\-N\-I\-Z\-E\-D\-\_\-\-R\-E\-Q\-U\-E\-S\-T} =  100
+ \}
+\begin{DoxyCompactList}\small\item\em \-Message types. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{\-Public \-Member \-Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classNatNetPacket_aa6da2fc5f50d6ed960333a7dbeee2c22}{\hyperlink{classNatNetPacket_aa6da2fc5f50d6ed960333a7dbeee2c22}{\-Nat\-Net\-Packet} ()}\label{classNatNetPacket_aa6da2fc5f50d6ed960333a7dbeee2c22}
+
+\begin{DoxyCompactList}\small\item\em \-Default constructor. \end{DoxyCompactList}\item 
+\hypertarget{classNatNetPacket_a1276bae8a1f3864764897747ee67b90c}{\hyperlink{classNatNetPacket_a1276bae8a1f3864764897747ee67b90c}{\-Nat\-Net\-Packet} (\hyperlink{classNatNetPacket}{\-Nat\-Net\-Packet} const \&other)}\label{classNatNetPacket_a1276bae8a1f3864764897747ee67b90c}
+
+\begin{DoxyCompactList}\small\item\em \-Copy constructor. \end{DoxyCompactList}\item 
+\hypertarget{classNatNetPacket_a25c409e7b0bc26ea11c978463fd49fa1}{\hyperlink{classNatNetPacket}{\-Nat\-Net\-Packet} \& \hyperlink{classNatNetPacket_a25c409e7b0bc26ea11c978463fd49fa1}{operator=} (\hyperlink{classNatNetPacket}{\-Nat\-Net\-Packet} const \&other)}\label{classNatNetPacket_a25c409e7b0bc26ea11c978463fd49fa1}
+
+\begin{DoxyCompactList}\small\item\em \-Assignment operator. \-Does deep copy. \end{DoxyCompactList}\item 
+int \hyperlink{classNatNetPacket_a64cec16e85c33bdfdef9372286fe2c6c}{send} (int sd) const 
+\begin{DoxyCompactList}\small\item\em \-Send packet over the series of tubes. \end{DoxyCompactList}\item 
+int \hyperlink{classNatNetPacket_a3660ddf6d4207e2fef9b76a780913d28}{send} (int sd, struct sockaddr\-\_\-in dest\-Addr) const 
+\begin{DoxyCompactList}\small\item\em \-Send packet over the series of tubes. \end{DoxyCompactList}\item 
+\hypertarget{classNatNetPacket_a01546982e21c1ecfff4a0bd2319b59e9}{char $\ast$ \hyperlink{classNatNetPacket_a01546982e21c1ecfff4a0bd2319b59e9}{raw\-Ptr} ()}\label{classNatNetPacket_a01546982e21c1ecfff4a0bd2319b59e9}
+
+\begin{DoxyCompactList}\small\item\em \-Return a raw pointer to the packet data. \-Careful. \end{DoxyCompactList}\item 
+\hypertarget{classNatNetPacket_ad95192c9fc7688d73b293b8b4e49de6c}{const char $\ast$ {\bfseries raw\-Ptr} () const }\label{classNatNetPacket_ad95192c9fc7688d73b293b8b4e49de6c}
+
+\item 
+\hypertarget{classNatNetPacket_ac4a953155e583f92166cb2fc2231e130}{const char $\ast$ {\bfseries raw\-Payload\-Ptr} () const }\label{classNatNetPacket_ac4a953155e583f92166cb2fc2231e130}
+
+\item 
+size\-\_\-t \hyperlink{classNatNetPacket_a2995d658809ef76680d783c8dbb11fbb}{max\-Length} () const 
+\begin{DoxyCompactList}\small\item\em \-Maximum length of the underlying packet data. \end{DoxyCompactList}\item 
+\hypertarget{classNatNetPacket_a07aa64d7f8db5bd5469879ae87918c92}{\hyperlink{classNatNetPacket_af9a3198d39270f9703a36c414079ab51}{\-Nat\-Net\-Message\-I\-D} \hyperlink{classNatNetPacket_a07aa64d7f8db5bd5469879ae87918c92}{i\-Message} () const }\label{classNatNetPacket_a07aa64d7f8db5bd5469879ae87918c92}
+
+\begin{DoxyCompactList}\small\item\em \-Get the message type. \end{DoxyCompactList}\item 
+\hypertarget{classNatNetPacket_aff2c08650945030907a0fcc5c11c2b84}{unsigned short \hyperlink{classNatNetPacket_aff2c08650945030907a0fcc5c11c2b84}{n\-Data\-Bytes} () const }\label{classNatNetPacket_aff2c08650945030907a0fcc5c11c2b84}
+
+\begin{DoxyCompactList}\small\item\em \-Get the number of bytes in the payload. \end{DoxyCompactList}\item 
+{\footnotesize template$<$class T $>$ }\\\-T const $\ast$ \hyperlink{classNatNetPacket_aa88263f0c7c59be19b1ca22b2b0df8e3}{read} (size\-\_\-t offset) const 
+\begin{DoxyCompactList}\small\item\em \-Read payload data. \-Const version. \end{DoxyCompactList}\item 
+{\footnotesize template$<$class T $>$ }\\\-T $\ast$ \hyperlink{classNatNetPacket_a69c4890244314ffb4362e2e3476e23aa}{read} (size\-\_\-t offset)
+\begin{DoxyCompactList}\small\item\em \-Read payload data. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{\-Static \-Public \-Member \-Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classNatNetPacket_a76ef193995d0fde8fb25d7e362f47331}{static \hyperlink{classNatNetPacket}{\-Nat\-Net\-Packet} \hyperlink{classNatNetPacket_a76ef193995d0fde8fb25d7e362f47331}{ping\-Packet} ()}\label{classNatNetPacket_a76ef193995d0fde8fb25d7e362f47331}
+
+\begin{DoxyCompactList}\small\item\em \-Construct a \char`\"{}ping\char`\"{} packet. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{\-Detailed \-Description}
+\-Encapsulates \hyperlink{classNatNet}{\-Nat\-Net} packets. 
+
+\begin{DoxyAuthor}{\-Author}
+\-Philip \-G. \-Lee 
+\end{DoxyAuthor}
+
+
+\subsection{\-Member \-Function \-Documentation}
+\hypertarget{classNatNetPacket_a2995d658809ef76680d783c8dbb11fbb}{\index{\-Nat\-Net\-Packet@{\-Nat\-Net\-Packet}!max\-Length@{max\-Length}}
+\index{max\-Length@{max\-Length}!NatNetPacket@{\-Nat\-Net\-Packet}}
+\subsubsection[{max\-Length}]{\setlength{\rightskip}{0pt plus 5cm}size\-\_\-t {\bf \-Nat\-Net\-Packet\-::max\-Length} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classNatNetPacket_a2995d658809ef76680d783c8dbb11fbb}
+
+
+\-Maximum length of the underlying packet data. 
+
+{\ttfamily \hyperlink{classNatNetPacket_a01546982e21c1ecfff4a0bd2319b59e9}{raw\-Ptr()}}\mbox{[}{\ttfamily \hyperlink{classNatNetPacket_a2995d658809ef76680d783c8dbb11fbb}{max\-Length()}-\/1}\mbox{]} should be a good dereference. \hypertarget{classNatNetPacket_aa88263f0c7c59be19b1ca22b2b0df8e3}{\index{\-Nat\-Net\-Packet@{\-Nat\-Net\-Packet}!read@{read}}
+\index{read@{read}!NatNetPacket@{\-Nat\-Net\-Packet}}
+\subsubsection[{read}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class T $>$ \-T const$\ast$ {\bf \-Nat\-Net\-Packet\-::read} (
+\begin{DoxyParamCaption}
+\item[{size\-\_\-t}]{offset}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classNatNetPacket_aa88263f0c7c59be19b1ca22b2b0df8e3}
+
+
+\-Read payload data. \-Const version. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em offset} & payload byte offset \\
+\hline
+\end{DoxyParams}
+\hypertarget{classNatNetPacket_a69c4890244314ffb4362e2e3476e23aa}{\index{\-Nat\-Net\-Packet@{\-Nat\-Net\-Packet}!read@{read}}
+\index{read@{read}!NatNetPacket@{\-Nat\-Net\-Packet}}
+\subsubsection[{read}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class T $>$ \-T$\ast$ {\bf \-Nat\-Net\-Packet\-::read} (
+\begin{DoxyParamCaption}
+\item[{size\-\_\-t}]{offset}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classNatNetPacket_a69c4890244314ffb4362e2e3476e23aa}
+
+
+\-Read payload data. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em offset} & payload byte offset \\
+\hline
+\end{DoxyParams}
+\hypertarget{classNatNetPacket_a64cec16e85c33bdfdef9372286fe2c6c}{\index{\-Nat\-Net\-Packet@{\-Nat\-Net\-Packet}!send@{send}}
+\index{send@{send}!NatNetPacket@{\-Nat\-Net\-Packet}}
+\subsubsection[{send}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf \-Nat\-Net\-Packet\-::send} (
+\begin{DoxyParamCaption}
+\item[{int}]{sd}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classNatNetPacket_a64cec16e85c33bdfdef9372286fe2c6c}
+
+
+\-Send packet over the series of tubes. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em sd} & \-Socket to use (already bound to an address) \\
+\hline
+\end{DoxyParams}
+\hypertarget{classNatNetPacket_a3660ddf6d4207e2fef9b76a780913d28}{\index{\-Nat\-Net\-Packet@{\-Nat\-Net\-Packet}!send@{send}}
+\index{send@{send}!NatNetPacket@{\-Nat\-Net\-Packet}}
+\subsubsection[{send}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf \-Nat\-Net\-Packet\-::send} (
+\begin{DoxyParamCaption}
+\item[{int}]{sd, }
+\item[{struct sockaddr\-\_\-in}]{dest\-Addr}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}\label{classNatNetPacket_a3660ddf6d4207e2fef9b76a780913d28}
+
+
+\-Send packet over the series of tubes. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em sd} & \-Socket to use \\
+\hline
+{\em dest\-Addr} & \-Address to which to send the packet \\
+\hline
+\end{DoxyParams}
+
+
+\-The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+\-Nat\-Net\-Packet.\-h\end{DoxyCompactItemize}

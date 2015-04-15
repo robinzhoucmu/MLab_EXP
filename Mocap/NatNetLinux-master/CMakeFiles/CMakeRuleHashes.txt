@@ -1,0 +1,3 @@
+# Hashes of file build rules.
+c4b9c0815836b69668e9a0fb332812f1 doc/CMakeFiles/doc
+5e54af1e6214e70bf9de0179fd725c99 doc/CMakeFiles/doc-doxygen
