@@ -1,0 +1,19 @@
+<package>
+  <description brief="TrackingObj">
+
+     TrackingObj
+
+  </description>
+  <author>Jiaji Zhou</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/TrackingObj</url>
+  <depend package="std_msgs"/>
+  <depend package="geometry_msgs"/>
+  <depend package="roscpp"/>
+  <depend package="robot_comm"/>
+  <depend package="matVec"/>
+  <depend package="Mocap"/>	 	
+</package>
+
+
