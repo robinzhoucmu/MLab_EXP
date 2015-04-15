@@ -87,16 +87,17 @@ void ObjectReg::FormCaliMarkerCoordinateFrame() {
   Vec axis_x;
   Vec axis_y;
   for (int i = 0; i < num_markers; ++i) {
-    // Determine the ith point can be set as the origin.
+    // Determine whether the ith point can be set as the origin.
     // Check the angle between axis is close to right angle or not.
     axis_x = cali_markers_pos[(i+1) % num_markers] - cali_markers_pos[i];
     axis_y = cali_markers_pos[(i+2) % num_markers] - cali_markers_pos[i];
     const double norm_axis_x = sqrt(axis_x * axis_x);
     const double norm_axis_y = sqrt(axis_y * axis_y);
+    // Normalize to unit length.
     axis_x = axis_x / norm_axis_x;
     axis_y = axis_y / norm_axis_y;
 
-    // Use the longer axis as the y axis.
+    // Convention: Use the longer axis as the y axis.
     if (norm_axis_x > norm_axis_y) {
       Vec tmp = axis_x;
       axis_x = axis_y;
