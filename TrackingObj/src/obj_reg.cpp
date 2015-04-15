@@ -4,6 +4,8 @@ ObjectReg::ObjectReg() {
 }
 
 void ObjectReg::Serialize(std::ostream & fout) {
+  fout << obj_name << std::endl;
+  /*
   // First 3 lines of cali marker positions.
   for (int i = 0; i < 3; ++i) {
     const Vec& p = cali_markers_pos[i];
@@ -15,10 +17,13 @@ void ObjectReg::Serialize(std::ostream & fout) {
   // Serialize relevant homogenious transformations.
   SerializeHomog(fout, tf_robot_mctractable);
   SerializeHomog(fout, tf_robot_calimarkers);
+  */
   SerializeHomog(fout, tf_mctractable_obj);
 }
 
 void ObjectReg::Deserialize(std::istream& fin) {
+  fin >> obj_name;
+  /*
   // Deserialize vector of cali marker positions.
   cali_markers_pos.clear();
   for (int i = 0; i < 3; ++i) {
@@ -30,6 +35,7 @@ void ObjectReg::Deserialize(std::istream& fin) {
   }
   DeserializeHomog(fin, &tf_robot_mctractable);
   DeserializeHomog(fin, &tf_robot_calimarkers);
+  */
   DeserializeHomog(fin, &tf_mctractable_obj);
 }
 
@@ -87,7 +93,9 @@ void ObjectReg::FormCaliMarkerCoordinateFrame() {
     axis_y = cali_markers_pos[(i+2) % num_markers] - cali_markers_pos[i];
     const double norm_axis_x = sqrt(axis_x * axis_x);
     const double norm_axis_y = sqrt(axis_y * axis_y);
-    
+    axis_x = axis_x / norm_axis_x;
+    axis_y = axis_y / norm_axis_y;
+
     // Use the longer axis as the y axis.
     if (norm_axis_x > norm_axis_y) {
       Vec tmp = axis_x;
@@ -148,11 +156,21 @@ int main(int argc, char* argv[]) {
   MocapComm mocap_comm(&np);
   ObjectReg obj_reg;
   // Shell based interactive process.
-  std::cout << "Object Registration Process Starts. Remeber to calibrate mocap frame to robot base frame first." << std::endl;
-  std::cout << "Place JUST the paper cali markers on the table." << std::endl;
+  std::cout << "Object Registration Process Starts." << std::endl;
+
   std::cout << "Input Object Name" << std::endl;
   std::string name;
   std::cin >> name;
+
+  std::cout << "First we need to calibrate mocap frame to robot base frame. Type in the pose(7 numbers):" << std::endl;
+  double pose_robot_mocap[7];
+  for (int i = 0; i < 7; ++i) {
+    std::cin >> pose_robot_mocap[i];
+  }
+  mocap_comm.SetMocapTransformation(pose_robot_mocap); 
+
+  std::cout << "Place JUST the paper cali markers on the table." << std::endl;
+  
   obj_reg.SetObjName(name);
   
   std::cout << "Setting Up Cali Marker Frame" << std::endl;
