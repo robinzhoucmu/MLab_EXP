@@ -1,4 +1,5 @@
 #include "obj_reg.h"
+#include<stdlib.h>
 
 ObjectReg::ObjectReg() {
 }
@@ -62,21 +63,24 @@ void ObjectReg::SerializeHomog(std::ostream& fout, const HomogTransf& tf) {
 void ObjectReg::ReadCaliMarkersFromMocap(MocapComm& mocap_comm) {
   cali_markers_pos.clear();
   Mocap::mocap_frame mocap_msg;
-  mocap_comm.GetMocapFrame(&mocap_msg);
-  
-  // Extract cali markers(which NatNet will treat as unidenfied markers).
-  int num_markers = mocap_msg.uid_markers.markers.size();
-  // Check for size.
-  assert(num_markers == 3);
-  for (int i = 0; i < num_markers; ++i) {
-    const geometry_msgs::Point& pt_mocap = mocap_msg.uid_markers.markers[i];
-    Vec pt(3);
-    pt[0] = pt_mocap.x;
-    pt[1] = pt_mocap.y;
-    pt[2] = pt_mocap.z;
-    cali_markers_pos.push_back(pt);
+  bool flag = mocap_comm.GetMocapFrame(&mocap_msg);
+  if (flag) {
+    // Extract cali markers(which NatNet will treat as unidenfied markers).
+    int num_markers = mocap_msg.uid_markers.markers.size();
+    // Check for size.
+    assert(num_markers == 3);
+    for (int i = 0; i < num_markers; ++i) {
+      const geometry_msgs::Point& pt_mocap = mocap_msg.uid_markers.markers[i];
+      Vec pt(3);
+      pt[0] = pt_mocap.x;
+      pt[1] = pt_mocap.y;
+      pt[2] = pt_mocap.z;
+      cali_markers_pos.push_back(pt);
+    }
+    FormCaliMarkerCoordinateFrame();
+  } else {
+    return false;
   }
-  FormCaliMarkerCoordinateFrame();
 }
 
 void ObjectReg::FormCaliMarkerCoordinateFrame() {
@@ -127,23 +131,37 @@ void ObjectReg::FormCaliMarkerCoordinateFrame() {
   tf_robot_calimarkers.setTranslation(trans);
 }
 
-void ObjectReg::ReadTractablePoseFromMocap(MocapComm& mocap_comm) {
+bool ObjectReg::ReadTractablePoseFromMocap(MocapComm& mocap_comm) {
   Mocap::mocap_frame mocap_msg;
-  mocap_comm.GetMocapFrame(&mocap_msg);
-  // We are assuming during registration process, there is only one tractable in view.
-  assert(mocap_msg.body_poses.poses.size() == 1);
-  // Extract pose from mocap output.
-  double tractable_pose[7];
-  geometry_msgs::Pose pose = mocap_msg.body_poses.poses[0];
-  tractable_pose[0] = pose.position.x;
-  tractable_pose[1] = pose.position.y;
-  tractable_pose[2] = pose.position.z;
-  tractable_pose[3] = pose.orientation.x;
-  tractable_pose[4] = pose.orientation.y;
-  tractable_pose[5] = pose.orientation.z;
-  tractable_pose[6] = pose.orientation.w;
-  // Update the tf.
-  tf_robot_mctractable.setPose(tractable_pose);
+  bool flag = mocap_comm.GetMocapFrame(&mocap_msg);
+  if (flag) {
+    // We are assuming during registration process, there is only one tractable in view.
+    assert(mocap_msg.body_poses.poses.size() == 1);
+    // Extract pose from mocap output.
+    double tractable_pose[7];
+    geometry_msgs::Pose pose = mocap_msg.body_poses.poses[0];
+    tractable_pose[0] = pose.position.x;
+    tractable_pose[1] = pose.position.y;
+    tractable_pose[2] = pose.position.z;
+    tractable_pose[3] = pose.orientation.x;
+    tractable_pose[4] = pose.orientation.y;
+    tractable_pose[5] = pose.orientation.z;
+    tractable_pose[6] = pose.orientation.w;
+    // Update the tf.
+    tf_robot_mctractable.setPose(tractable_pose);
+    return true;
+  } else {
+    return false;
+  }
+}
+
+bool ObjectReg::GetLocalObjectPose(MocapComm& mocap_comm, HomogTransf* obj_pose) {
+  if (ReadTractablePoseFromMocap(mocap_comm)) {
+    *obj_pose = tf_robot_mctractable * tf_mctractable_obj;
+    return true;
+  } else {
+    return false;
+  }
 }
 
 void ObjectReg::ComputeTransformation() {
@@ -178,12 +196,21 @@ int main(int argc, char* argv[]) {
   std::cout << "Enter any key to start acquiring" << std::endl;
   std::cin.ignore();
   std::cin.get();
-  obj_reg.ReadCaliMarkersFromMocap(mocap_comm);
+
+  if (!obj_reg.ReadCaliMarkersFromMocap(mocap_comm)) {
+    std::cerr << "Failed to read calibration markers" << std::endl;
+    exit (EXIT_FAILURE);
+  };
   
   std::cout << "Now put the object on the paper." << std::endl;
+  std::cout << "Note that the object should be registered in opti-track as tractable rigid body already." << std::endl;
   std::cout << "Enter any key to start acquiring" << std::endl;
   std::cin.get();
-  obj_reg.ReadTractablePoseFromMocap(mocap_comm);
+
+  if (!obj_reg.ReadTractablePoseFromMocap(mocap_comm)) {
+    std::cerr << "Failed to read tractable pose from mocap" << std::endl;
+    exit (EXIT_FAILURE);
+  }
   
   std::cout << "Computing transformation." << std::endl;
   obj_reg.ComputeTransformation();

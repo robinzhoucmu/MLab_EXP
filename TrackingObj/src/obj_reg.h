@@ -4,6 +4,8 @@
 // This header file defines the object registration class.
 // ObjectReg instance contains  mocap readings and 
 // computed transformations to register the object.
+// We will require the mocap system to be calibrated w.r.t the robot
+// base frame beforehand. 
 
 #include <fstream>
 #include <iostream>
@@ -20,11 +22,18 @@ class ObjectReg {
   void Serialize(std::ostream& fout);
   void Deserialize(std::istream& fin);
 
-  void ReadCaliMarkersFromMocap(MocapComm& mocap_comm);
-  void ReadTractablePoseFromMocap(MocapComm& mocap_comm);
+  bool ReadCaliMarkersFromMocap(MocapComm& mocap_comm);
+
+  // Read the pose of the tractable rigid body from mocap.
+  bool ReadTractablePoseFromMocap(MocapComm& mocap_comm);
   
   void ComputeTransformation();
 
+  // Get local object pose in robot base frame by transforming mocap pose with tf_mctractable_obj;
+  bool GetLocalObjectPose(MocapComm& mocap_comm, HomogTransf* obj_pose);
+  
+  // Get the key transformation between mocap marker frame, which we don't exactly 
+  // know how opti-track is forming it, to object local frame, which we will pre-specify. 
   const HomogTransf GetTransformation() {
     return tf_mctractable_obj;
   }

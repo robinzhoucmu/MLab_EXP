@@ -9,7 +9,8 @@
 
 #include <vector>
 #include <matVec/matVec.h>
-struct Edge{
+
+struct Edge {
   Edge(const Vec& lp, const Vec& rp) {
     left_end = lp;
     right_end = rp;
@@ -19,6 +20,13 @@ struct Edge{
     // Normalize to unit length.
     normal_dir = normal_dir / (sqrt(normal_dir * normal_dir));
   }
+  // Get a sample point on the edge segment. 
+  // 0 means the left_end, 1 means the right_end.
+  Vec GetSample(double r) {
+    assert( r >=0 && r<=1 );
+    Vec sample_pt = left_end + r * (edge_vec);
+    return sample_pt;
+  }
   Vec left_end;
   Vec right_end;
   Vec edge_vec;
@@ -27,6 +35,7 @@ struct Edge{
 
 class ObjectGeometry {
  public:
+  ObjectGeometry();
   std::vector<Vec> vertices;
   std::vector<Edge> edges;
 };

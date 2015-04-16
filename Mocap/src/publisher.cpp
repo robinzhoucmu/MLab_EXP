@@ -157,6 +157,7 @@ void MocapPublisher::PublishToTopic() {
       //std::cout << ros::Time::now() << std::endl;
       mocapPub.publish(msg);
     }
+    // All callbacks/services will be processed here.
     ros::spinOnce();
     loop_rate.sleep();
     rosMsgCount++;
