@@ -60,7 +60,7 @@ void ObjectReg::SerializeHomog(std::ostream& fout, const HomogTransf& tf) {
   }
 }
 
-void ObjectReg::ReadCaliMarkersFromMocap(MocapComm& mocap_comm) {
+bool ObjectReg::ReadCaliMarkersFromMocap(MocapComm& mocap_comm) {
   cali_markers_pos.clear();
   Mocap::mocap_frame mocap_msg;
   bool flag = mocap_comm.GetMocapFrame(&mocap_msg);
@@ -136,10 +136,10 @@ bool ObjectReg::ReadTractablePoseFromMocap(MocapComm& mocap_comm) {
   bool flag = mocap_comm.GetMocapFrame(&mocap_msg);
   if (flag) {
     // We are assuming during registration process, there is only one tractable in view.
-    assert(mocap_msg.body_poses.poses.size() == 1);
+    assert(mocap_msg.body_poses.size() == 1);
     // Extract pose from mocap output.
     double tractable_pose[7];
-    geometry_msgs::Pose pose = mocap_msg.body_poses.poses[0];
+    geometry_msgs::Pose pose = mocap_msg.body_poses[0];
     tractable_pose[0] = pose.position.x;
     tractable_pose[1] = pose.position.y;
     tractable_pose[2] = pose.position.z;

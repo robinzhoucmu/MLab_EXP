@@ -91,27 +91,11 @@ void MocapPublisher::ExtractPoseMsg(const MocapFrame& mframe,
     transformPoint(&uid_marker_pt);
     msg->uid_markers.markers.push_back(uid_marker_pt);
   }
-  // Extract idenfied marker sets.
-  const int num_id_marker_sets = mframe.markerSets().size();
-  msg->id_marker_sets.clear();
-  for (int i = 0; i < num_id_marker_sets; ++i) {
-    const MarkerSet marker_set = mframe.markerSets()[i]; 
-    const int marker_set_size = marker_set.markers().size();
-    Mocap::marker_set id_marker_set;
-    for (int j = 0; j < marker_set_size; ++j) {
-      const Point3f& pt = marker_set.markers()[j];
-      geometry_msgs::Point id_marker_pt;
-      id_marker_pt.x = k_unit * pt.x;
-      id_marker_pt.y = k_unit * pt.y;
-      id_marker_pt.z = k_unit * pt.z;
-      // Transform the point.
-      transformPoint(&id_marker_pt);
-      id_marker_set.markers.push_back(id_marker_pt);
-    }
-    msg->id_marker_sets.push_back(id_marker_set);
-  }
-  // Extract tracked body/ies poses.
+  
+  // Extract tracked body/ies poses and corresponding identified marker sets.
   const int num_bodies = mframe.rigidBodies().size();
+  msg->id_marker_sets.clear();
+  msg->body_poses.clear();
   for (int i = 0; i < num_bodies; i++) {
     const RigidBody& body = mframe.rigidBodies()[i];
     geometry_msgs::Pose pose;
@@ -126,9 +110,22 @@ void MocapPublisher::ExtractPoseMsg(const MocapFrame& mframe,
     pose.orientation.w = body.orientation().qw;
     // Transform the pose.
     transformPose(&pose);
-    msg->body_poses.poses.push_back(pose);    
+    msg->body_poses.push_back(pose);    
     msg->header.stamp = ros::Time::now();
-
+    
+    const int marker_set_size = body.markers().size();
+    Mocap::marker_set id_marker_set;
+    for (int j = 0; j < marker_set_size; ++j) {
+      const Point3f& pt = body.markers()[j];
+      geometry_msgs::Point id_marker_pt;
+      id_marker_pt.x = k_unit * pt.x;
+      id_marker_pt.y = k_unit * pt.y;
+      id_marker_pt.z = k_unit * pt.z;
+      // Transform the point.
+      transformPoint(&id_marker_pt);
+      id_marker_set.markers.push_back(id_marker_pt);
+    }
+    msg->id_marker_sets.push_back(id_marker_set);
   }
 }
 
