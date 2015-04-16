@@ -156,7 +156,9 @@ bool ObjectReg::ReadTractablePoseFromMocap(MocapComm& mocap_comm) {
 }
 
 bool ObjectReg::GetLocalObjectPose(MocapComm& mocap_comm, HomogTransf* obj_pose) {
+  // Read tractable pose from mocap first.
   if (ReadTractablePoseFromMocap(mocap_comm)) {
+    // Transform to the local object frame.
     *obj_pose = tf_robot_mctractable * tf_mctractable_obj;
     return true;
   } else {
@@ -168,60 +170,57 @@ void ObjectReg::ComputeTransformation() {
   tf_mctractable_obj = tf_robot_mctractable.inv() * tf_robot_calimarkers;
 }
 
-
-int main(int argc, char* argv[]) {
-  ros::init(argc, argv, "ObjectRegistration");
-  ros::NodeHandle np;
-  MocapComm mocap_comm(&np);
-  ObjectReg obj_reg;
+bool ObjectReg::Register(MocapComm& mocap_comm) {
   // Shell based interactive process.
   std::cout << "Object Registration Process Starts." << std::endl;
-
+  
+  // Set object name.
   std::cout << "Input Object Name" << std::endl;
   std::string name;
   std::cin >> name;
-
-  std::cout << "First we need to calibrate mocap frame to robot base frame. Type in the pose(7 numbers):" << std::endl;
-  double pose_robot_mocap[7];
-  for (int i = 0; i < 7; ++i) {
-    std::cin >> pose_robot_mocap[i];
+  SetObjName(name);
+  
+  // Calibrate mocap frame to robot base frame.
+  std::cout << "Do you need to calibrate mocap frame w.r.t robot base frame first? Type y for yes and n for no." << std::endl;
+  char ch;
+  std::cin >> ch;
+  if (ch == 'Y' || ch == 'y') {
+    std::cout << "Type in the pose(7 numbers):" << std::endl;
+    double pose_robot_mocap[7];
+    for (int i = 0; i < 7; ++i) {
+      std::cin >> pose_robot_mocap[i];
+    }
+    mocap_comm.SetMocapTransformation(pose_robot_mocap); 
+  } else if (!(ch == 'N' || ch == 'n')) {
+    std::cerr << "Cannot recognize input" << std::endl;
+    return false;
   }
-  mocap_comm.SetMocapTransformation(pose_robot_mocap); 
-
-  std::cout << "Place JUST the paper cali markers on the table." << std::endl;
-  
-  obj_reg.SetObjName(name);
-  
+  // Read calibration marker paper and form local object frame.
+  std::cout << "Place JUST the paper cali markers on the table." << std::endl;  
   std::cout << "Setting Up Cali Marker Frame" << std::endl;
   std::cout << "Enter any key to start acquiring" << std::endl;
   std::cin.ignore();
   std::cin.get();
-
-  if (!obj_reg.ReadCaliMarkersFromMocap(mocap_comm)) {
+  if (!ReadCaliMarkersFromMocap(mocap_comm)) {
     std::cerr << "Failed to read calibration markers" << std::endl;
-    exit (EXIT_FAILURE);
-  };
+    return false;
+  } 
   
+  // Put the object to align with paper markers and compute transformation.
   std::cout << "Now put the object on the paper." << std::endl;
   std::cout << "Note that the object should be registered in opti-track as tractable rigid body already." << std::endl;
   std::cout << "Enter any key to start acquiring" << std::endl;
+  std::cin.ignore();
   std::cin.get();
 
-  if (!obj_reg.ReadTractablePoseFromMocap(mocap_comm)) {
+  if (!ReadTractablePoseFromMocap(mocap_comm)) {
     std::cerr << "Failed to read tractable pose from mocap" << std::endl;
-    exit (EXIT_FAILURE);
+    return false;
   }
   
   std::cout << "Computing transformation." << std::endl;
-  obj_reg.ComputeTransformation();
-  std::cout << obj_reg.GetTransformation() << std::endl;
-  
-  std::cout << "Saving information to \"" << obj_reg.GetObjName() << ".txt\"  on disk";
-  std::string output_file_name = name + ".txt";
-  std::ofstream fout;
-  fout.open(output_file_name.c_str());
-  obj_reg.Serialize(fout);
-  fout.close();
+  ComputeTransformation();
+  std::cout << GetTransformation() << std::endl;
 
-  return 0;
 }
+

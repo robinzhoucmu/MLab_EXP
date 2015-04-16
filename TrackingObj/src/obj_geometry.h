@@ -9,13 +9,16 @@
 
 #include <vector>
 #include <matVec/matVec.h>
+#include <assert.h>
+#include <cmath>
 
 struct Edge {
   Edge(const Vec& lp, const Vec& rp) {
     left_end = lp;
     right_end = rp;
     edge_vec = right_end - left_end;
-    Vec z({0,0,1},3);
+    double axis_z[3] = {0,0,1};
+    Vec z(axis_z,3);
     normal_dir = edge_vec ^ z;
     // Normalize to unit length.
     normal_dir = normal_dir / (sqrt(normal_dir * normal_dir));
@@ -24,7 +27,7 @@ struct Edge {
   // 0 means the left_end, 1 means the right_end.
   Vec GetSample(double r) {
     assert( r >=0 && r<=1 );
-    Vec sample_pt = left_end + r * (edge_vec);
+    Vec sample_pt = left_end + edge_vec * r;
     return sample_pt;
   }
   Vec left_end;
@@ -35,7 +38,7 @@ struct Edge {
 
 class ObjectGeometry {
  public:
-  ObjectGeometry();
+  ObjectGeometry(){};
   std::vector<Vec> vertices;
   std::vector<Edge> edges;
 };

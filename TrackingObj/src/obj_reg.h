@@ -22,6 +22,10 @@ class ObjectReg {
   void Serialize(std::ostream& fout);
   void Deserialize(std::istream& fin);
 
+  // An interactive process to register the object from terminal.
+  // Include a mocap calibration w.r.t robot base step.
+  bool Register(MocapComm& mocap_comm);
+
   bool ReadCaliMarkersFromMocap(MocapComm& mocap_comm);
 
   // Read the pose of the tractable rigid body from mocap.
@@ -43,7 +47,7 @@ class ObjectReg {
   void SetObjName(std::string name) {
     obj_name = name;
   }
-
+  
  private:
   // Compute the tf_robot_calimarkers from calibration marker point mocap readings.
   void FormCaliMarkerCoordinateFrame();
