@@ -11,12 +11,17 @@
 class PushObject {
  public:
   PushObject();
+  PushObject(std::string file_name);
+  PushObject(std::string file_name_geo, std::string file_name_reg);
   // Get pose in robot frame after transforming mocap readings.
   // Assume mocap system is calibrated to robot base frame already.
   bool GetObjPose(HomogTransf* tf);
   const std::vector<Vec> GetVertices() {return obj_geo.vertices;}
   const std::vector<Edge> GetEdges() {return obj_geo.edges;}
   
+  void Serialize(std::ostream& fout);
+  void Deserialize(std::istream &fin);
+
  private:
   MocapComm* mocap_comm;
   ObjectGeometry obj_geo;

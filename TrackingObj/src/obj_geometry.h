@@ -11,6 +11,8 @@
 #include <matVec/matVec.h>
 #include <assert.h>
 #include <cmath>
+#include <fstream>
+#include <iostream>
 
 struct Edge {
   Edge(const Vec& lp, const Vec& rp) {
@@ -39,8 +41,54 @@ struct Edge {
 class ObjectGeometry {
  public:
   ObjectGeometry(){};
+  void Serialize(std::ostream& fout) {
+    assert(vertices.size() == edges.size());
+    int numV = vertices.size();
+    // Number of vertices.
+    fout << numV << std::endl;
+    // All vertices.
+    for (int i = 0; i < numV; i++) {
+      SerializeVector(vertices[i], fout);
+    }
+    // All edges.
+    for (int i = 0; i < numV; i++) {
+      // Just serialize left and right end is sufficient.
+      SerializeVector(edges[i].left_end, fout);
+      SerializeVector(edges[i].right_end, fout);
+    }
+  }
+
+  void Deserialize(std::istream& fin) {
+    int numV;
+    // Get #vertices.
+    fin >> numV; 
+    vertices.clear();
+    edges.clear();
+    // Get all vertices.
+    for (int i = 0; i < numV; i++) {
+      Vec v = DeserializeVector(fin);
+      vertices.push_back(v);
+    }
+    // Get all edges.
+    for (int i = 0; i < numV; ++i) {
+      Vec le = DeserializeVector(fin);
+      Vec re = DeserializeVector(fin);
+      Edge e(le,re);
+      edges.push_back(e);
+    }
+    
+  }
   std::vector<Vec> vertices;
   std::vector<Edge> edges;
+ private:
+  void SerializeVector(const Vec& v, std::ostream& fout) {
+    fout << v[0] << " " << v[1] << " " << v[2] << std::endl;
+  }
+  Vec DeserializeVector(std::istream& fin) {
+    Vec v(3);
+    fin >> v[0] >> v[1] >> v[2];
+    return v;
+  }
 };
 
 #endif

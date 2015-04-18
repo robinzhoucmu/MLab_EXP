@@ -21,8 +21,23 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 #uncomment if you have defined services
 #rosbuild_gensrv()
 
+ADD_CUSTOM_COMMAND(
+  OUTPUT push_obj.h
+  COMMAND cp ${PROJECT_SOURCE_DIR}/src/push_obj.h
+             ${PROJECT_SOURCE_DIR}/include/TrackingObj/push_obj.h
+  DEPENDS ${PROJECT_SOURCE_DIR}/src/push_obj.h 
+  )
+
+ADD_CUSTOM_TARGET(makeH ALL DEPENDS push_obj.h)
+
+
+
+
 #common commands for building c++ executables and libraries
-rosbuild_add_library(push_obj src/push_obj.cpp)
+rosbuild_add_library(push_obj 
+                     src/push_obj.cpp
+		     src/obj_reg.cpp)
+
 rosbuild_add_library(obj_reg src/obj_reg.cpp)
 
 #target_link_libraries(${PROJECT_NAME} another_library)

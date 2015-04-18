@@ -13,5 +13,19 @@ bool PushObject::GetObjPose(HomogTransf *tf) {
   }
 }
 
+void PushObject::Serialize(std::ostream& fout) {
+  // Serialize object registration(transformation) information.
+  obj_reg.Serialize(fout);
+  // Serialize object geometry information.
+  obj_geo.Serialize(fout);
+}
+
+void PushObject::Deserialize(std::istream& fin) {
+  // Deserialize object registration/transformation.
+  obj_reg.Deserialize(fin);
+  // Deserialize object geometry info.
+  obj_geo.Deserialize(fin);
+}
+
 
 
