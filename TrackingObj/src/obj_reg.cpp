@@ -6,6 +6,7 @@ ObjectReg::ObjectReg() {
 
 void ObjectReg::Serialize(std::ostream & fout) {
   fout << obj_name << std::endl;
+  fout << tractable_id << std::endl; 
   /*
   // First 3 lines of cali marker positions.
   for (int i = 0; i < 3; ++i) {
@@ -24,6 +25,7 @@ void ObjectReg::Serialize(std::ostream & fout) {
 
 void ObjectReg::Deserialize(std::istream& fin) {
   fin >> obj_name;
+  fin >> tractable_id;
   /*
   // Deserialize vector of cali marker positions.
   cali_markers_pos.clear();
@@ -137,7 +139,8 @@ bool ObjectReg::ReadTractablePoseFromMocap(MocapComm& mocap_comm) {
   if (flag) {
     // Extract pose from mocap output.
     double tractable_pose[7];
-    geometry_msgs::Pose pose = mocap_msg.body_poses[0];
+    // TODO(Jiaji): Better handling of id matching without assuming consecutive id from 1.
+    geometry_msgs::Pose pose = mocap_msg.body_poses[tractable_id - 1];
     tractable_pose[0] = pose.position.x;
     tractable_pose[1] = pose.position.y;
     tractable_pose[2] = pose.position.z;
@@ -153,7 +156,7 @@ bool ObjectReg::ReadTractablePoseFromMocap(MocapComm& mocap_comm) {
   }
 }
 
-bool ObjectReg::GetLocalObjectPose(MocapComm& mocap_comm, HomogTransf* obj_pose) {
+bool ObjectReg::GetGlobalObjectPose(MocapComm& mocap_comm, HomogTransf* obj_pose) {
   // Read tractable pose from mocap first.
   if (ReadTractablePoseFromMocap(mocap_comm)) {
     // Transform to the local object frame.
@@ -177,7 +180,11 @@ bool ObjectReg::Register(MocapComm& mocap_comm) {
   std::string name;
   std::cin >> name;
   SetObjName(name);
-  
+
+  // Set object tractable id.
+  std::cout << "Input Tractable id. Make sure it's the same with Opti-track Windows setting!" << std::endl;
+  std::cin >> tractable_id;
+
   // Calibrate mocap frame to robot base frame.
   std::cout << "Do you need to calibrate mocap frame w.r.t robot base frame first? Type y for yes and n for no." << std::endl;
   char ch;

@@ -26,7 +26,7 @@ PushObject::PushObject(std::string file_name_reg, std::string file_name_geo) {
 }
 
 bool PushObject::GetGlobalObjPose(HomogTransf *tf) {
-  if (obj_reg.GetLocalObjectPose(*mocap_comm, tf)) {
+  if (obj_reg.GetGlobalObjectPose(*mocap_comm, tf)) {
     return true;
   } else {
     return false;

@@ -15,7 +15,8 @@ int main(int argc, char* argv[]) {
   fin_mocap_cali.close();
   mocap_comm.SetMocapTransformation(pose_robot_mocap);
     
-  PushObject triangle("object_db/triangle_reg.txt", "object_db/triangle_geo.txt");
+  //PushObject triangle("object_db/triangle_reg.txt", "object_db/triangle_geo.txt");
+  PushObject triangle("object_db/triangle.txt");
   // Print out vertices information.
   const std::vector<Vec> & vertices = triangle.GetVertices();
   for (int i = 0; i < vertices.size(); ++i) {

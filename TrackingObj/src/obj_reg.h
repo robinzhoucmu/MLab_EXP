@@ -33,8 +33,9 @@ class ObjectReg {
   
   void ComputeTransformation();
 
-  // Get local object pose in robot base frame by transforming mocap pose with tf_mctractable_obj;
-  bool GetLocalObjectPose(MocapComm& mocap_comm, HomogTransf* obj_pose);
+  // Get object pose in robot base frame(global frame) by 
+  // transforming mocap pose with tf_mctractable_obj;
+  bool GetGlobalObjectPose(MocapComm& mocap_comm, HomogTransf* obj_pose);
   
   // Get the key transformation between mocap marker frame, which we don't exactly 
   // know how opti-track is forming it, to object local frame, which we will pre-specify. 
@@ -47,6 +48,8 @@ class ObjectReg {
   void SetObjName(std::string name) {
     obj_name = name;
   }
+  // Make sure this id matches settings on the Windows Opti-track software.
+  int tractable_id;
   
  private:
   // Compute the tf_robot_calimarkers from calibration marker point mocap readings.

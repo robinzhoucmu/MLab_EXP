@@ -30,6 +30,8 @@ class PushObject {
   HomogTransf GetIntrinsicTf() const {return obj_reg.GetTransformation();} 
   // Get object name.
   std::string GetObjName() const {return obj_reg.GetObjName();}
+  // Get object tractable id.
+  int GetTractableId() const {return obj_reg.tractable_id;}
 
   void Serialize(std::ostream& fout);
   void Deserialize(std::istream &fin);
