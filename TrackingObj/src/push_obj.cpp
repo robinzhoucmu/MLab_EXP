@@ -1,11 +1,31 @@
 #include "push_obj.h"
 
 PushObject::PushObject() {
-  ros::NodeHandle np;
-  mocap_comm = new MocapComm(&np); 
+  InitMocapComm();
 }
 
-bool PushObject::GetObjPose(HomogTransf *tf) {
+PushObject::PushObject(std::string file_name) {
+  InitMocapComm();
+  std::ifstream fin;
+  fin.open(file_name.c_str());
+  Deserialize(fin);
+  fin.close();
+}
+
+PushObject::PushObject(std::string file_name_reg, std::string file_name_geo) {
+  InitMocapComm();
+  std::ifstream fin_reg;
+  fin_reg.open(file_name_reg.c_str());
+  obj_reg.Deserialize(fin_reg);
+  fin_reg.close();
+  
+  std::ifstream fin_obj;
+  fin_obj.open(file_name_geo.c_str());
+  obj_geo.Deserialize(fin_obj);
+  fin_obj.close();
+}
+
+bool PushObject::GetGlobalObjPose(HomogTransf *tf) {
   if (obj_reg.GetLocalObjectPose(*mocap_comm, tf)) {
     return true;
   } else {
@@ -27,5 +47,8 @@ void PushObject::Deserialize(std::istream& fin) {
   obj_geo.Deserialize(fin);
 }
 
+void PushObject::InitMocapComm() {
+  mocap_comm = new MocapComm(&np); 
+}
 
 

@@ -41,6 +41,7 @@ struct Edge {
 class ObjectGeometry {
  public:
   ObjectGeometry(){};
+  
   void Serialize(std::ostream& fout) {
     assert(vertices.size() == edges.size());
     int numV = vertices.size();
@@ -50,12 +51,14 @@ class ObjectGeometry {
     for (int i = 0; i < numV; i++) {
       SerializeVector(vertices[i], fout);
     }
+    /*
     // All edges.
     for (int i = 0; i < numV; i++) {
       // Just serialize left and right end is sufficient.
       SerializeVector(edges[i].left_end, fout);
       SerializeVector(edges[i].right_end, fout);
     }
+    */
   }
 
   void Deserialize(std::istream& fin) {
@@ -69,6 +72,11 @@ class ObjectGeometry {
       Vec v = DeserializeVector(fin);
       vertices.push_back(v);
     }
+    for (int i = 0; i < numV; i++) {
+      Edge e(vertices[i], vertices[(i+1)%numV]);
+      edges.push_back(e);
+    }
+    /*
     // Get all edges.
     for (int i = 0; i < numV; ++i) {
       Vec le = DeserializeVector(fin);
@@ -76,7 +84,7 @@ class ObjectGeometry {
       Edge e(le,re);
       edges.push_back(e);
     }
-    
+    */
   }
   std::vector<Vec> vertices;
   std::vector<Edge> edges;

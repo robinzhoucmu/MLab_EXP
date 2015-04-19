@@ -38,10 +38,10 @@ class ObjectReg {
   
   // Get the key transformation between mocap marker frame, which we don't exactly 
   // know how opti-track is forming it, to object local frame, which we will pre-specify. 
-  const HomogTransf GetTransformation() {
+  HomogTransf GetTransformation() const{
     return tf_mctractable_obj;
   }
-  const std::string GetObjName() {
+  std::string GetObjName() const{
     return obj_name;
   }
   void SetObjName(std::string name) {

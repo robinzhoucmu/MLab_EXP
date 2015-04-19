@@ -135,8 +135,6 @@ bool ObjectReg::ReadTractablePoseFromMocap(MocapComm& mocap_comm) {
   Mocap::mocap_frame mocap_msg;
   bool flag = mocap_comm.GetMocapFrame(&mocap_msg);
   if (flag) {
-    // We are assuming during registration process, there is only one tractable in view.
-    assert(mocap_msg.body_poses.size() == 1);
     // Extract pose from mocap output.
     double tractable_pose[7];
     geometry_msgs::Pose pose = mocap_msg.body_poses[0];

@@ -54,7 +54,7 @@ class Globals {
   // Initialize the sockets arguments.
   static void ReadOpts(int argc, char* argv[]) {
     namespace po = boost::program_options;
-    po::options_description desc("mocap-publisheru sing NatNetLinux");
+    po::options_description desc("mocap-publisher using NatNetLinux");
     desc.add_options()
       ("help", "Display help message")
       ("local-addr,l", po::value<std::string>(), "Local IPv4 address")
