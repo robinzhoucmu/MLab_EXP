@@ -144,10 +144,11 @@ bool ObjectReg::ReadTractablePoseFromMocap(MocapComm& mocap_comm) {
     tractable_pose[0] = pose.position.x;
     tractable_pose[1] = pose.position.y;
     tractable_pose[2] = pose.position.z;
-    tractable_pose[3] = pose.orientation.x;
-    tractable_pose[4] = pose.orientation.y;
-    tractable_pose[5] = pose.orientation.z;
-    tractable_pose[6] = pose.orientation.w;
+    // Note that in geometry message, q.w corresponds to q0 in matVec quaternion.
+    tractable_pose[3] = pose.orientation.w;
+    tractable_pose[4] = pose.orientation.x;
+    tractable_pose[5] = pose.orientation.y;
+    tractable_pose[6] = pose.orientation.z;
     // Update the tf.
     tf_robot_mctractable.setPose(tractable_pose);
     return true;

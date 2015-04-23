@@ -280,9 +280,13 @@ void MocapPublisher::transformPoint(geometry_msgs::Point* pt) {
 void MocapPublisher::transformPose(geometry_msgs::Pose* pose) {
   geometry_msgs::Point& trans = pose->position;
   geometry_msgs::Quaternion& quat = pose->orientation;
+
+  // Todo(Jiaji): Note q.w comes first here, in matVec q.w is the 4th element.
   double tmp_pose[7] = {trans.x, trans.y, trans.z,
-			quat.x, quat.y, quat.z, quat.w};
-  HomogTransf tf = tf_mocap * HomogTransf(tmp_pose);
+			quat.w, quat.x, quat.y, quat.z};
+  
+  HomogTransf cur_tf = HomogTransf(tmp_pose);
+  HomogTransf tf = tf_mocap * cur_tf;
 
   Vec tf_trans = tf.getTranslation();
   trans.x = tf_trans[0];
@@ -290,10 +294,10 @@ void MocapPublisher::transformPose(geometry_msgs::Pose* pose) {
   trans.z = tf_trans[2];
 
   Quaternion tf_quat = tf.getQuaternion();
-  quat.x = tf_quat[0];
-  quat.y = tf_quat[1];
-  quat.z = tf_quat[2];
-  quat.w = tf_quat[3];
+  quat.x = tf_quat.x();
+  quat.y = tf_quat.y();
+  quat.z = tf_quat.z();
+  quat.w = tf_quat.w();
 }
 
 // Main function for the Mocap Node. 
