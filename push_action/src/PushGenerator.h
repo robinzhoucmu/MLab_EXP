@@ -4,6 +4,9 @@
 #include <matVec/matVec.h>
 #include <TrackingObj/push_obj.h>
 #include <vector>
+#include <assert.h>
+#include <cstdlib>
+#include <ctime>
 
 struct PushAction{
   Vec pushPoint;
@@ -16,13 +19,21 @@ struct PushAction{
 class PushGenerator
 {
   public:
+    // Minimum distance from the corner of a block that we will push (mm)
+    const static double MIN_EDGE_DISTANCE = 5.0;
+    // Minimum angle the push direction makes with an edge (degrees)
+    const static double MIN_PUSH_ANGLE = 10.0;
 
     // The distance away from the push point to start the object (mm)
-    const static double DEFAULT_INITIAL_DISTANCE = 100.0;
+    const static double DEFAULT_INITIAL_DISTANCE = 50.0;
     // The distance past the push point to push the object (mm)
     const static double DEFAULT_PENETRATION_DISTANCE = 20.0;
     // The distance to retract after pushing (mm)
     const static double DEFAULT_RETRACTION_DISTANCE = 5.0;
+
+    PushGenerator(){ srand(time(NULL)); }
+    ~PushGenerator(){}
+
 
     /** Determines whether a specified push of an object is valid
      * 

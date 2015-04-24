@@ -9,6 +9,7 @@
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/push_action</url>
   <depend package="roscpp"/>
+  <depend package="roslib"/>
   <depend package="robot_comm"/>
   <depend package="matVec"/>
   <depend package="TrackingObj"/>

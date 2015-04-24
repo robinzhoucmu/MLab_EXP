@@ -6,6 +6,8 @@
 
 // Here, we sort all the vertices counter-clockwise and form edges along the way.
 // All vertices and edges are represented in the local object reference frame.
+// Normal is outward facing.
+// Edge vector is actual length of edge
 
 #include <vector>
 #include <matVec/matVec.h>
@@ -27,7 +29,7 @@ struct Edge {
   }
   // Get a sample point on the edge segment. 
   // 0 means the left_end, 1 means the right_end.
-  Vec GetSample(double r) {
+  Vec GetSample(double r) const {
     assert( r >=0 && r<=1 );
     Vec sample_pt = left_end + edge_vec * r;
     return sample_pt;
