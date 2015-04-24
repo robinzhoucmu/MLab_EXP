@@ -7,7 +7,7 @@
 // Robot Moves randomly around kCenter.
 const double kCenter[3] = {500, 0, 400};
 // kCenter plus/minus kDelta as boundary.
-const double kDelta[3] = {125, 200, 120};
+const double kDelta[3] = {145, 225, 140};
 
 // Base frame: x pointing out to the vision node; 
 // Have the robot tool frame mostly facing downward.
