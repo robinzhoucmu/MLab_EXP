@@ -4,6 +4,8 @@
 // This header file defines the object registration class.
 // ObjectReg instance contains  mocap readings and 
 // computed transformations to register the object.
+// We will require the mocap system to be calibrated w.r.t the robot
+// base frame beforehand. 
 
 #include <fstream>
 #include <iostream>
@@ -20,21 +22,35 @@ class ObjectReg {
   void Serialize(std::ostream& fout);
   void Deserialize(std::istream& fin);
 
-  void ReadCaliMarkersFromMocap(MocapComm& mocap_comm);
-  void ReadTractablePoseFromMocap(MocapComm& mocap_comm);
+  // An interactive process to register the object from terminal.
+  // Include a mocap calibration w.r.t robot base step.
+  bool Register(MocapComm& mocap_comm);
+
+  bool ReadCaliMarkersFromMocap(MocapComm& mocap_comm);
+
+  // Read the pose of the tractable rigid body from mocap.
+  bool ReadTractablePoseFromMocap(MocapComm& mocap_comm);
   
   void ComputeTransformation();
 
-  const HomogTransf GetTransformation() {
+  // Get object pose in robot base frame(global frame) by 
+  // transforming mocap pose with tf_mctractable_obj;
+  bool GetGlobalObjectPose(MocapComm& mocap_comm, HomogTransf* obj_pose);
+  
+  // Get the key transformation between mocap marker frame, which we don't exactly 
+  // know how opti-track is forming it, to object local frame, which we will pre-specify. 
+  HomogTransf GetTransformation() const{
     return tf_mctractable_obj;
   }
-  const std::string GetObjName() {
+  std::string GetObjName() const{
     return obj_name;
   }
   void SetObjName(std::string name) {
     obj_name = name;
   }
-
+  // Make sure this id matches settings on the Windows Opti-track software.
+  int tractable_id;
+  
  private:
   // Compute the tf_robot_calimarkers from calibration marker point mocap readings.
   void FormCaliMarkerCoordinateFrame();

@@ -54,7 +54,7 @@ class Globals {
   // Initialize the sockets arguments.
   static void ReadOpts(int argc, char* argv[]) {
     namespace po = boost::program_options;
-    po::options_description desc("mocap-publisheru sing NatNetLinux");
+    po::options_description desc("mocap-publisher using NatNetLinux");
     desc.add_options()
       ("help", "Display help message")
       ("local-addr,l", po::value<std::string>(), "Local IPv4 address")
@@ -131,7 +131,7 @@ class MocapPublisher {
   // Set the transformation from robot base to the mocap frame.
   bool SetMocapTransformation(Mocap::mocap_SetMocapTransformation::Request& req, 
 			      Mocap::mocap_SetMocapTransformation::Response& res);
-
+  
   void setMocapTransformation(double pose[7]);  
 
   // Helper function to transform points in the mocap frame to robot base frame
@@ -161,7 +161,7 @@ class MocapPublisher {
   
   // For GetMocapFrame service call: if we wait for more than k_max_wait time,
   // will return false.
-  static const double k_max_wait = 2.0;
+  static const double k_max_wait = 0.1;
   // Conversion from raw mocap output(in meters) to robot frame unit(milimeters).
   static const double k_unit = 1000;
 

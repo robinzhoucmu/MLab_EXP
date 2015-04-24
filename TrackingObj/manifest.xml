@@ -13,7 +13,11 @@
   <depend package="roscpp"/>
   <depend package="robot_comm"/>
   <depend package="matVec"/>
-  <depend package="Mocap"/>	 	
+  <depend package="Mocap"/>	
+  <export>
+    <cpp cflags="-I${prefix}/include" lflags="-L${prefix}/lib -lpush_obj"/>
+  </export>
+	 	
 </package>
 
 

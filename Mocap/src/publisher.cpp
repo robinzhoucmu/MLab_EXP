@@ -91,27 +91,11 @@ void MocapPublisher::ExtractPoseMsg(const MocapFrame& mframe,
     transformPoint(&uid_marker_pt);
     msg->uid_markers.markers.push_back(uid_marker_pt);
   }
-  // Extract idenfied marker sets.
-  const int num_id_marker_sets = mframe.markerSets().size();
-  msg->id_marker_sets.clear();
-  for (int i = 0; i < num_id_marker_sets; ++i) {
-    const MarkerSet marker_set = mframe.markerSets()[i]; 
-    const int marker_set_size = marker_set.markers().size();
-    Mocap::marker_set id_marker_set;
-    for (int j = 0; j < marker_set_size; ++j) {
-      const Point3f& pt = marker_set.markers()[j];
-      geometry_msgs::Point id_marker_pt;
-      id_marker_pt.x = k_unit * pt.x;
-      id_marker_pt.y = k_unit * pt.y;
-      id_marker_pt.z = k_unit * pt.z;
-      // Transform the point.
-      transformPoint(&id_marker_pt);
-      id_marker_set.markers.push_back(id_marker_pt);
-    }
-    msg->id_marker_sets.push_back(id_marker_set);
-  }
-  // Extract tracked body/ies poses.
+  
+  // Extract tracked body/ies poses and corresponding identified marker sets.
   const int num_bodies = mframe.rigidBodies().size();
+  msg->id_marker_sets.clear();
+  msg->body_poses.clear();
   for (int i = 0; i < num_bodies; i++) {
     const RigidBody& body = mframe.rigidBodies()[i];
     geometry_msgs::Pose pose;
@@ -126,9 +110,22 @@ void MocapPublisher::ExtractPoseMsg(const MocapFrame& mframe,
     pose.orientation.w = body.orientation().qw;
     // Transform the pose.
     transformPose(&pose);
-    msg->body_poses.poses.push_back(pose);    
+    msg->body_poses.push_back(pose);    
     msg->header.stamp = ros::Time::now();
-
+    
+    const int marker_set_size = body.markers().size();
+    Mocap::marker_set id_marker_set;
+    for (int j = 0; j < marker_set_size; ++j) {
+      const Point3f& pt = body.markers()[j];
+      geometry_msgs::Point id_marker_pt;
+      id_marker_pt.x = k_unit * pt.x;
+      id_marker_pt.y = k_unit * pt.y;
+      id_marker_pt.z = k_unit * pt.z;
+      // Transform the point.
+      transformPoint(&id_marker_pt);
+      id_marker_set.markers.push_back(id_marker_pt);
+    }
+    msg->id_marker_sets.push_back(id_marker_set);
   }
 }
 
@@ -157,6 +154,7 @@ void MocapPublisher::PublishToTopic() {
       //std::cout << ros::Time::now() << std::endl;
       mocapPub.publish(msg);
     }
+    // All callbacks/services will be processed here.
     ros::spinOnce();
     loop_rate.sleep();
     rosMsgCount++;
@@ -282,9 +280,13 @@ void MocapPublisher::transformPoint(geometry_msgs::Point* pt) {
 void MocapPublisher::transformPose(geometry_msgs::Pose* pose) {
   geometry_msgs::Point& trans = pose->position;
   geometry_msgs::Quaternion& quat = pose->orientation;
+
+  // Todo(Jiaji): Note q.w comes first here, in matVec q.w is the 4th element.
   double tmp_pose[7] = {trans.x, trans.y, trans.z,
-			quat.x, quat.y, quat.z, quat.w};
-  HomogTransf tf = tf_mocap * HomogTransf(tmp_pose);
+			quat.w, quat.x, quat.y, quat.z};
+  
+  HomogTransf cur_tf = HomogTransf(tmp_pose);
+  HomogTransf tf = tf_mocap * cur_tf;
 
   Vec tf_trans = tf.getTranslation();
   trans.x = tf_trans[0];
@@ -292,10 +294,10 @@ void MocapPublisher::transformPose(geometry_msgs::Pose* pose) {
   trans.z = tf_trans[2];
 
   Quaternion tf_quat = tf.getQuaternion();
-  quat.x = tf_quat[0];
-  quat.y = tf_quat[1];
-  quat.z = tf_quat[2];
-  quat.w = tf_quat[3];
+  quat.x = tf_quat.x();
+  quat.y = tf_quat.y();
+  quat.z = tf_quat.z();
+  quat.w = tf_quat.w();
 }
 
 // Main function for the Mocap Node. 
