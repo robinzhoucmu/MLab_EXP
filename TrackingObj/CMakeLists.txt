@@ -22,13 +22,15 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 #rosbuild_gensrv()
 
 ADD_CUSTOM_COMMAND(
-  OUTPUT push_obj.h
-  COMMAND cp ${PROJECT_SOURCE_DIR}/src/push_obj.h
-             ${PROJECT_SOURCE_DIR}/include/TrackingObj/push_obj.h
-  DEPENDS ${PROJECT_SOURCE_DIR}/src/push_obj.h 
+  OUTPUT include_files
+  COMMAND cp ${PROJECT_SOURCE_DIR}/src/*.h
+             ${PROJECT_SOURCE_DIR}/include/TrackingObj
+  DEPENDS ${PROJECT_SOURCE_DIR}/src/push_obj.h
+          ${PROJECT_SOURCE_DIR}/src/obj_geometry.h
+          ${PROJECT_SOURCE_DIR}/src/obj_reg.h
   )
 
-ADD_CUSTOM_TARGET(makeH ALL DEPENDS push_obj.h)
+ADD_CUSTOM_TARGET(makeH ALL DEPENDS include_files)
 
 
 
