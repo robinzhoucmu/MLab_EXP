@@ -78,10 +78,37 @@ bool PushGenerator::generateRandomPush(const PushObject obj, PushAction *push)
   return true;
 }
 
-bool PushGenerator::generateTrajectory(const PushAction push, const HomogTransf objectPose, 
+bool PushGenerator::generateTrajectory(const PushAction push, const HomogTransf objectPose, const Vec tableNormal, 
     std::vector<HomogTransf> *robotPoses)
 {
-  return false;
+  // Compute the push point and push direction in the robot frame
+  Vec robotPoint = objectPose * push.pushPoint;
+  Vec robotXDir = objectPose.getRotation() * push.pushVector;
+
+  // Compute the frame of the robot
+  Vec robotZDir = tableNormal;
+  Vec robotYDir = robotZDir ^ robotXDir;
+
+  // Make sure the axes are normalized so we create our 
+  //  rotation matrix correctly
+  robotXDir.normalize();
+  robotYDir.normalize();
+  robotZDir.normalize();
+
+  RotMat robot_orient(robotXDir, robotYDir, robotZDir);
+
+  // Now find the 3 translations of the robot. 
+  Vec initialPoint = robotPoint - robotXDir * push.initialDist;
+  Vec penetrationPoint = robotPoint + robotXDir * push.penetrationDist;
+  Vec retractionPoint = penetrationPoint - robotXDir * push.retractionDist;
+
+  // Store the poses in our array, and we're done
+  robotPoses->resize(3);
+  (*robotPoses)[0] = HomogTransf(robot_orient, initialPoint);
+  (*robotPoses)[1] = HomogTransf(robot_orient, penetrationPoint);
+  (*robotPoses)[2] = HomogTransf(robot_orient, retractionPoint);
+
+  return true;
 }
 
 

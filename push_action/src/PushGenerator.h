@@ -20,9 +20,9 @@ class PushGenerator
 {
   public:
     // Minimum distance from the corner of a block that we will push (mm)
-    const static double MIN_EDGE_DISTANCE = 5.0;
+    const static double MIN_EDGE_DISTANCE = 10.0;
     // Minimum angle the push direction makes with an edge (degrees)
-    const static double MIN_PUSH_ANGLE = 10.0;
+    const static double MIN_PUSH_ANGLE = 20.0;
 
     // The distance away from the push point to start the object (mm)
     const static double DEFAULT_INITIAL_DISTANCE = 50.0;
@@ -65,6 +65,8 @@ class PushGenerator
      * \param[in] objectPose A homogeneous transform of the object pose in 
      *            the frame used by the robot. Note that the local object 
      *            frame used here is also used by the push action.
+     * \param[in] tableNormal A 3d vector representing the normal vector the 
+     *            table in the frame used by the robot, pointing upwards 
      * \param[out] robotPoses A vector of poses to move the robot through to 
      *              execute the desired push. The robot will start an 
      *              'initialDist' away from the object, then move to contact
@@ -76,7 +78,7 @@ class PushGenerator
      *              z-axis is normal to the ground the object is resting on, 
      *              pointing upwards, and y-axis satisfies right hand rule. 
      */
-    bool generateTrajectory(const PushAction push, const HomogTransf objectPose, 
+    bool generateTrajectory(const PushAction push, const HomogTransf objectPose, const Vec tableNormal, 
         std::vector<HomogTransf> *robotPoses);
 
   private:
