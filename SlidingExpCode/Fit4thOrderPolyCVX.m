@@ -33,7 +33,7 @@ cvx_begin
     variables v(15) xi(n) delta(n) s(n) z(n,3)
     
 minimize(lambda * norm(v) + beta * sum(xi) + gamma * sum(delta))
-subject to
+subject to 
     % Point Fitting Constraints.
     %abs( D' * v - ones(n,1))  <=  xi;   
     %sum(v) == 1
