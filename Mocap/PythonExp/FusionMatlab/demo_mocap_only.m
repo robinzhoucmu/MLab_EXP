@@ -1,3 +1,4 @@
+clear all;
 close all;
 mocap_file = '../mocap_pos.txt';
 H_mb_lo = [0.798368 -0.60081 -0.0583333 -5.71732 
@@ -14,5 +15,21 @@ wsize = 6;
 pos_2d_f = window_filter(pos_2d, wsize);
 time_f = time(wsize:end);
 figure, plot(time_f, pos_2d_f(:,1), 'r-'); hold on;  plot(time_f, pos_2d_f(:,2), 'g-'); plot(time_f, pos_2d_f(:,3), 'b-');
+[v, t_v] = first_order_difference(pos_2d_f, time_f);
 
+% Filter out object-still snapshots.
+ind_still = sum(v.^2,2) < 1;
+v(ind_still, :) = [];
+t_v(ind_still, :) = [];
+% Filter velocity. 
+v = window_filter(v, wsize);
+t_v = t_v(wsize:end);
 
+plot3curves(v, t_v);
+
+[a, t_a] = first_order_difference(v, t_v);
+% Filter acceleration. 
+a = window_filter(a, wsize);
+t_a = t_a(wsize:end);
+
+plot3curves(a, t_a);
