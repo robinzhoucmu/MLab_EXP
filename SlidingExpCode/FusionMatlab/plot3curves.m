@@ -1,3 +1,4 @@
+% Input: signal, time.
 function [h] = plot3curves(x, t)
 h = figure;
 plot(t, x(:,1), 'r-');
