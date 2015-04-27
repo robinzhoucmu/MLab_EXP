@@ -67,7 +67,7 @@ k = convhull(F(1,:), F(2,:), F(3,:));
 trisurf(k, F(1,:), F(2,:), F(3,:));
 
 
-[v, Q, xi, delta] = Fit4thOrderPolyCVX(F, bv', 0.01, 0.1);
+[v, Q, xi, delta, pred_vel] = Fit4thOrderPolyCVX(F, bv', 0.01, 1000, 1);
 
 % % Least square quadratic fitting.
 % figure;

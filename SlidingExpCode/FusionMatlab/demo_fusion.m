@@ -1,5 +1,5 @@
-pos_exp2 = dlmread('../PythonExp/pos.txt', ' ');
-force_exp2 = dlmread('../PythonExp/force.txt', ' ');
+pos_exp2 = dlmread('~/MLab_EXP/Mocap/PythonExp/pos.txt', ' ');
+force_exp2 = dlmread('~/MLab_EXP/Mocap/PythonExp/force.txt', ' ');
 trans = pos_exp2(:, 1:3);
 q_exp2 = pos_exp2(:,4:end);
 N = size(q_exp2, 1);

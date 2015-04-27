@@ -16,9 +16,10 @@ for i = 1:1:N
     t = H_obj(1:3, 4);
     q = qGetQ(R);
     % x and y.
-    pos_2d(i, 1:2) = t(1:2);
+    pos_2d(i, 1:2) = t(1:2) / 1000 ;
     % theta.
-    pos_2d(i, 3) = atan2(q(4), q(1)) * 2 * 180 / pi;
+    % pos_2d(i, 3) = atan2(q(4), q(1)) * 2 * 180 / pi;
+    pos_2d(i, 3) = atan2(q(4), q(1)) * 2;
 end
 
 end
