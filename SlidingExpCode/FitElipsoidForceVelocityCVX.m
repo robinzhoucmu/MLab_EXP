@@ -17,5 +17,4 @@ subject to
        s(i) >= 0
     end
 cvx_end
-
 end

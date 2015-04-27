@@ -36,6 +36,10 @@ Nc = 100;
 CORs = GenerateRandomCORs(Pts, Nc);
 [F, bv] = GenFVPairsFromPD(Pts, PD, CORs);
 
+
+%F = bsxfun(@rdivide, F, sqrt(sum(F.^2)));
+
+
 %%%%----------------%%%%%
 % Unit body velocity style sampling.
 % [V, bv] = GenBodyVelocities(Pts, PD, Nc);
@@ -48,6 +52,7 @@ figure;
 axis tight;
 view(-10, 20);
 plot3(F(1,:), F(2,:), F(3,:), 'r*', 'Markersize', 6);
+hold on;
 %figure;
 %scatter(Pts(1,:), Pts(2,:));
 %figure;
@@ -67,8 +72,8 @@ k = convhull(F(1,:), F(2,:), F(3,:));
 trisurf(k, F(1,:), F(2,:), F(3,:));
 
 
-[v, Q, xi, delta] = Fit4thOrderPolyCVX(F, bv', 0.01, 0.1);
-
+[v, Q, xi, delta, pred_vel] = Fit4thOrderPolyCVX(F, bv', 0, 1, 0);
+pred_vel = bsxfun(@rdivide, pred_vel, sqrt(sum(pred_vel.^2,2)));
 % % Least square quadratic fitting.
 % figure;
 % %subplot(2,2,3);
@@ -85,26 +90,26 @@ trisurf(k, F(1,:), F(2,:), F(3,:));
 % set( p, 'FaceColor', 'g', 'FaceAlpha', 0.5, 'EdgeColor', 'none' );
 % view(-10, 20);
 % axis vis3d;
+% 
+% lambda = 1000; gamma = 1000;
+% [A] = FitElipsoidForceVelocityCVX(F, bv', lambda, gamma);
+% 
+% figure;
+% %subplot(2,2,4);
+% plot3(F(1,:), F(2,:), F(3,:), 'r.');
+% 
+% maxd = max(abs(F), [], 2) * range;
+% step = maxd / 100;
+% [ x, y, z ] = meshgrid( -maxd:step:maxd, -maxd:step:maxd, -maxd:step:maxd);
+% 
+% Ellipsoid = A(1,1) * x .* x +   A(2,2) * y.* y + A(3,3) * z .* z + ...
+%           2 * A(1,2) * x .* y + 2 * A(1,3) * x .* z + 2 * A(2,3) * y .* z;
+% p = patch( isosurface( x, y, z, Ellipsoid, 1 ) );
+% set( p, 'FaceColor', 'g', 'FaceAlpha', 0.5, 'EdgeColor', 'none' );
+% view(-10, 20);
+% camlight;
+% lighting phong;
+% axis tight;
 
-lambda = 10000; gamma = 1000;
-[A] = FitElipsoidForceVelocityCVX(F, bv', lambda, gamma);
-
-figure;
-%subplot(2,2,4);
-plot3(F(1,:), F(2,:), F(3,:), 'r.');
-
-maxd = max(abs(F), [], 2) * range;
-step = maxd / 100;
-[ x, y, z ] = meshgrid( -maxd:step:maxd, -maxd:step:maxd, -maxd:step:maxd);
-
-Ellipsoid = A(1,1) * x .* x +   A(2,2) * y.* y + A(3,3) * z .* z + ...
-          2 * A(1,2) * x .* y + 2 * A(1,3) * x .* z + 2 * A(2,3) * y .* z;
-p = patch( isosurface( x, y, z, Ellipsoid, 1 ) );
-set( p, 'FaceColor', 'g', 'FaceAlpha', 0.5, 'EdgeColor', 'none' );
-view(-10, 20);
-camlight;
-lighting phong;
-axis tight;
-
-[r,fits] = FitPointsOnlyPolyOrder4(F', 1);
+%[r,fits] = FitPointsOnlyPolyOrder4(F', 1);
 

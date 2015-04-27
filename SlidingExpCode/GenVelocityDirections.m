@@ -47,13 +47,13 @@ V(2*numC+2:2:4*numC, :) = -Dx;
 normalizer = sqrt(bsxfun(@plus, sum(CORs.^2, 1), 1))';
 bv = zeros(2*numC, 3);
 % Vx
-bv(1:2:end,1) = bsxfun(@rdivide, CORs(2,:)', normalizer);
+bv(1:1:end/2,1) = bsxfun(@rdivide, CORs(2,:)', normalizer);
 % Vy
-bv(1:2:end,2) = bsxfun(@rdivide, -CORs(1,:)', normalizer);
+bv(1:1:end/2,2) = bsxfun(@rdivide, -CORs(1,:)', normalizer);
 % w
-bv(1:2:end,3) = 1./normalizer;
+bv(1:1:end/2,3) = 1./normalizer;
 % Negative rotation sense.
-bv(2:2:end,:) = -bv(1:2:end,:);
+bv(end/2+1:1:end,:) = -bv(1:1:end/2,:);
 
 end
 
