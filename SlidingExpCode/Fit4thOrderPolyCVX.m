@@ -1,9 +1,12 @@
 % Fit a convex 4th order homogenous polynomial.
 % Input:
 % Force, Vel: 3*N matrix.
+% lambda: weight for norm of coefficients.
+% gamma: weight for vel matching.
+% beta: weight for force matching.
 % Output:
 % v_{15,1}: for the coeffs of the polynomial.
-function [v, Q, xi, delta, s] = Fit4thOrderPolyCVX(Force, Vel, lambda, gamma, beta)
+function [v, Q, xi, delta, pred_V, s] = Fit4thOrderPolyCVX(Force, Vel, lambda, gamma, beta)
 if (nargin == 2) 
     lambda = 1;
     gamma = 1;
@@ -33,40 +36,30 @@ G = [x.^3; x.^2.*y; x.^2.*z; x.*y.^2; x.*y.*z; x.*z.^2; y.^3; y.^2.*z; y.*z.^2; 
     
 cvx_begin 
     variable Q(9,9) semidefinite
-    variables v(15) xi(n) delta(n) s(n) z(n,3)
+    variables v(15) xi(n) delta(n) s(n) Z(n,3) H(10,3)
     
 minimize(lambda * norm(v) + beta * sum(xi) + gamma * sum(delta))
 subject to 
     % Point Fitting Constraints.
     %abs( D' * v - ones(n,1))  <=  xi;   
-    %sum(v) == 1
+    sum(v) == 1
+    H == [4*v(1), v(4), v(5); ...
+          3*v(4), 2*v(10), v(13); ...
+          3*v(5), v(13), 2*v(11); ...
+          2*v(10), 3*v(6), v(14); ...
+          2*v(13), 2*v(14), 2*v(15); ...
+          2*v(11), v(15), 3*v(8); ...
+          v(6), 4*v(2), v(7); ...
+          v(14), 3*v(7), 2*v(12); ...
+          v(15), 2*v(12), 3*v(9); ...
+          v(8), v(9), 4*v(3)]
     for i = 1:n
-       norm(D(i,:) * v - 1) <= xi(i)
-%         norm(G(i,:) * [4*v(1), v(4), v(5); ...
-%                      3*v(4), 2*v(10), v(13); ...
-%                   3*v(5), v(13), 2*v(11); ...
-%                   2*v(10), 3*v(6), v(14); ...
-%                   2*v(13), 2*v(14), 2*v(15); ...
-%                   2*v(11), v(15), 3*v(8); ...
-%                   v(6), 4*v(2), v(7); ...
-%                   v(14), 3*v(7), 2*v(12); ...
-%                   v(15), 2*v(12), 3*v(9); ...
-%                   v(8), v(9), 4*v(3);] - s(i) * Vel(:,i)') <= delta(i)
-%         s(i) >= 0
-     
-     z(i,:) == G(i,:) * [4*v(1), v(4), v(5); ...
-                     3*v(4), 2*v(10), v(13); ...
-                  3*v(5), v(13), 2*v(11); ...
-                  2*v(10), 3*v(6), v(14); ...
-                  2*v(13), 2*v(14), 2*v(15); ...
-                  2*v(11), v(15), 3*v(8); ...
-                  v(6), 4*v(2), v(7); ...
-                  v(14), 3*v(7), 2*v(12); ...
-                  v(15), 2*v(12), 3*v(9); ...
-                  v(8), v(9), 4*v(3);]
-     s(i) == z(i,:) * Vel(:,i)
-     norm(z(i,:) - s(i) * Vel(:,i)') <= delta(i)
-%     z(i,:) * z(i,:)' + Vel(:,i)' * Vel(:,i) -2 * z(i,:) * Vel(:,i) <= delta(i)
+        norm(D(i,:) * v - 1) <= xi(i) 
+        % Predicted vel 1*3.
+        Z(i,:) == G(i,:) * H
+        %norm(Z(i,:) - (Z(i,:) * Vel(:,i)) * Vel(:,i)') <= delta(i)
+        norm(Z(i,:) - s(i) * Vel(:,i)') <= delta(i)
+        %z(i,:) * z(i,:)' + Vel(:,i)' * Vel(:,i) -2 * z(i,:) * Vel(:,i) <= delta(i)
     end
     % Convexity constraints.
     Q(1,1) == 12 * v(1);
@@ -107,8 +100,16 @@ subject to
     Q(9,9) == 12*v(3);
     
 cvx_end
-mean(xi)
+disp('velocity matching error');
 mean(delta)
+disp('force matching error');
+mean(xi)
+
+pred_V = Z;
+pred_V_dir = bsxfun(@rdivide, pred_V, sqrt(sum(pred_V.^2, 2)));
+disp('velocity alignment error scaled l2')
+err = mean(sqrt(sum((pred_V_dir - Vel').^2, 2)))
+
 Plot4thPoly(v, Force');
 end
 

@@ -1,5 +1,5 @@
 % Input: Given poly coefficients and direction of forces (3*N), 
-% Output: Get direction of velocities (3*N).
+% Output: Get direction of velocities (N*3).
 function [ dir_vel, vel ] = GetVelFrom4thOrderPoly(v, dir_f)
 x = dir_f(1,:);
 y = dir_f(2,:);

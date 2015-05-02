@@ -5,9 +5,9 @@ rng(1);
 % Two symetric bar demo:
 %Pts = [-1,1;-1,1];
 %PD = [5;5];
-Np = 2;
-r = 2;
-m = 1; 
+Np = 3;
+r = 10;
+m = 2; 
 range = 8;
 % Uniform random;
 %Pts = bsxfun(@minus, rand(2, Np),[0.5;0.5]) * r;
@@ -27,14 +27,20 @@ Pts = r * [cos(Angles)';sin(Angles)'];
 PD = rand(Np, 1) * m;
 
 % Same weights.
-PD = ones(Np, 1) * m;
+%PD = ones(Np, 1) * m;
 
-Nc = 100;
+Nc = 20;
 
 %%%%----------------%%%%
 % COR style sampling...
 CORs = GenerateRandomCORs(Pts, Nc);
 [F, bv] = GenFVPairsFromPD(Pts, PD, CORs);
+
+F = F(:,1:end/2);
+bv = bv(1:end/2,:);
+
+%F = bsxfun(@rdivide, F, sqrt(sum(F.^2)));
+
 
 %%%%----------------%%%%%
 % Unit body velocity style sampling.
@@ -48,6 +54,7 @@ figure;
 axis tight;
 view(-10, 20);
 plot3(F(1,:), F(2,:), F(3,:), 'r*', 'Markersize', 6);
+hold on;
 %figure;
 %scatter(Pts(1,:), Pts(2,:));
 %figure;
@@ -65,10 +72,19 @@ figure;
 axis tight;
 k = convhull(F(1,:), F(2,:), F(3,:));
 trisurf(k, F(1,:), F(2,:), F(3,:));
+dir_F = bsxfun(@rdivide, F, sqrt(sum(F.^2)));
+numTrain = ceil(size(dir_F, 2) * 0.8);
+dir_F_train = dir_F(:, 1:numTrain);
+bv_train = bv(1:numTrain, :);
+dir_F_test = dir_F(:, numTrain+1:end);
+bv_test = bv(numTrain+1:end,:);
 
-
-[v, Q, xi, delta, pred_vel] = Fit4thOrderPolyCVX(F, bv', 0.01, 1000, 1);
-
+[v, Q, xi, delta, pred_v, s] = Fit4thOrderPolyCVX(dir_F_train, bv_train', 0, 100, 1);
+pred_vel_train = GetVelFrom4thOrderPoly(v, dir_F_train);
+pred_vel_test = GetVelFrom4thOrderPoly(v, dir_F_test);
+err_v_test = pred_vel_test - bv_test;
+disp('test velocity data error');
+mean(sqrt(sum(err_v_test.^2,2)))
 % % Least square quadratic fitting.
 % figure;
 % %subplot(2,2,3);
@@ -85,26 +101,26 @@ trisurf(k, F(1,:), F(2,:), F(3,:));
 % set( p, 'FaceColor', 'g', 'FaceAlpha', 0.5, 'EdgeColor', 'none' );
 % view(-10, 20);
 % axis vis3d;
+% 
+lambda = 0; gamma = 1000;
+[A, xi_elip, delta_elip] = FitElipsoidForceVelocityCVX(dir_F, bv', lambda, gamma);
+% 
+% figure;
+% %subplot(2,2,4);
+% plot3(F(1,:), F(2,:), F(3,:), 'r.');
+% 
+% maxd = max(abs(F), [], 2) * range;
+% step = maxd / 100;
+% [ x, y, z ] = meshgrid( -maxd:step:maxd, -maxd:step:maxd, -maxd:step:maxd);
+% 
+% Ellipsoid = A(1,1) * x .* x +   A(2,2) * y.* y + A(3,3) * z .* z + ...
+%           2 * A(1,2) * x .* y + 2 * A(1,3) * x .* z + 2 * A(2,3) * y .* z;
+% p = patch( isosurface( x, y, z, Ellipsoid, 1 ) );
+% set( p, 'FaceColor', 'g', 'FaceAlpha', 0.5, 'EdgeColor', 'none' );
+% view(-10, 20);
+% camlight;
+% lighting phong;
+% axis tight;
 
-lambda = 10000; gamma = 1000;
-[A] = FitElipsoidForceVelocityCVX(F, bv', lambda, gamma);
-
-figure;
-%subplot(2,2,4);
-plot3(F(1,:), F(2,:), F(3,:), 'r.');
-
-maxd = max(abs(F), [], 2) * range;
-step = maxd / 100;
-[ x, y, z ] = meshgrid( -maxd:step:maxd, -maxd:step:maxd, -maxd:step:maxd);
-
-Ellipsoid = A(1,1) * x .* x +   A(2,2) * y.* y + A(3,3) * z .* z + ...
-          2 * A(1,2) * x .* y + 2 * A(1,3) * x .* z + 2 * A(2,3) * y .* z;
-p = patch( isosurface( x, y, z, Ellipsoid, 1 ) );
-set( p, 'FaceColor', 'g', 'FaceAlpha', 0.5, 'EdgeColor', 'none' );
-view(-10, 20);
-camlight;
-lighting phong;
-axis tight;
-
-[r,fits] = FitPointsOnlyPolyOrder4(F', 1);
+%[r,fits] = FitPointsOnlyPolyOrder4(F', 1);
 

@@ -1,6 +1,6 @@
 % input: coefficients r, data X_{n,3} 
 function [] = Plot4thPoly(r, X)
-maxd = max(abs(X)) * 10;
+maxd = max(abs(X)) * 5;
 step = maxd / 50;
 x = X(:,1);
 y = X(:,2);
@@ -13,7 +13,6 @@ shape = r(1) * xx.^4 + r(2) * yy.^4 + r(3) * zz.^4 + ...
         r(10) *(xx.^2).* (yy.^2) + r(11) *(xx.^2) .* (zz.^2) + r(12) * (yy.^2) .* (zz.^2) + ...      
         r(13) * (xx.^2) .* yy .* zz + r(14) * (yy.^2) .* xx .* zz + r(15) *  (zz.^2) .* xx .* yy;
 figure;
-axis tight;
 plot3(x,y,z, 'r*');
 
 p = patch(isosurface(xx,yy,zz,shape,1));
