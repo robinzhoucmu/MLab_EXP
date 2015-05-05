@@ -6,11 +6,11 @@ rng(1);
 %Pts = [-1,1;-1,1];
 %PD = [5;5];
 Np = 3;
-r = 10;
-m = 2; 
+r = 0.1;
+m = 0.1; 
 range = 8;
 % Uniform random;
-%Pts = bsxfun(@minus, rand(2, Np),[0.5;0.5]) * r;
+Pts = bsxfun(@minus, rand(2, Np),[0.5;0.5]) * r;
 
 % Two uniform random;
 % a = [ 0;5];
@@ -27,17 +27,17 @@ Pts = r * [cos(Angles)';sin(Angles)'];
 PD = rand(Np, 1) * m;
 
 % Same weights.
-%PD = ones(Np, 1) * m;
+PD = ones(Np, 1) * m;
 
-Nc = 20;
+Nc = 200;
 
 %%%%----------------%%%%
 % COR style sampling...
 CORs = GenerateRandomCORs(Pts, Nc);
 [F, bv] = GenFVPairsFromPD(Pts, PD, CORs);
 
-F = F(:,1:end/2);
-bv = bv(1:end/2,:);
+%F = F(:,1:end/2);
+%bv = bv(1:end/2,:);
 
 %F = bsxfun(@rdivide, F, sqrt(sum(F.^2)));
 
@@ -75,16 +75,20 @@ trisurf(k, F(1,:), F(2,:), F(3,:));
 dir_F = bsxfun(@rdivide, F, sqrt(sum(F.^2)));
 numTrain = ceil(size(dir_F, 2) * 0.8);
 dir_F_train = dir_F(:, 1:numTrain);
+F_train = F(:,1:numTrain);
 bv_train = bv(1:numTrain, :);
 dir_F_test = dir_F(:, numTrain+1:end);
 bv_test = bv(numTrain+1:end,:);
 
-[v, Q, xi, delta, pred_v, s] = Fit4thOrderPolyCVX(dir_F_train, bv_train', 0, 100, 1);
+[v, Q, xi, delta, pred_v, s] = Fit4thOrderPolyCVX(F_train, bv_train', 0, 100, 0.1);
 pred_vel_train = GetVelFrom4thOrderPoly(v, dir_F_train);
 pred_vel_test = GetVelFrom4thOrderPoly(v, dir_F_test);
 err_v_test = pred_vel_test - bv_test;
 disp('test velocity data error');
 mean(sqrt(sum(err_v_test.^2,2)))
+angles_test = acos(diag(bv_test * pred_vel_test')) * 180 / pi;
+disp('Mean Test Angle(Degree) Deviation');
+mean(angles_test)
 % % Least square quadratic fitting.
 % figure;
 % %subplot(2,2,3);
@@ -103,7 +107,9 @@ mean(sqrt(sum(err_v_test.^2,2)))
 % axis vis3d;
 % 
 lambda = 0; gamma = 1000;
-[A, xi_elip, delta_elip] = FitElipsoidForceVelocityCVX(dir_F, bv', lambda, gamma);
+[A, xi_elip, delta_elip, pred_v_lr_train, s_lr] = FitElipsoidForceVelocityCVX(dir_F_train, bv_train', lambda, gamma);
+disp('Mean test error Linear');
+[err, dev_angle] = EvaluateLinearPredictor(dir_F_test', bv_test, A)
 % 
 % figure;
 % %subplot(2,2,4);

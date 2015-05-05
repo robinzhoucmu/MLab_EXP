@@ -9,6 +9,13 @@
 function [F, bv] = GenFVPairsFromPD(Pts, PD, CORs)
 
 [V, bv] = GenVelocityDirections(Pts, CORs);
+%Randomom permutation.
+NData = size(bv,1);
+index_perm = randperm(NData);
+V(1:2:end,:) = V(2*index_perm -1,:);
+V(2:2:end,:) = V(2*index_perm,:);
+bv = bv(index_perm,:);
+
 [F] = GetFrictionForce(V, Pts, PD);
 end
 
