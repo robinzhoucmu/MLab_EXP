@@ -5,9 +5,9 @@ H_mb_lo = [0.230127 0.973003 0.00328255 -36.9078
 0.972686 -0.229519 -0.0284225 -26.1142 
 0 0 0 1 ];
 
-[obj_cart, t_obj] = read_from_log('~/MLab_EXP/Mocap/PythonExp/pos4.txt');
-[robot_cart, t_robot] = read_from_log('~/MLab_EXP/Mocap/PythonExp/robot4.txt');
-[force, t_force] = read_from_log('~/MLab_EXP/Mocap/PythonExp/force4.txt');
+[obj_cart, t_obj] = read_from_log('~/MLab_EXP/Mocap/PythonExp/pos5.txt');
+[robot_cart, t_robot] = read_from_log('~/MLab_EXP/Mocap/PythonExp/robot5.txt');
+[force, t_force] = read_from_log('~/MLab_EXP/Mocap/PythonExp/force5.txt');
 % FT sensor +fx is the same as tool frame +x, which is negative of robot
 % frame +x.
 force(:,1) = -force(:,1);
@@ -52,9 +52,18 @@ plot3curves(Vel, t_ref_sub(2:end-1));
 
 
 % Remove static parts.
-ind_static = sqrt(sum(Vel.^2,2)) < 0.01;
+ind_static = sqrt(sum(Vel.^2,2)) < 0.005;
 Vel(ind_static,:) = [];
 Loads(ind_static,:) = [];
+
+%Vel = standardize(Vel);
+%Loads = standardize(Loads);
+%Vel = bsxfun(@rdivide, Vel, mean(abs(Vel)));
+%Loads = bsxfun(@rdivide, Loads, mean(abs(Loads)));
+
+Vel(:,1:2) = Vel(:,1:2) * 10;
+Vel(:,3) = Vel(:,3);
+Loads(:,3) = Loads(:,3) * 10;
 
 %Loads = bsxfun(@rdivide, Loads, max(abs(Loads)));
 
@@ -90,18 +99,23 @@ mean(angles_train)
 
 % Predict test data velocity and evaluate performance.
 [pred_vel_dir_test] = GetVelFrom4thOrderPoly(coeffs, -Dir_Loads_Test');
-% Compute mean deviation angle.
-angles_test = acos(diag(Dir_Vel_Test * pred_vel_dir_test')) * 180 / pi;
-disp('Mean Test Angle(Degree) Deviation');
-mean(angles_test)
+
+
+%Linear Prediction (Quadratic fitting) baseline.
+lambda = 0; gamma = 1000;
+[A, xi_elip, delta_elip, pred_v_lr_train, s_lr] = FitElipsoidForceVelocityCVX(-Dir_Loads_Train', Dir_Vel_Train', lambda, gamma);
+
+% Evaluate Test Performances
 
 avgVelTrain = mean(Dir_Vel_Train);
 disp('Just predict average value of train')
 mean(acos(diag(repmat(avgVelTrain, 18 , 1) * Dir_Vel_Test')) * 180 / pi)
 
-%Linear Prediction baseline.
-lambda = 0; gamma = 1000;
-[A, xi_elip, delta_elip, pred_v_lr_train, s_lr] = FitElipsoidForceVelocityCVX(-Dir_Loads_Train', Dir_Vel_Train', lambda, gamma);
+angles_test = acos(diag(Dir_Vel_Test * pred_vel_dir_test')) * 180 / pi;
+disp('Mean Test Angle(Degree) Deviation');
+mean(angles_test)
+
+
 disp('Mean test error Linear');
 [err, dev_angle] = EvaluateLinearPredictor(Dir_Vel_Test, Dir_Vel_Test, A)
 
