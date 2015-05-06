@@ -12,7 +12,7 @@ cvx_begin
 minimize( norm(A, 'fro') + lambda * sum(xi) + gamma * sum(delta))
 subject to
     for i = 1:n
-       %norm(F(:,i)' * A * F(:,i) - 1) <= xi(i)
+       norm(F(:,i)' * A * F(:,i) - 1) <= xi(i)
        norm(A * F(:,i) - s(i) * V(:,i)) <= delta(i)
        s(i) >= 1
     end
