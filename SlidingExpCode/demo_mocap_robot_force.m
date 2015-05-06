@@ -48,7 +48,7 @@ t_cp = t_ref;
 fused_robot_cart = interp1(t_cp,fused_robot_cart,t_ref);
 
 % Subsample the signal.
-sample_interval = 2;
+sample_interval = 10;
 t_ref_sub = t_ref(1:sample_interval:end);
 obj_pos_2d_sub = obj_pos_2d(1:sample_interval:end,:);
 fused_robot_cart_sub = fused_robot_cart(1:sample_interval:end,:);
@@ -61,6 +61,13 @@ Acc_All = Acc;
 
 % Extract Forces for corresponding time.
 Loads = fused_wrench_sub(2:end-1,:);
+
+% Change to body length scale.
+body_length = 0.1;
+Vel(:,1:2) = Vel(:,1:2) / body_length;
+Vel(:,3) = Vel(:,3);
+Loads(:,3) = Loads(:,3) / body_length;
+
 figure;
 plot3(Loads(:,1), Loads(:,2), Loads(:,3), 'r*', 'Markersize', 6);title('Load Scatter Plot');
 plot3curves(Vel, t_ref_sub(2:end-1));
@@ -74,17 +81,15 @@ Vel(ind_static,:) = [];
 Loads(ind_static,:) = [];
 t_ref_sub_moving = t_ref_sub(~ind_static);
 
-body_length = 0.1;
-Vel(:,1:2) = Vel(:,1:2) / body_length;
-Vel(:,3) = Vel(:,3);
-Loads(:,3) = Loads(:,3) / body_length;
+
 
 % Normalize velocities to get directions.
 Dir_Vel = bsxfun(@rdivide, Vel, sqrt(sum(Vel.^2,2)));
 Dir_Loads = bsxfun(@rdivide, Loads, sqrt(sum(Loads.^2,2)));
 
 NData = size(Dir_Vel, 1);
-NDataTrain = floor(NData * 0.8);
+ratio_train = 0.1;
+NDataTrain = floor(NData * ratio_train);
 index_perm = randperm(NData);
 %Split Train, Test data.
 Loads_Train = Loads(index_perm(1:NDataTrain), :);
@@ -98,8 +103,8 @@ Dir_Vel_Test = Dir_Vel(index_perm(NDataTrain+1:end), :);
 
 % Fit limit surface.
 w_force = 0.1;
-w_vel = 1;
-w_reg = 0.01;
+w_vel = 10;
+w_reg = 0;
 [coeffs, Q, xi, delta, pred_v_train, s] = Fit4thOrderPolyCVX(-Loads_Train', Dir_Vel_Train', w_reg, w_vel, w_force);
 
 

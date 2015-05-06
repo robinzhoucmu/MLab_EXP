@@ -10,8 +10,8 @@ tf = max(t);
 t_s = t0:dt_resampled:tf;
 
 x_resampled = interp1(t,x,t_s);
-N   = 500;              % FIR filter order
-Fp  = 0.15;              % passband-edge frequency
+N   = 400;              % FIR filter order
+Fp  = 0.10;              % passband-edge frequency
 Fs  = 1/dt_resampled;   % sampling frequency
 Rp  = 0.00057565;       % Corresponds to 0.01 dB peak-to-peak ripple
 Rst = 1e-4;             % Corresponds to 80 dB stopband attenuation
