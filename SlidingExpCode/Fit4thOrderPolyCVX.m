@@ -109,7 +109,7 @@ mean(xi)
 
 pred_V = Z;
 pred_V_dir = bsxfun(@rdivide, pred_V, sqrt(sum(pred_V.^2, 2)));
-disp('velocity alignment error scaled l2')
+disp('velocity direction alignment l2 distance')
 err = mean(sqrt(sum((pred_V_dir - Vel').^2, 2)))
 
 Plot4thPoly(v, Force');

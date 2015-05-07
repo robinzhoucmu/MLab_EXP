@@ -1,6 +1,8 @@
 % Fit elipsoid (e.g., min volumn enclosing elipsoid) 
 % given force and velocities using CVX.
 % F, V: 3*N matrix. 
+% lambda: tradeoff parameter for fitting force.
+% gamma: tradeoff parameter for regularization.
 % A: x^Ax - 1 = 0;
 function [A, xi, delta, pred_V_dir, s] = FitElipsoidForceVelocityCVX(F, V, lambda, gamma)
 
@@ -8,8 +10,7 @@ function [A, xi, delta, pred_V_dir, s] = FitElipsoidForceVelocityCVX(F, V, lambd
 cvx_begin 
     variable A(d,d) semidefinite
     variables xi(n) s(n) delta(n)
-%minimize( -det_rootn(A) + lambda * sum(xi) + gamma * sum(delta))
-minimize( norm(A, 'fro') + lambda * sum(xi) + gamma * sum(delta))
+minimize( gamma * norm(A, 'fro') + lambda * sum(xi) + sum(delta))
 subject to
     for i = 1:n
        norm(F(:,i)' * A * F(:,i) - 1) <= xi(i)
