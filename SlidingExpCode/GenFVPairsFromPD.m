@@ -7,7 +7,7 @@
 % F_{3, Nc}: The forces and moment (about the COM) for each CORs. 
 % V_: velocity matrix, where each 2 rows represent the velocities
 function [F, bv] = GenFVPairsFromPD(Pts, PD, CORs)
-
+% Generate velocities for both clock-wise and counter-clock wise rotations.
 [V, bv] = GenVelocityDirections(Pts, CORs);
 %Randomom permutation.
 NData = size(bv,1);

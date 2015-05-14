@@ -20,11 +20,18 @@ num_v = size(v,1);
 v = bsxfun(@rdivide, v, sqrt(sum(v.^2, 2)));
 
 
+
+% pho = 0.05;
+% D = diag([pho,pho,pi]);
+% t = bsxfun(@minus, rand(Ns, 3), [0.5,0.5,0.5]) * 2 * D;
+% v= t;
+% num_v = size(v,1);
+
 % Compute COM.
-COM = Pts * PD / sum(PD);
+%COM = Pts * PD / sum(PD);
 
 % Compute velocity.
-Disp = bsxfun(@minus, Pts, COM);
+Disp = bsxfun(@minus, Pts, [0;0]);
 V = zeros(num_v * 2, Np);
 % The vx part for rotation about COM.
 V(1:2:2*num_v, :) = bsxfun(@times, repmat(Disp(2,:), [num_v, 1]), v(:,3));
@@ -42,6 +49,7 @@ Nv = 1./sqrt(V(1:2:2*num_v,:).^2 + V(2:2:2*num_v,:).^2 + eps);
 % Normalize the velocities.
 V(1:2:2*num_v,:) = bsxfun(@times, V(1:2:2*num_v,:), Nv);
 V(2:2:2*num_v,:) = bsxfun(@times, V(2:2:2*num_v,:), Nv);
+
 
 end
 

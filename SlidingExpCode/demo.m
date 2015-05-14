@@ -5,12 +5,12 @@ rng(1);
 % Two symetric bar demo:
 %Pts = [-1,1;-1,1];
 %PD = [5;5];
-Np = 3;
-r = 0.1;
-m = 0.1; 
+Np = 50;
+r = 1;
+m = 1; 
 range = 8;
 % Uniform random;
-Pts = bsxfun(@minus, rand(2, Np),[0.5;0.5]) * r;
+%Pts = bsxfun(@minus, rand(2, Np),[0.5;0.5]) * r;
 
 % Two uniform random;
 % a = [ 0;5];
@@ -30,41 +30,32 @@ PD = rand(Np, 1) * m;
 PD = ones(Np, 1) * m;
 
 Nc = 200;
-
+pho = r;
 %%%%----------------%%%%
 % COR style sampling...
-CORs = GenerateRandomCORs(Pts, Nc);
+% CORs = GenerateRandomCORs(Pts, Nc);
+% [F, bv] = GenFVPairsFromPD(Pts, PD, CORs);
+
+CORs = GenerateRandomCORs2(Nc, pho);
 [F, bv] = GenFVPairsFromPD(Pts, PD, CORs);
-
-%F = F(:,1:end/2);
-%bv = bv(1:end/2,:);
-
-%F = bsxfun(@rdivide, F, sqrt(sum(F.^2)));
 
 
 %%%%----------------%%%%%
-% Unit body velocity style sampling.
+%Unit body velocity style sampling.
 % [V, bv] = GenBodyVelocities(Pts, PD, Nc);
 % F = GetFrictionForce(V, Pts, PD);
 
+% Erdman normalization.
 
-%axis equal
-%subplot(1,2,1);
+F(3,:) = F(3,:) / pho;
+bv(:,3) = bv(:,3) * pho;
+bv = bsxfun(@rdivide, bv, sqrt(sum(bv.^2,2)));
+
 figure;
 axis tight;
 view(-10, 20);
 plot3(F(1,:), F(2,:), F(3,:), 'r*', 'Markersize', 6);
 hold on;
-%figure;
-%scatter(Pts(1,:), Pts(2,:));
-%figure;
-%scatter(CORs(1,:), CORs(2,:));
-% xData = zeros(size(F,2)*2, 3);
-% yData = zeros(size(F,2)*2, 1);
-% xData(1:1:size(F,2),:) = F'*1.1;
-% xData(size(F,2)+1:1:2*size(F,2),:) = F'*0.9;
-% yData(1:1:size(F,2),:) = 1;
-% yData(size(F,2)+1:1:2*size(F,2),:) = -1;
 
 %Convex Hull
 %subplot(1,2,2);
@@ -77,10 +68,15 @@ numTrain = ceil(size(dir_F, 2) * 0.8);
 dir_F_train = dir_F(:, 1:numTrain);
 F_train = F(:,1:numTrain);
 bv_train = bv(1:numTrain, :);
+F_test = F(:, numTrain+1:end);
 dir_F_test = dir_F(:, numTrain+1:end);
 bv_test = bv(numTrain+1:end,:);
 
-[v, Q, xi, delta, pred_v, s] = Fit4thOrderPolyCVX(F_train, bv_train', 0, 100, 0.1);
+w_reg = 0;
+w_vel = 1;
+w_force = 1; 
+
+[v, Q, xi, delta, pred_v, s] = Fit4thOrderPolyCVX(F_train, bv_train', w_reg, w_vel, w_force);
 pred_vel_train = GetVelFrom4thOrderPoly(v, dir_F_train);
 pred_vel_test = GetVelFrom4thOrderPoly(v, dir_F_test);
 err_v_test = pred_vel_test - bv_test;
@@ -89,44 +85,12 @@ mean(sqrt(sum(err_v_test.^2,2)))
 angles_test = acos(diag(bv_test * pred_vel_test')) * 180 / pi;
 disp('Mean Test Angle(Degree) Deviation');
 mean(angles_test)
-% % Least square quadratic fitting.
-% figure;
-% %subplot(2,2,3);
-% plot3(F(1,:), F(2,:), F(3,:), 'r.');
-% [ center, radii, evecs, v, fits_ellipsoid ] = ellipsoid_fit( [F'; -F']);
-% maxd = max(abs(F), [], 2) * range;
-% step = maxd / 100;
-% [ x, y, z ] = meshgrid( -maxd:step:maxd, -maxd:step:maxd, -maxd:step:maxd);
-% 
-% Ellipsoid = v(1) *x.*x +   v(2) * y.*y + v(3) * z.*z + ...
-%           2*v(4) *x.*y + 2*v(5)*x.*z + 2*v(6) * y.*z + ...
-%           2*v(7) *x    + 2*v(8)*y    + 2*v(9) * z;
-% p = patch( isosurface( x, y, z, Ellipsoid, 1 ) );
-% set( p, 'FaceColor', 'g', 'FaceAlpha', 0.5, 'EdgeColor', 'none' );
-% view(-10, 20);
-% axis vis3d;
-% 
-lambda = 0; gamma = 1000;
-[A, xi_elip, delta_elip, pred_v_lr_train, s_lr] = FitElipsoidForceVelocityCVX(dir_F_train, bv_train', lambda, gamma);
+ 
+w_force2 = 1;
+w_reg2 = 0;
+[A, xi_elip, delta_elip, pred_v_lr_train, s_lr] = FitElipsoidForceVelocityCVX(F_train, bv_train', w_force2, w_reg2);
 disp('Mean test error Linear');
 [err, dev_angle] = EvaluateLinearPredictor(dir_F_test', bv_test, A)
-% 
-% figure;
-% %subplot(2,2,4);
-% plot3(F(1,:), F(2,:), F(3,:), 'r.');
-% 
-% maxd = max(abs(F), [], 2) * range;
-% step = maxd / 100;
-% [ x, y, z ] = meshgrid( -maxd:step:maxd, -maxd:step:maxd, -maxd:step:maxd);
-% 
-% Ellipsoid = A(1,1) * x .* x +   A(2,2) * y.* y + A(3,3) * z .* z + ...
-%           2 * A(1,2) * x .* y + 2 * A(1,3) * x .* z + 2 * A(2,3) * y .* z;
-% p = patch( isosurface( x, y, z, Ellipsoid, 1 ) );
-% set( p, 'FaceColor', 'g', 'FaceAlpha', 0.5, 'EdgeColor', 'none' );
-% view(-10, 20);
-% camlight;
-% lighting phong;
-% axis tight;
 
 %[r,fits] = FitPointsOnlyPolyOrder4(F', 1);
 
