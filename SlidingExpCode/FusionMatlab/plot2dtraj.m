@@ -3,7 +3,7 @@ if (nargin == 2)
     unit = 1000;
 end
 h = figure;
-axis_xmin = 400; 
+axis_xmin = 100; 
 axis_xmax = 800;
 axis_ymin = -200;
 axis_ymax = 200;
@@ -12,7 +12,7 @@ pos_2d(:,1:2) = pos_2d(:,1:2) * unit;
 pos_finger(:,1:2) = pos_finger(:,1:2) * unit; 
 plot(pos_2d(:,1), pos_2d(:,2), 'r-');
 %hold on;
-movieObj = VideoWriter('out.avi');
+movieObj = VideoWriter('out_2.avi');
 movieObj.FrameRate = 10;
 open(movieObj);
 for i = 1:1:size(pos_2d,1)

@@ -7,9 +7,9 @@ H_mb_lo = [0.230127 0.973003 0.00328255 -36.9078
 0.972686 -0.229519 -0.0284225 -26.1142 
 0 0 0 1 ];
 
-[obj_cart, t_obj] = read_from_log('~/MLab_EXP/Mocap/PythonExp/pos3.txt');
-[robot_cart, t_robot] = read_from_log('~/MLab_EXP/Mocap/PythonExp/robot3.txt');
-[force, t_force] = read_from_log('~/MLab_EXP/Mocap/PythonExp/force3.txt');
+[obj_cart, t_obj] = read_from_log('~/MLab_EXP/Mocap/PythonExp/pos4.txt');
+[robot_cart, t_robot] = read_from_log('~/MLab_EXP/Mocap/PythonExp/robot4.txt');
+[force, t_force] = read_from_log('~/MLab_EXP/Mocap/PythonExp/force4.txt');
 % FT sensor +fx is the same as tool frame +x, which is negative of robot
 % frame +x.
 force(:,1) = -force(:,1);
@@ -18,12 +18,13 @@ force(:,1) = -force(:,1);
 force = bsxfun(@minus, force, force(1,:));
 
 % Convert robot reading from mm to meters.
-robot_cart(:,1:3) = robot_cart(:,1:3) / 1000.0;
+unit_scale = 1000;
+robot_cart(:,1:3) = robot_cart(:,1:3) / unit_scale;
 
 [fused_obj_cart, fused_robot_cart, fused_force, t_ref] = sensorFusionByTime(obj_cart, t_obj, robot_cart, t_robot, force, t_force);
 t_ref = bsxfun(@minus, t_ref, t_ref(1));
 % Return 2d pose in meters, radian.
-obj_pos_2d = get2dPos(fused_obj_cart, H_mb_lo, 1000);
+obj_pos_2d = get2dPos(fused_obj_cart, H_mb_lo, unit_scale);
 
 % Convert force to robot frame.
 fused_wrench = ComputeWrench(obj_pos_2d, fused_force(:,1:2), fused_robot_cart(:,1:2));
@@ -126,7 +127,7 @@ disp('Mean Test Angle(Degree) Deviation');
 mean(angles_test)
 
 disp('Mean test error Linear');
-[err, dev_angle] = EvaluateLinearPredictor(Dir_Vel_Test, Dir_Vel_Test, A)
+[err, dev_angle] = EvaluateLinearPredictor(-Dir_Loads_Test, Dir_Vel_Test, A)
 
 
 % avgVelTrain = mean(Dir_Vel_Train);
