@@ -37,7 +37,7 @@ G = [x.^3; x.^2.*y; x.^2.*z; x.*y.^2; x.*y.*z; x.*z.^2; y.^3; y.^2.*z; y.*z.^2; 
  %v4*x^3 + 2*v10*x^2*y + v13*x^2*z + 3*v6*x*y^2 + 2*v14*x*y*z + v15*x*z^2 + 4*v2*y^3 + 3*v7*y^2*z + 2*v12*y*z^2 + v9*z^3
  %v5*x^3 + v13*x^2*y + 2*v11*x^2*z + v14*x*y^2 + 2*v15*x*y*z + 3*v8*x*z^2 + v7*y^3 + 2*v12*y^2*z + 3*v9*y*z^2 + 4*v3*z^3    
     
-cvx_begin 
+cvx_begin quiet
     variable Q(9,9) semidefinite
     variables v(15) xi(n) delta(n) s(n) Z(n,3) H(10,3) 
     

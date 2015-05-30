@@ -5,12 +5,12 @@ rng(1);
 % Two symetric bar demo:
 %Pts = [-1,1;-1,1];
 %PD = [5;5];
-Np = 50;
+Np = 5;
 r = 1;
 m = 1; 
 range = 8;
 % Uniform random;
-%Pts = bsxfun(@minus, rand(2, Np),[0.5;0.5]) * r;
+Pts = bsxfun(@minus, rand(2, Np),[0.5;0.5]) * r;
 
 % Two uniform random;
 % a = [ 0;5];
@@ -21,7 +21,7 @@ range = 8;
 
 % On the rim
 Angles = rand(Np, 1) * 2 * pi;
-Pts = r * [cos(Angles)';sin(Angles)'];
+%Pts = r * [cos(Angles)';sin(Angles)'];
 
 % Random weights.
 PD = rand(Np, 1) * m;
@@ -33,11 +33,11 @@ Nc = 200;
 pho = r;
 %%%%----------------%%%%
 % COR style sampling...
-% CORs = GenerateRandomCORs(Pts, Nc);
-% [F, bv] = GenFVPairsFromPD(Pts, PD, CORs);
-
-CORs = GenerateRandomCORs2(Nc, pho);
+CORs = GenerateRandomCORs(Pts, Nc);
 [F, bv] = GenFVPairsFromPD(Pts, PD, CORs);
+
+% CORs = GenerateRandomCORs2(Nc, pho);
+% [F, bv] = GenFVPairsFromPD(Pts, PD, CORs);
 
 
 %%%%----------------%%%%%

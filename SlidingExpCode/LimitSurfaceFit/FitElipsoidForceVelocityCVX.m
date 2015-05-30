@@ -7,7 +7,7 @@
 function [A, xi, delta, pred_V_dir, s] = FitElipsoidForceVelocityCVX(F, V, lambda, gamma)
 
 [d, n] = size(F);
-cvx_begin 
+cvx_begin quiet
     variable A(d,d) semidefinite
     variables xi(n) s(n) delta(n)
 minimize( gamma * norm(A, 'fro') + lambda * sum(xi) + sum(delta))
