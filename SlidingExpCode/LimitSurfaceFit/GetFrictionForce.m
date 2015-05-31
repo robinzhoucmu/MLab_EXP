@@ -14,7 +14,9 @@ NumC = size(V,1) / 2;
 NumP = size(V,2);
 F = zeros(3, NumC);
 % Compute the COM.
-COM = Pts * PD / sum(PD);
+%COM = Pts * PD / sum(PD);
+
+% If the velocity for a particular support point is 0. 
 
 % Compute the forces matrix V_{2*Nc, Np}
 MatF = V * diag(PD);

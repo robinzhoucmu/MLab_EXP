@@ -4,13 +4,13 @@
 % Output:
 % V_(4*Nc)*Np: velocity matrix, where each 2 rows represent the velocities
 % of every points in Pts rotating about a particular COR. 
-% v_{2*Nc, 3}: body velocities.
+% bv_{2*Nc, 3}: body velocities.
 function [V, bv] = GenVelocityDirections(Pts, CORs)
 numP = size(Pts, 2);
 numC = size(CORs, 2);
 
-% Replicate as matrix Nc * Np to avoid for loops.
-% Separate out the x,y part.
+% Replicate as matrix (Nc * Np) to avoid for loops.
+% Separate the x,y part.
 MatPx = repmat(Pts(1,:), [numC 1]);
 MatPy = repmat(Pts(2,:), [numC 1]);
 

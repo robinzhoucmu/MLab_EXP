@@ -12,6 +12,9 @@
 % options.vertices (n*2, [x,y])
 %   vertices on the polygon, sorted CCW-wise. 
 
+% Output:
+% Pts: numPoints(Approx) * 2.
+
 function [Pts] = SampleSupportPoint(numPoints, options)
 if nargin == 1
     options.mode = 'square';
@@ -45,8 +48,13 @@ elseif strcmp(options.mode, 'circle')
     R = options.range;
     angles = rand(numPoints, 1) * 2 * pi;
     len = rand(numPoints, 1) * R;
-    Pts()
-    
+    Pts = [len .* cos(angles), len .* sin(angles)];
+
+% Sample on the rim of a circle.
+elseif strcmp(options.mode, 'rim')
+    R = options.range;
+    angles = rand(numPoints, 1) * 2 * pi;
+    Pts = [R * cos(angles), R * sin(angles)];
 end
 
 end
