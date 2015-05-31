@@ -27,6 +27,8 @@ elseif (strcmp(options.mode, 'linear'))
     a = options.coef(1);
     b = options.coef(2);
     c = options.coef(3);
+    % Note that points might have negative coordinate, hence linear product
+    % might be negative. Take abosulte value instead.
     Pds = abs(a * Pts(:,1) + b * Pts(:,2) + c * ones(NumP, 1));
 else
     error('mode is not supported.');

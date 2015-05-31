@@ -9,7 +9,7 @@
 % options.range:
 %   radius for circle/rim.
 
-% options.vertices (n*2, [x,y])
+% options.vertices [x,y](n*2)
 %   vertices on the polygon, sorted CCW-wise. 
 
 % Output:

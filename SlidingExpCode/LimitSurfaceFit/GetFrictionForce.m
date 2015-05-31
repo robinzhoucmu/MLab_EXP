@@ -5,22 +5,29 @@
 % Output:
 % F_{3, Nc}: The forces and moment (about the COM) for each CORs. 
 
-% Todo: For points of zero velocity, I am assuming the
-% friction is also zero, which is not the true. It could be pointing in any
-% direction.
+% For point of zero velocity, we randomly assign a force direction for it.
 
 function [F] = GetFrictionForce(V, Pts, PD)
 NumC = size(V,1) / 2;
-NumP = size(V,2);
 F = zeros(3, NumC);
 % Compute the COM.
 %COM = Pts * PD / sum(PD);
 
-% If the velocity for a particular support point is 0. 
-
 % Compute the forces matrix V_{2*Nc, Np}
 MatF = V * diag(PD);
 
+% When body is rotating w.r.t to one of the support points, 
+% its force could be in any direction and any scale(0-1) since  
+% We randomly select a direction for that point.
+
+for i = 1:1:NumC
+   ind = find(V(2*i-1,:) == 0 & V(2*i, :) == 0);
+   if (~isempty(ind))
+       F_rnd = rand(2,1) - [0.5;0.5];
+       F_rnd = rand(1,1) * PD(ind) * F_rnd / sqrt(sum(F_rnd.^2));
+       MatF(2*i-1:2*i, ind) = F_rnd;
+   end
+end
 % Represent coords with respect to COM. Disp_{2,Np}
 %Disp = bsxfun(@minus, Pts, COM);
 

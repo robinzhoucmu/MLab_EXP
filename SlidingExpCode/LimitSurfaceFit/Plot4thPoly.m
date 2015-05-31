@@ -1,6 +1,6 @@
 % input: coefficients r, data X_{n,3} 
 function [] = Plot4thPoly(r, X)
-maxd = max(abs(X)) * 15;
+maxd = max(abs(X)) * 20;
 step = maxd / 80;
 x = X(:,1);
 y = X(:,2);

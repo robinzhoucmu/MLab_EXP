@@ -3,10 +3,13 @@
 % NC: number of samples to create random CORs.
 % Output:
 % CORs_{2, Nc}: x,y coordinates of randomly sampled CORs.
-function [CORs] = GenerateRandomCORs(Pts, Nc)
+function [CORs] = GenerateRandomCORs(Pts, Nc, nFacetPts)
+if (nargin == 2)
+    nFacetPts = 50;
+end
+
 numP = size(Pts, 2);
-%CORS = zeros([2, Nc + numP]);
-CORS = zeros([2, Nc + numP]);
+CORs = zeros([2, Nc + nFacetPts * numP]);
 
 % Compute point center.
 pC = mean(Pts, 2);
@@ -23,6 +26,7 @@ CORs(:, num_near+1: num_near + num_medium) = ...
     bsxfun(@plus,(bsxfun(@minus, rand(2, num_medium) , [0.5;0.5]))* 20 * avgR, pC);
 CORs(:, num_near+num_medium+1: Nc) = ...
     bsxfun(@minus, rand(2, Nc - num_near - num_medium), [0.5;0.5])* 100000;
-%CORs(:, Nc+1:Nc+numP) = Pts;
+% Rotation about support points.
+CORs(:, Nc+1:Nc+ nFacetPts * numP) = repmat(Pts, [1 nFacetPts]);
 end
 
