@@ -1,3 +1,5 @@
+% Input:
+% Force,Vel: N*3, row-based examples.
 function [err, dev_angle] = EvaluateLinearPredictor(Force, Vel, beta)
 
 pred_vel = Force * beta;

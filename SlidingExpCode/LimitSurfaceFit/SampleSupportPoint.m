@@ -17,7 +17,7 @@
 
 function [Pts] = SampleSupportPoint(numPoints, options)
 if nargin == 1
-    options.mode = 'square';
+    options.mode = 'rim';
     options.range = 2;
 end
 % Sample inside a polygon.
