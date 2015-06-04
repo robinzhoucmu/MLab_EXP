@@ -20,7 +20,7 @@ for i = 1:1:3
 end
 pred_v_tree = bsxfun(@rdivide, pred_v_tree, sqrt(sum(pred_v_tree.^2,2)));
 
-angles_train = acos(diag(Dir_Vel_Train * pred_v_tree')) * 180 / pi;
+angles_train = mean(acos(diag(Dir_Vel_Train * pred_v_tree')) * 180 / pi);
 %disp('Mean Training Angle(Degree) Deviation');
 %mean(angles_train)
 
@@ -32,7 +32,7 @@ if (nargin == 5)
     end
     pred_v_tree_test = bsxfun(@rdivide, pred_v_tree_test, sqrt(sum(pred_v_tree_test.^2,2)));
 
-    angles_test = acos(diag(Dir_Vel_Test * pred_v_tree_test')) * 180 / pi;
+    angles_test = mean(acos(diag(Dir_Vel_Test * pred_v_tree_test')) * 180 / pi);
     %disp('Mean Test Angle(Degree) Deviation');
     %mean(angles_test)
 end

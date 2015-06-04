@@ -35,13 +35,17 @@ if strcmp(options.mode, 'polygon')
     area_en = (vx_max - vx_min) * (vy_max - vy_min);
     
     num_samples = numPoints * (area_en / area_size);
-    P = rand(num_samples, 2);
+    % Sample more.
+    P = rand(3*num_samples, 2);
     P(:,1) = vx_min + P(:,1) * (vx_max - vx_min);
     P(:,2) = vy_min + P(:,2) * (vy_max - vy_min);
-    
+
     % Rejection sampling.
     InPoly = inpolygon(P(:,1), P(:,2), vx, vy);
     Pts = P(InPoly, :);
+    
+    % Trim.
+    Pts = Pts(1:numPoints, :);
     
 % Sample inside a circle.
 elseif strcmp(options.mode, 'circle') 

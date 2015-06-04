@@ -5,7 +5,7 @@ rng(1);
 % Sample points randomly on a polygon, e.g., triangle.
 options_pt.mode = 'polygon';
 options_pt.vertices = [0,0; 0,1; 1,0];
-numPts = 10;
+numPts = 3;
 [Pts] = SampleSupportPoint(numPts, options_pt);
 
 %Pts = options_pt.vertices;
@@ -59,7 +59,7 @@ w_reg = 0;
 w_vel = 1;
 w_force = 0.5; 
 
-[v, Q, xi, delta, pred_v, s] = Fit4thOrderPolyCVX(F_train, bv_train', w_reg, w_vel, w_force);
+[v, xi, delta, pred_v, s] = Fit4thOrderPolyCVX(F_train, bv_train', w_reg, w_vel, w_force);
 pred_vel_test = GetVelFrom4thOrderPoly(v, dir_F_test);
 err_v_test = pred_vel_test - bv_test;
 disp('Test velocity data error');
@@ -67,6 +67,10 @@ mean(sqrt(sum(err_v_test.^2,2)))
 angles_test = acos(diag(bv_test * pred_vel_test')) * 180 / pi;
 disp('Mean Test Angle(Degree) Deviation');
 mean(angles_test)
+
+[err_test, dev_angle_test] = EvaluatePoly4Predictor(dir_F_test', bv_test, v);
+dev_angle_test
+
  
 w_force2 = 0.5;
 w_reg2 = 0;
