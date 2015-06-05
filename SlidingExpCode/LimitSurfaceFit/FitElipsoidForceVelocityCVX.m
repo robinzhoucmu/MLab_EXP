@@ -7,6 +7,7 @@
 function [A, xi, delta, pred_V_dir, s] = FitElipsoidForceVelocityCVX(F, V, lambda, gamma)
 
 [d, n] = size(F);
+scale_min = 0.05;
 cvx_begin quiet
     variable A(d,d) semidefinite
     variables xi(n) s(n) delta(n)
@@ -15,7 +16,7 @@ subject to
     for i = 1:n
        norm(F(:,i)' * A * F(:,i) - 1) <= xi(i)
        norm(A * F(:,i) - s(i) * V(:,i)) <= delta(i)
-       s(i) >= 1
+       s(i) > scale_min
     end
     %A - 0.1 * eye(3) >= 0
 cvx_end
