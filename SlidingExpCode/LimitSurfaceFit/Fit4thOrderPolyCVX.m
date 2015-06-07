@@ -41,7 +41,7 @@ G = [x.^3; x.^2.*y; x.^2.*z; x.*y.^2; x.*y.*z; x.*z.^2; y.^3; y.^2.*z; y.*z.^2; 
  %v4*x^3 + 2*v10*x^2*y + v13*x^2*z + 3*v6*x*y^2 + 2*v14*x*y*z + v15*x*z^2 + 4*v2*y^3 + 3*v7*y^2*z + 2*v12*y*z^2 + v9*z^3
  %v5*x^3 + v13*x^2*y + 2*v11*x^2*z + v14*x*y^2 + 2*v15*x*y*z + 3*v8*x*z^2 + v7*y^3 + 2*v12*y^2*z + 3*v9*y*z^2 + 4*v3*z^3    
 
-scaling_min = 0;
+scaling_min = eps;
  
 if (flag_convex == 1)
     cvx_begin quiet
@@ -66,10 +66,13 @@ if (flag_convex == 1)
             norm(D(i,:) * v - 1) <= xi(i) 
             % Predicted vel 1*3.
             Z(i,:) == G(i,:) * H
-            %norm(Z(i,:) - (Z(i,:) * Vel(:,i)) * Vel(:,i)') <= delta(i)
             norm(Z(i,:) - s(i) * Vel(:,i)') <= delta(i)
-            s(i) > scaling_min
+            s(i) >= scaling_min
+%             norm([0 Vel(3,i) -Vel(2,i);
+%                   -Vel(3,i) 0 Vel(1,i);
+%                   Vel(2,i) -Vel(1,i) 0] * Z(i,:)') <= delta(i)
         end
+%          sum(sum(H)) == 1
         % Convexity constraints.
         Q(1,1) == 12 * v(1);
         Q(1,2) + Q(2,1) == 6 * v(4);
@@ -133,8 +136,12 @@ else
             % Predicted vel 1*3.
             Z(i,:) == G(i,:) * H
             norm(Z(i,:) - s(i) * Vel(:,i)') <= delta(i)
-            s(i) > scaling_min
+            s(i) >= scaling_min
+%             norm([0 Vel(3,i) -Vel(2,i);
+%                   -Vel(3,i) 0 Vel(1,i);
+%                   Vel(2,i) -Vel(1,i) 0] * Z(i,:)') <= delta(i)
         end
+%         sum(sum(H)) == 1
     cvx_end
     mean(s)
 end
@@ -145,7 +152,7 @@ end
 % mean(xi)
 pred_V = Z;
 pred_V_dir = bsxfun(@rdivide, pred_V, sqrt(sum(pred_V.^2, 2)));
-disp('velocity direction alignment l2 distance')
+disp('poly4: velocity direction alignment l2 distance')
 err = mean(sqrt(sum((pred_V_dir - Vel').^2, 2)))
 
 %Plot4thPoly(v, Force');

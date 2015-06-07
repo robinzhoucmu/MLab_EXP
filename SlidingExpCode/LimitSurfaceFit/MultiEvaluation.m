@@ -34,8 +34,8 @@ for i = 1:1:num_evals
     bv(1:numTrain,:) = bv(1:numTrain,:) + eps_noise_v * randn(numTrain, 3);
     % Normalize bv again.
     bv = bsxfun(@rdivide, bv, sqrt(sum(bv.^2,2)));
-    
     dir_F = bsxfun(@rdivide, F, sqrt(sum(F.^2)));
+    
     info.numTrain = numTrain;
     info.totData = size(dir_F, 2);
     dir_F_train = dir_F(:, 1:numTrain);
@@ -52,7 +52,11 @@ for i = 1:1:num_evals
     else
         train_data = F_train;
     end
- 
+%     bv_train = bsxfun(@rdivide, bv_train, bv_train(:,3));
+%     train_data = bsxfun(@rdivide, train_data, train_data(3,:));
+    mean(train_data,2)
+    mean(bv_train,1)
+    
     % 4th order poly with convexity constraint. 
     ind_method_poly4_cvx = 1;
     w_reg = 0;
@@ -67,7 +71,7 @@ for i = 1:1:num_evals
     
     [coef_poly4_cvx, xi, delta, pred_v, s] = Fit4thOrderPolyCVX(train_data, bv_train', w_reg, w_vel, w_force, flag_convex);
     [err_test, dev_angle_test] = EvaluatePoly4Predictor(dir_F_test', bv_test, coef_poly4_cvx);
-    err_angles_test(i, ind_method_poly4_cvx) = dev_angle_test;
+    err_angles_test(i, ind_method_poly4_cvx) = dev_angle_test
     [err_train, dev_angle_train] = EvaluatePoly4Predictor(train_data', bv_train, coef_poly4_cvx);
     err_angles_train(i, ind_method_poly4_cvx) = dev_angle_train;
 
@@ -76,7 +80,7 @@ for i = 1:1:num_evals
     flag_convex = 0;
     [coef_poly4, xi, delta, pred_v, s] = Fit4thOrderPolyCVX(train_data, bv_train', w_reg, w_vel, w_force, flag_convex);
     [err_test, dev_angle_test] = EvaluatePoly4Predictor(dir_F_test', bv_test, coef_poly4);
-    err_angles_test(i, ind_method_poly4) = dev_angle_test;
+    err_angles_test(i, ind_method_poly4) = dev_angle_test
     [err_train, dev_angle_train] = EvaluatePoly4Predictor(train_data', bv_train, coef_poly4);
     err_angles_train(i, ind_method_poly4) = dev_angle_train;
     
@@ -94,15 +98,13 @@ for i = 1:1:num_evals
     % 2nd order poly. 
     ind_method_poly2 = 3;
     w_force2 = 0;
-    w_reg2 = 1;
+    w_reg2 = 0;
     [A, xi_elip, delta_elip, pred_v_lr_train, s_lr] = FitElipsoidForceVelocityCVX(train_data, bv_train', w_force2, w_reg2);
     A
     [err_test, dev_angle_test] = EvaluateLinearPredictor(dir_F_test', bv_test, A);
-    err_angles_test(i, ind_method_poly2) = dev_angle_test;
+    err_angles_test(i, ind_method_poly2) = dev_angle_test
     [err_train, dev_angle_train] = EvaluateLinearPredictor(train_data', bv_train, A);
-    err_angles_train(i, ind_method_poly2) = dev_angle_train;
-
-    
+    err_angles_train(i, ind_method_poly2) = dev_angle_train; 
 
 %     % random forest.
 %     ind_method_rf = 3;
