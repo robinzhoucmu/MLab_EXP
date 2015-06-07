@@ -66,12 +66,14 @@ for i = 1:1:num_evals
       %  w_reg = 1;
     else
         w_force = 1;
+        w_reg = 0.1;
     end
     flag_convex = 1;
     
     [coef_poly4_cvx, xi, delta, pred_v, s] = Fit4thOrderPolyCVX(train_data, bv_train', w_reg, w_vel, w_force, flag_convex);
     [err_test, dev_angle_test] = EvaluatePoly4Predictor(dir_F_test', bv_test, coef_poly4_cvx);
-    err_angles_test(i, ind_method_poly4_cvx) = dev_angle_test
+    dev_angle_test
+    err_angles_test(i, ind_method_poly4_cvx) = dev_angle_test;
     [err_train, dev_angle_train] = EvaluatePoly4Predictor(train_data', bv_train, coef_poly4_cvx);
     err_angles_train(i, ind_method_poly4_cvx) = dev_angle_train;
 
@@ -80,7 +82,8 @@ for i = 1:1:num_evals
     flag_convex = 0;
     [coef_poly4, xi, delta, pred_v, s] = Fit4thOrderPolyCVX(train_data, bv_train', w_reg, w_vel, w_force, flag_convex);
     [err_test, dev_angle_test] = EvaluatePoly4Predictor(dir_F_test', bv_test, coef_poly4);
-    err_angles_test(i, ind_method_poly4) = dev_angle_test
+    dev_angle_test
+    err_angles_test(i, ind_method_poly4) = dev_angle_test;
     [err_train, dev_angle_train] = EvaluatePoly4Predictor(train_data', bv_train, coef_poly4);
     err_angles_train(i, ind_method_poly4) = dev_angle_train;
     
@@ -100,9 +103,10 @@ for i = 1:1:num_evals
     w_force2 = 0;
     w_reg2 = 0;
     [A, xi_elip, delta_elip, pred_v_lr_train, s_lr] = FitElipsoidForceVelocityCVX(train_data, bv_train', w_force2, w_reg2);
-    A
+    %A
     [err_test, dev_angle_test] = EvaluateLinearPredictor(dir_F_test', bv_test, A);
-    err_angles_test(i, ind_method_poly2) = dev_angle_test
+    err_angles_test(i, ind_method_poly2) = dev_angle_test;
+    dev_angle_test
     [err_train, dev_angle_train] = EvaluateLinearPredictor(train_data', bv_train, A);
     err_angles_train(i, ind_method_poly2) = dev_angle_train; 
 

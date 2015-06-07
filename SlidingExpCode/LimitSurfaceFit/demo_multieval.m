@@ -13,9 +13,9 @@ num_cors = 150;
 
 r_train = 0.1;
 
-noise.f = 0;
-noise.v = 0;
-flag_use_dir = 1;
+noise.f = 0.05;
+noise.v = 0.05;
+flag_use_dir = 0;
 [ err_angles_train, err_angles_test, info ] = MultiEvaluation(num_evals, num_pts, num_cors, facet_points, r_train, noise, options_pt, options_pd, flag_use_dir);
 mean(err_angles_train, 1)
 std(err_angles_train,1)

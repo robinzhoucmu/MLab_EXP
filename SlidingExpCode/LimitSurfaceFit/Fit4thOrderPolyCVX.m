@@ -111,8 +111,8 @@ if (flag_convex == 1)
         Q(8,9) + Q(9,8) == 6*v(9);
         Q(9,9) == 12*v(3);
     cvx_end
-    mean(s)
-    v
+    %mean(s)
+    %v
 else
     cvx_begin quiet
     cvx_precision high
