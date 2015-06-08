@@ -3,22 +3,24 @@ clear all;
 rng(1);
 
 % Sample points randomly on a polygon, e.g., triangle.
-options_pt.mode = 'polygon';
-options_pt.vertices = [0,0; 0,1; 1,0];
+%options_pt.mode = 'polygon';
+%options_pt.vertices = [0,0; 0,1; 1,0];
+options_pt.mode = 'circle';
+options_pt.range = 4;
 numPts = 3;
 [Pts] = SampleSupportPoint(numPts, options_pt);
 
 %Pts = options_pt.vertices;
 
 % Assign pressure weights for the support points.
-options_pd.mode = 'linear';
+options_pd.mode = 'uniform';
 options_pd.coef = [1 1 1];
 [Pds] = AssignPressure(Pts, options_pd);
 pho = ComputeGyrationRadius(Pts, Pds);
 
 Nc = 100;
 % COR style sampling...
-CORs = GenerateRandomCORs(Pts', Nc, 2);
+CORs = GenerateRandomCORs(Pts', Nc, 20);
 [F, bv] = GenFVPairsFromPD(Pts', Pds, CORs);
 
 % CORs = GenerateRandomCORs2(Nc, pho);
