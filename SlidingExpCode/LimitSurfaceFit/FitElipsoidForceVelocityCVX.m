@@ -15,15 +15,15 @@ minimize( gamma * norm(A, 'fro') + lambda * sum(xi) + sum(delta))
 subject to
     for i = 1:n
        norm(F(:,i)' * A * F(:,i) - 1) <= xi(i)
-%        norm(A * F(:,i) - s(i) * V(:,i)) <= delta(i)
-%        s(i) >= scale_min
-       norm([0 V(3,i) -V(2,i);
-               -V(3,i) 0 V(1,i);
-               V(2,i) -V(1,i) 0] * A * F(:,i)) <= delta(i)
-       (A * F(:,i))' * V(:,i) >= 0
+       norm(A * F(:,i) - s(i) * V(:,i)) <= delta(i)
+       s(i) >= scale_min
+%        norm([0 V(3,i) -V(2,i);
+%                -V(3,i) 0 V(1,i);
+%                V(2,i) -V(1,i) 0] * A * F(:,i)) <= delta(i)
+       %(A * F(:,i))' * V(:,i) >= 0
        %norm(A,2) == 1
     end
-   sum(sum(A)) == 1
+%  sum(sum(A)) == 1
     %trace(A) == 1
     %A*[1;1;1] == 1
     %A - 0.1 * eye(3) >= 0

@@ -66,14 +66,14 @@ if (flag_convex == 1)
             norm(D(i,:) * v - 1) <= xi(i) 
             % Predicted vel 1*3.
             Z(i,:) == G(i,:) * H
-%             norm(Z(i,:) - s(i) * Vel(:,i)') <= delta(i)
-%             s(i) >= scaling_min
-            norm([0 Vel(3,i) -Vel(2,i);
-                  -Vel(3,i) 0 Vel(1,i);
-                  Vel(2,i) -Vel(1,i) 0] * Z(i,:)') <= delta(i)
-            Z(i,:) * Vel(:,i) >= 0 
+            norm(Z(i,:) - s(i) * Vel(:,i)') <= delta(i)
+            s(i) >= scaling_min
+%             norm([0 Vel(3,i) -Vel(2,i);
+%                   -Vel(3,i) 0 Vel(1,i);
+%                   Vel(2,i) -Vel(1,i) 0] * Z(i,:)') <= delta(i)
+%            Z(i,:) * Vel(:,i) >= 0 
         end
-          sum(sum(H)) == 1
+%           sum(sum(H)) == 1
         % Convexity constraints.
         Q(1,1) == 12 * v(1);
         Q(1,2) + Q(2,1) == 6 * v(4);
@@ -136,15 +136,15 @@ else
             norm(D(i,:) * v - 1) <= xi(i) 
             % Predicted vel 1*3.
             Z(i,:) == G(i,:) * H
-%             norm(Z(i,:) - s(i) * Vel(:,i)') <= delta(i)
-%             s(i) >= scaling_min
-            norm([0 Vel(3,i) -Vel(2,i);
-                  -Vel(3,i) 0 Vel(1,i);
-                  Vel(2,i) -Vel(1,i) 0] * Z(i,:)') <= delta(i)
+            norm(Z(i,:) - s(i) * Vel(:,i)') <= delta(i)
+            s(i) >= scaling_min
+%             norm([0 Vel(3,i) -Vel(2,i);
+%                   -Vel(3,i) 0 Vel(1,i);
+%                   Vel(2,i) -Vel(1,i) 0] * Z(i,:)') <= delta(i)
         end
-        sum(sum(H)) == 1
+%        sum(sum(H)) == 1
     cvx_end
-    mean(s)
+%    mean(s)
 end
 
 % disp('velocity matching error');

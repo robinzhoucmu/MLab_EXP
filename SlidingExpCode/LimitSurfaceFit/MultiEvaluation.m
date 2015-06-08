@@ -66,7 +66,7 @@ for i = 1:1:num_evals
       %  w_reg = 1;
     else
         w_force = 1;
-        w_reg = 0.1;
+        w_reg = 0;
     end
     flag_convex = 1;
     
@@ -102,6 +102,13 @@ for i = 1:1:num_evals
     ind_method_poly2 = 3;
     w_force2 = 0;
     w_reg2 = 0;
+    if (flag_use_dir == 1)
+        w_force2 = 0; 
+      %  w_reg = 1;
+    else
+        w_force2 = 1;
+        w_reg2 = 0;
+    end
     [A, xi_elip, delta_elip, pred_v_lr_train, s_lr] = FitElipsoidForceVelocityCVX(train_data, bv_train', w_force2, w_reg2);
     %A
     [err_test, dev_angle_test] = EvaluateLinearPredictor(dir_F_test', bv_test, A);
