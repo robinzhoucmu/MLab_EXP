@@ -1,6 +1,6 @@
 % Comparisons among several techniques (poly4, poly2, gp, rf).
 function [ err_angles_train, err_angles_test, info] = MultiEvaluation(num_evals, num_pts, num_cors, facet_pts, r_train, noise, options_pt, options_pd, flag_use_dir)
-num_methods = 4;
+num_methods = 5;
 err_angles_test = zeros(num_evals, num_methods);
 err_angles_train = zeros(num_evals, num_methods);
 
@@ -65,7 +65,7 @@ for i = 1:1:num_evals
         w_force = 0; 
       %  w_reg = 1;
     else
-        w_force = 1;
+        w_force = 0;
         w_reg = 0;
     end
     flag_convex = 1;
@@ -106,7 +106,7 @@ for i = 1:1:num_evals
         w_force2 = 0; 
       %  w_reg = 1;
     else
-        w_force2 = 1;
+        w_force2 = 0.5;
         w_reg2 = 0;
     end
     [A, xi_elip, delta_elip, pred_v_lr_train, s_lr] = FitElipsoidForceVelocityCVX(train_data, bv_train', w_force2, w_reg2);
@@ -117,6 +117,31 @@ for i = 1:1:num_evals
     [err_train, dev_angle_train] = EvaluateLinearPredictor(train_data', bv_train, A);
     err_angles_train(i, ind_method_poly2) = dev_angle_train; 
 
+    ind_method_poly2_sdpcon = 4;
+    w_force2 = 0;
+    w_reg2 = 0;
+    if (flag_use_dir == 1)
+        w_force2 = 0; 
+      %  w_reg = 1;
+    else
+        w_force2 = 0.5;
+        w_reg2 = 0;
+    end
+    [A, a] = FitElipsoidSdpCon(train_data, bv_train', w_force2, w_reg2);
+    %A
+    [err_test, dev_angle_test] = EvaluateLinearPredictor(dir_F_test', bv_test, A);
+    err_angles_test(i, ind_method_poly2_sdpcon) = dev_angle_test;
+    dev_angle_test
+    [err_train, dev_angle_train] = EvaluateLinearPredictor(train_data', bv_train, A);
+    err_angles_train(i, ind_method_poly2_sdpcon) = dev_angle_train; 
+    
+    if (mean(err_angles_test(i,1:4)) > 15) 
+        info.bad_pts = Pts;
+        info.bad_pds = Pds;
+        info.bad_F = F;
+        info.bad_V = bv;
+    end
+    
 %     % random forest.
 %     ind_method_rf = 3;
 %     options_rf.ntrees = 50;
@@ -126,7 +151,7 @@ for i = 1:1:num_evals
 %     err_angles_train(i, ind_method_rf) = angles_train;
     
     % gp with poly kernel.
-    ind_method_gp = 4;
+    ind_method_gp = 5;
     [hyp, err_angle_train, err_angle_test] = GP_Fitting(dir_F_train', bv_train, dir_F_test', bv_test);
     err_angles_test(i, ind_method_gp) = err_angle_test;
     err_angles_train(i, ind_method_gp) = err_angle_train;

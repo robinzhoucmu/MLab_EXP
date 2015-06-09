@@ -61,5 +61,6 @@ elseif strcmp(options.mode, 'rim')
     Pts = [R * cos(angles), R * sin(angles)];
 end
 
+Pts = bsxfun(@minus, Pts, mean(Pts,1));
 end
 
