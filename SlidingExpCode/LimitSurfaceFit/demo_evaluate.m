@@ -7,7 +7,7 @@ rng(1);
 %options_pt.vertices = [0,0; 0,1; 1,0];
 options_pt.mode = 'circle';
 options_pt.range = 4;
-numPts = 30;
+numPts = 5;
 [Pts] = SampleSupportPoint(numPts, options_pt);
 
 %Pts = options_pt.vertices;
@@ -17,10 +17,11 @@ options_pd.mode = 'uniform';
 options_pd.coef = [1 1 1];
 [Pds] = AssignPressure(Pts, options_pd);
 pho = ComputeGyrationRadius(Pts, Pds);
+%pho = 1;
 
 Nc = 100;
 % COR style sampling...
-CORs = GenerateRandomCORs(Pts', Nc, 2);
+CORs = GenerateRandomCORs(Pts', Nc, 30);
 [F, bv] = GenFVPairsFromPD(Pts', Pds, CORs);
 
 % CORs = GenerateRandomCORs2(Nc, pho);
@@ -80,7 +81,8 @@ w_reg2 = 0;
 disp('Mean test error Linear');
 [err, dev_angle] = EvaluateLinearPredictor(dir_F_test', bv_test, A)
 
-
-[A2, a2, err_angle] = FitElipsoidSdpCon(F_train, bv_train', w_force2, w_reg2);
+w_force3 = 0;
+w_reg3 = 0;
+[A2, a2, err_angle] = FitElipsoidSdpCon(F_train, bv_train', w_force3, w_reg3);
 disp('Mean test error Linear');
 [err2, dev_angle2] = EvaluateLinearPredictor(dir_F_test', bv_test, A2)
