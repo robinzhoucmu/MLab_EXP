@@ -9,12 +9,14 @@ end
 N = size(F, 2);
 options_sdp = sdpoptionset('Algorithm','interior-point',...
 				       'GradConstr','off','GradObj','off','DerivativeCheck','off',...
-                       'Aind',1,...                 % Mark the beginning of the matrix constraints
-                       'L_upp',200,...              % Set upper bounds on the off-diagonal elements of the Cholesky factors    
-                       'L_low',-200);               % Set lower bounds on all elements of the Cholesky factors                     
+                       'Aind',1);                % Mark the beginning of the matrix constraints
+%                        'L_upp',200,...              % Set upper bounds on the off-diagonal elements of the Cholesky factors    
+%                        'L_low',-200);               % Set lower bounds on all elements of the Cholesky factors                     
 a0 = ones(6,1);
-aeq = ones(size(a0))';
-beq = 1;
+% aeq = ones(size(a0))';
+% beq = 1;
+aeq = [];
+beq = [];
 [a,fval] = fminsdp(@(x)fun(x,F,V,w_force, w_reg),a0,[],[],aeq,beq,[],[],@(x)nonlcon(x),options_sdp);
 V_p = predict_v(a, F);
 dev_angle = mean(acos(diag(V_p' * V)) * 180 / pi);
