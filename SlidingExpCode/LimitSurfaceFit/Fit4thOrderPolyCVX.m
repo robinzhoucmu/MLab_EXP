@@ -48,7 +48,8 @@ if (flag_convex == 1)
         cvx_precision high
         variable Q(9,9) semidefinite
         variables v(15) xi(n) delta(n) s(n) Z(n,3) H(10,3)     
-    minimize(lambda * norm(v) + beta * sum(xi) + gamma * sum(delta))
+    %minimize(lambda * norm(v) + beta * sum(xi) + gamma * sum(delta))
+    minimize(lambda * norm(v) + beta * norm(xi) + gamma * norm(delta))
     subject to 
         %sum(v) == 1
         % Point Fitting Constraints.
@@ -156,6 +157,6 @@ pred_V_dir = bsxfun(@rdivide, pred_V, sqrt(sum(pred_V.^2, 2)));
 disp('poly4: velocity direction alignment l2 distance')
 err = mean(sqrt(sum((pred_V_dir - Vel').^2, 2)))
 
-%Plot4thPoly(v, Force');
+Plot4thPoly(v, Force');
 end
 

@@ -5,9 +5,9 @@
 
 // Hand chosen values (in robot base frame) that avoid collision.
 // Robot Moves randomly around kCenter.
-const double kCenter[3] = {500, 0, 400};
+const double kCenter[3] = {500, 0, 205};
 // kCenter plus/minus kDelta as boundary.
-const double kDelta[3] = {145, 225, 140};
+const double kDelta[3] = {145, 225, 40};
 
 // Base frame: x pointing out to the vision node; 
 // Have the robot tool frame mostly facing downward.
@@ -172,6 +172,7 @@ bool MocapCalibration::AcquireMocapData(int step_id) {
     int num_received_frames = 0; 
     bool flag_response = true;
     std::vector<double> avg_mocap_cords(3,0);
+    std::vector<double> last_mocap_cords(3,0);
     const int freqHz = int (1.0 / k_read_period);
     ros::Rate r(freqHz);
     double last_secs = ros::Time::now().toSec();   
@@ -185,6 +186,15 @@ bool MocapCalibration::AcquireMocapData(int step_id) {
 	num_received_frames++;
 	for (int i = 0; i < 3; ++i) {
 	  avg_mocap_cords[i] += global_mocap_cord[i];
+	  last_mocap_cords[i] = global_mocap_cord[i];
+	}
+	// Check for sudden jump.
+	const double eps_jump = 1.5;
+	for (int i = 0; i < 3; ++i) {
+	  double diff = global_mocap_cord[i] - last_mocap_cords[i];
+	  if (diff > eps_jump || diff < -eps_jump) {
+	    flag_response = false;
+	  } 
 	}
       }
       r.sleep();
@@ -205,7 +215,7 @@ int main(int argc, char* argv[]) {
   srand (time(NULL));
   ros::init(argc, argv, "MocapCalibration");
   MocapCalibration mocap_cali;
-  const int kNumRandSamples = 200;
+  const int kNumRandSamples = 500;
   mocap_cali.GenRandomTrajectory(kCenter, kDelta, kDeltaAngles, kNumRandSamples);
   
   std::ofstream fout;

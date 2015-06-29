@@ -69,7 +69,8 @@ Vel(:,1:2) = Vel(:,1:2) / body_length;
 Loads(:,3) = Loads(:,3) / body_length;
 
 figure;
-plot3(Loads(:,1), Loads(:,2), Loads(:,3), 'r*', 'Markersize', 6);title('Load Scatter Plot');
+plot3(Loads(:,1), Loads(:,2), Loads(:,3), 'r*', 'Markersize', 6);
+title('Load Scatter Plot');
 plot3curves(Vel, t_ref_sub(2:end-1));
 title('Velocity plot');
 plot3curves(Loads, t_ref_sub(2:end-1));
@@ -80,8 +81,6 @@ ind_static = sqrt(sum(Vel.^2,2)) < 0.005;
 Vel(ind_static,:) = [];
 Loads(ind_static,:) = [];
 t_ref_sub_moving = t_ref_sub(~ind_static);
-
-
 
 % Normalize velocities to get directions.
 Dir_Vel = bsxfun(@rdivide, Vel, sqrt(sum(Vel.^2,2)));

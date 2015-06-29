@@ -8,6 +8,7 @@ Q = bsxfun(@plus, R * Pm, t);
 dist = sqrt(sum((Q - Pr).^2));
 
 ind = dist > threshold;
+size(ind > 0)
 Pc(:,ind) = [];
 Pm(:,ind) = [];
 RotMatrices(ind) = [];

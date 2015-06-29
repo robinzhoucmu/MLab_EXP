@@ -6,6 +6,7 @@ if (nargin == 2)
 end
 trans = cart_pos(:, 1:3);
 quat = cart_pos(:,4:end);
+
 N = size(trans, 1);
 pos_2d = zeros(N,3);
 

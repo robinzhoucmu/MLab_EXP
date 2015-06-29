@@ -1,8 +1,11 @@
 % Input:
 % x: signal input.
 % t: time_stamp.
-% y: signal output.
 % N: order
+% Fp: cut-off freq.
+
+% Output:
+% y: signal output.
 % t_s: sampled signal time_stamp (uniform rate)
 function [y, t_s] = FIRFilter(x, t, N, Fp)
 if nargin == 2
