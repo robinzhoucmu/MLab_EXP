@@ -1,22 +1,24 @@
 function [flag_stable, mu, sigma] = CrossEntropyCheckStable(Fc, V)
 mu = zeros(6,1);
 sigma = eye(6,6);
-N = 30;
+N = 50;
 Ne = 6;
-maxIters = 4;
+maxIters = 200;
 t = 0;
 D = zeros(N, 1);
 X = zeros(N, 6);
-eps_dist = 1e-2;
+eps_dist = 1e-3;
 flag_stable = 1;
-eps_var = 1e-3;
+eps_var = 1e-4;
 while (t < maxIters && flag_stable && trace(sigma) > eps_var)
     for i = 1:1:N
        [A,a] = SamplePsdMatrix(mu, sigma);
-       [D(i),k] = CheckStableCVX(Fc, V, A);
+       %[D(i),k] = CheckStableCVX(Fc, V, A);
+       [D(i),k] = CheckStableLSNonNeg(Fc, V, A);
        X(i,:) = a; 
        if (D(i) > eps_dist)
-         %fprintf('NotStable:%f,%f,%f\n', D(i), min(eig(A)), max(eig(A)));
+         fprintf('NotStable:%f,%f,%f\n', D(i), min(eig(A)), max(eig(A)));
+         A
          flag_stable = 0;
          break;
          %k
