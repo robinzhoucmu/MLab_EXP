@@ -1,5 +1,5 @@
 function [flag_stable] = CheckStableDual(W, V)
-NSegs = 20;
+NSegs = 50;
 delta_theta = 2*pi/NSegs;
 delta_phi = pi/NSegs;
 flag_stable = 1;
@@ -16,7 +16,7 @@ Y1 = [t1(:)';t2(:)';t3(:)'];
 ind = Y1' * V < 0;
 Y = Y1(:,ind);
 i = 1;
-while (flag_stable) and (i <= size(Y,2))
+while flag_stable && i <= size(Y,2)
    [flag_exist, A] = FindSeparatingPlane(W, V, Y(:,i));
     if (flag_exist)
         flag_stable = 0;

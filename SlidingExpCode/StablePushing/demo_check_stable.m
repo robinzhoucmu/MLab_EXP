@@ -30,7 +30,7 @@ W = [W1,W2,W3,W4];
 W = bsxfun(@rdivide, W, sqrt(sum(W.^2)));
 %V = [0.05;0.9;0.05];
 
-numCORs = 250;
+numCORs = 50;
 radius = 10;
 CORs = zeros(numCORs, 2);
 V = zeros(numCORs, 3);
