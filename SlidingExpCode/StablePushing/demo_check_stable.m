@@ -1,4 +1,5 @@
 close all;
+rng(1);
 c1 = [-2;-2];
 u = sqrt(3);
 c2 = [2;-2];
@@ -29,7 +30,11 @@ W = [W1,W2,W3,W4];
 W = bsxfun(@rdivide, W, sqrt(sum(W.^2)));
 %V = [0.05;0.9;0.05];
 
+<<<<<<< HEAD
 numCORs = 50;
+=======
+numCORs = 250;
+>>>>>>> a32d5ec34999ee2de203fe2a28af94cf0a8bfee2
 radius = 10;
 CORs = zeros(numCORs, 2);
 V = zeros(numCORs, 3);
@@ -57,8 +62,9 @@ plot([c2(1), c2(1)- Fx], [c2(2), c2(2) + Fy], 'r-');
 plot([c2(1), c2(1)+ Fx], [c2(2), c2(2) + Fy], 'r-');
 
 for i = 1:1:numCORs
-    [f, mu, sigma] = CrossEntropyCheckStable(W, V(i,:)');
     %f = SearchEllipsoidStable(W, V(i,:)');
+    %[f, mu, sigma] = CrossEntropyCheckStable(W, V(i,:)');
+    f = CheckStableDual(W, V(i,:)');
     flags(i) = f;
     if (f == 0)
         plot(CORs(i,1), CORs(i,2), 'r.');
