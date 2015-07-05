@@ -1,5 +1,5 @@
 function [ flag_exist, A ] = FindSeparatingPlane( W, V, y )
-tau_max = 3;
+tau_max = 2*sqrt(2);
 tau_min = 0.1;
 cvx_begin quiet
     %variable A(3,3) semidefinite %diagonal
@@ -30,8 +30,8 @@ cvx_end
 if cvx_optval ~= 1
     flag_exist = 0;
 else 
-    cvx_optval
-    A
+    %cvx_optval
+    %A
     flag_exist = 1;
 end
 

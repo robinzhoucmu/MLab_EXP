@@ -1,8 +1,8 @@
 close all;
 rng(1);
 c1 = [-2;-2];
-u = sqrt(3);
-c2 = [2;-2];
+u = 1.0/sqrt(3);
+c2 = [0.2;-2];
 
 Fy = 1;
 Fx = Fy*u;
@@ -31,7 +31,7 @@ W = bsxfun(@rdivide, W, sqrt(sum(W.^2)));
 %V = [0.05;0.9;0.05];
 
 
-numCORs = 50;
+numCORs = 300;
 
 radius = 10;
 CORs = zeros(numCORs, 2);
@@ -44,14 +44,22 @@ CORs(numCORs/2+1:end, :) = 2 * radius * bsxfun(@minus, rand(numCORs/2, 2), [0,0.
 V(1:numCORs/2, :) = GetBodyVelFromCOR(CORs(1:numCORs/2, :), 'CCW');
 V(numCORs/2+1:end, :) = GetBodyVelFromCOR(CORs(numCORs/2+1:end, :), 'CW');
 
-h = figure;
-% Draw the COM. 
-plot(0,0, 'ko', 'MarkerSize', 5);
-% Draw the friction cone.
+ind_perm = randperm(numCORs);
+CORs = CORs(ind_perm, :);
+V = V(ind_perm, :);
+
+axis equal;
+
+%Draw the polygonal.
 hold on;
-plot(c1(1),c1(2), '^', 'MarkerSize', 4); 
-plot(c2(1),c2(2), '^', 'MarkerSize', 4); 
-s = 2;
+plot([-2,-2,2,2,0.2,-2], [-2,2,2,0,-2,-2], 'g-');
+
+% Draw the COM. 
+plot(0,0, 'ko', 'MarkerSize', 7);
+% Draw the friction cone.
+plot(c1(1),c1(2), '^', 'MarkerSize', 6); 
+plot(c2(1),c2(2), '^', 'MarkerSize', 6); 
+s = 1.5;
 Fx = Fx * s;
 Fy = Fy * s;
 plot([c1(1), c1(1)+ Fx], [c1(2), c1(2) + Fy], 'r-');
@@ -60,9 +68,9 @@ plot([c2(1), c2(1)- Fx], [c2(2), c2(2) + Fy], 'r-');
 plot([c2(1), c2(1)+ Fx], [c2(2), c2(2) + Fy], 'r-');
 
 for i = 1:1:numCORs
-    %f = SearchEllipsoidStable(W, V(i,:)');
+    f = SearchDiagnolEllipsoid(W, V(i,:)');
     %[f, mu, sigma] = CrossEntropyCheckStable(W, V(i,:)');
-    f = CheckStableDual(W, V(i,:)');
+    %f = CheckStableDual(W, V(i,:)');
     flags(i) = f;
     if (f == 0)
         plot(CORs(i,1), CORs(i,2), 'r.');
@@ -71,5 +79,6 @@ for i = 1:1:numCORs
         plot(CORs(i,1), CORs(i,2), 'b.');
         fprintf('Stable %f,%f\n', CORs(i,1), CORs(i,2));
     end
+    drawnow;
 end
 
