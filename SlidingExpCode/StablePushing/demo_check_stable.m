@@ -73,10 +73,10 @@ for i = 1:1:numCORs
     %f = CheckStableDual(W, V(i,:)');
     flags(i) = f;
     if (f == 0)
-        plot(CORs(i,1), CORs(i,2), 'r.');
+        plot(CORs(i,1), CORs(i,2), 'r*');
         fprintf('NotStable %f,%f\n', CORs(i,1), CORs(i,2));
     else
-        plot(CORs(i,1), CORs(i,2), 'b.');
+        plot(CORs(i,1), CORs(i,2), 'b*');
         fprintf('Stable %f,%f\n', CORs(i,1), CORs(i,2));
     end
     drawnow;
