@@ -1,6 +1,6 @@
 close all;
 rng(1);
-c1 = [-2;-2];
+c1 = [-1;-2];
 u = 1.0/sqrt(3);
 c2 = [0.2;-2];
 
@@ -31,13 +31,13 @@ W = bsxfun(@rdivide, W, sqrt(sum(W.^2)));
 %V = [0.05;0.9;0.05];
 
 
-numCORs = 300;
+numCORs = 200;
 
 radius = 10;
 CORs = zeros(numCORs, 2);
 V = zeros(numCORs, 3);
 flags = zeros(numCORs, 1);
-
+fval = -1 * ones(numCORs,1);
 % Sample first half as CCW on the left plane.
 CORs(1:numCORs/2, :) = 2 * radius * bsxfun(@minus, rand(numCORs/2, 2), [1,0.5]);
 CORs(numCORs/2+1:end, :) = 2 * radius * bsxfun(@minus, rand(numCORs/2, 2), [0,0.5]);
@@ -68,10 +68,11 @@ plot([c2(1), c2(1)- Fx], [c2(2), c2(2) + Fy], 'r-');
 plot([c2(1), c2(1)+ Fx], [c2(2), c2(2) + Fy], 'r-');
 
 for i = 1:1:numCORs
-    f = SearchDiagnolEllipsoid(W, V(i,:)');
+    [f,val] = SearchDiagnolEllipsoid(W, V(i,:)');
     %[f, mu, sigma] = CrossEntropyCheckStable(W, V(i,:)');
     %f = CheckStableDual(W, V(i,:)');
     flags(i) = f;
+    fval(i) = val;
     if (f == 0)
         plot(CORs(i,1), CORs(i,2), 'r*');
         fprintf('NotStable %f,%f\n', CORs(i,1), CORs(i,2));
