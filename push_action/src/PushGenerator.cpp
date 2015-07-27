@@ -81,6 +81,7 @@ bool PushGenerator::generateRandomPush(const PushObject obj, PushAction *push)
 bool PushGenerator::generateTrajectory(const PushAction push, const HomogTransf objectPose, const Vec tableNormal, 
     std::vector<HomogTransf> *robotPoses)
 {
+  robotPoses->clear();
   // Compute the push point and push direction in the robot frame
   Vec robotPoint = objectPose * push.pushPoint;
   Vec robotXDir = objectPose.getRotation() * push.pushVector;

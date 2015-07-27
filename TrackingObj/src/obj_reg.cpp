@@ -140,6 +140,7 @@ bool ObjectReg::ReadTractablePoseFromMocap(MocapComm& mocap_comm) {
     // Extract pose from mocap output.
     double tractable_pose[7];
     // TODO(Jiaji): Better handling of id matching without assuming consecutive id from 1.
+    assert(tractable_id <= mocap_msg.body_poses.size());
     geometry_msgs::Pose pose = mocap_msg.body_poses[tractable_id - 1];
     tractable_pose[0] = pose.position.x;
     tractable_pose[1] = pose.position.y;

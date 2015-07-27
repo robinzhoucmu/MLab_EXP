@@ -16,7 +16,7 @@ class PushObject {
   // Construct from a single file with serialized obj_reg & obj_geo; 
   PushObject(std::string file_name);
   // Construct from separate files.
-  PushObject(std::string file_name_reg, std::string file_name_obj);
+  PushObject(std::string file_name_reg, std::string file_name_geo);
 
   // Get pose in robot frame (global frame) after transforming mocap readings.
   // Assume mocap system is calibrated to robot base frame already.
