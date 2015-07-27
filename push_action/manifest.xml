@@ -13,7 +13,9 @@
   <depend package="robot_comm"/>
   <depend package="matVec"/>
   <depend package="TrackingObj"/>
-
+  <export>
+    <cpp cflags="-I${prefix}/include" lflags="-L${prefix}/lib -lPushGenerator"/>
+  </export>
 </package>
 
 

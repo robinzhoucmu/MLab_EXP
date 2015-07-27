@@ -13,34 +13,47 @@
 #include <Mocap/mocap_comm.h>
 #include <matVec/matVec.h>
 
+#include <push_action/PushGenerator.h>
+
 class PushExp {
  public:
-  PushExp(ros::NodeHandle *np);
+  PushExp();
   ~PushExp();
   void SubscribeServices();
 
  private:
   RobotComm* robot;
-  ros::AsyncSpinner asyn_spinner;
+  PushGenerator push_plan_gen;
 
-  // Mocap subscription.
-  ros::Subscriber mocap_sub;
+  ros::AsyncSpinner async_spinner;
+  // Mocap comm.
+  MocapComm mocap_comm;
   // Force subscription.
   ros::Subscriber force_sub;
+  // Number of push trials.
   int num_pushes;
+  
+  // Flag indicating whether the robot is away from camera view, hence not
+  // blocking the mocap cameras view. 
+  bool flag_robot_away;
+  std::vector<geometry_msgs::Pose> obj_poses;
+ 
   // Command the robot to a resting position that won't block the mocap nor touch the object.
   void GotoRobotRestingState();
   // Let the mocap acquire STATIC object poses assuming the robot is not blocking view.
   void AcquireObjectStablePose();
-  
+  void ComputeAveragePose();
+
   // 1) Move from the robot from rest state to pre-approach state.
   // 2) Approach object and push.
   // 3) Leave contact. 
-  void ExecuteSingleRobotPush();
+  void GeneratePushPlan();
+  void ExecuteRobotPushTraj();
+  
   // Log the pushing force while robot is pushing/in contact with the object.
   // Uses async spinner for logging. Call this function before calling robotSetCartesian.
   // Remember to stop the Async spinner after robotSetCartesian.
-  void LogPushForce();
+  void LogPushForceAsync();
   
   
   

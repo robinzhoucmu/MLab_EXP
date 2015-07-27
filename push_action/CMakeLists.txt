@@ -16,6 +16,15 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 #set the default path for built libraries to the "lib" directory
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
+ADD_CUSTOM_COMMAND(
+OUTPUT include_files
+COMMAND cp ${PROJECT_SOURCE_DIR}/src/*.h
+${PROJECT_SOURCE_DIR}/include/push_action
+DEPENDS ${PROJECT_SOURCE_DIR}/src/PushGenerator.h
+)
+ADD_CUSTOM_TARGET(makeH ALL DEPENDS include_files)
+
+
 #uncomment if you have defined messages
 #rosbuild_genmsg()
 #uncomment if you have defined services
