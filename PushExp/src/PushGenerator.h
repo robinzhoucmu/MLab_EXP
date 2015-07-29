@@ -16,6 +16,7 @@ struct PushAction{
   double initialDist;
   double penetrationDist;
   double retractionDist;
+  double moveCloseDist;
 };
 
 class PushGenerator
@@ -32,7 +33,8 @@ class PushGenerator
     double DEFAULT_PENETRATION_DISTANCE;
     // The distance to retract after pushing (mm)
     double DEFAULT_RETRACTION_DISTANCE;
-
+    // The distance to move the robot close to the object (mm)
+    double DEFAULT_MOVECLOSE_DISTANCE;
 
 
     PushGenerator() { 
@@ -77,9 +79,10 @@ class PushGenerator
      *            frame used here is also used by the push action.
      * \param[in] tableNormal A 3d vector representing the normal vector the 
      *            table in the frame used by the robot, pointing upwards 
-     * \param[out] robotPoses A length 3 vector of poses to move the robot through to 
+     * \param[out] robotPoses A length 4 vector of poses to move the robot through to 
      *              execute the desired push. The robot will start an 
-     *              'initialDist' away from the object, then move to contact
+     *              'initialDist' away from the object, then move close to be 'move_close_dist'
+     *              away from the object before move to contact
      *              the object and push it a 'penetrationDist' amount, and 
      *              then retract a 'retractionDist' away from the object to 
      *              complete the push. Note that we assume the tool frame of

@@ -41,7 +41,7 @@ class PushObject {
   void InitMocapComm();
   ros::NodeHandle np;
   MocapComm* mocap_comm;
-
+  
   // Object stuffs.
   ObjectGeometry obj_geo;
   ObjectReg obj_reg;

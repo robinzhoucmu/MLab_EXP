@@ -20,39 +20,42 @@
 class PushExp {
  public:
   PushExp(ros::NodeHandle *n);
-  ~PushExp();
-  void InitPushObject(std::string file_name_cali, std::string file_name_geo);
-  
+  ~PushExp(){};
+  void Initialize();
+  void Run();  
 
  private:
-  ros::NodeHandle *nodeHandle;
+  ros::NodeHandle *nh;
   RobotComm* robot;
-  PushGenerator push_plan_gen;
-  PushObject push_object;
+  PushGenerator* push_plan_gen;
+  PushObject* push_object;
 
-  ros::AsyncSpinner async_spinner;
-  // Mocap comm.
-  // MocapComm mocap_comm;
-  
+  ros::AsyncSpinner* async_spinner; 
   // Force subscription.
   ros::Subscriber force_sub;
   // Number of push trials.
-  int num_pushes;
+  int num_pushes;  
   
+  // Safe height above the working object surface. 
+  double safe_height;
+
   // Flag indicating whether the robot is away from camera view, i.e., not
   // blocking the mocap cameras view. 
   bool flag_robot_away;
   std::vector<HomogTransf> obj_poses;
   
   // Acquiring pose: read kNumMocapReadings number of frames in kReadDuration secs.
-  static const int kNumMocapReadings = 5;
-  static const double kReadDuration = 1.0;
+  int kNumMocapReadings;
+  double kReadDuration;
 
   // Robot movement trajectory for one single push.
   std::vector<HomogTransf> robot_push_traj;
 
+  // Robot resting cartesian position.
+  double robot_rest_cart[7];
+
   // Command the robot to a resting position that won't block the mocap nor touch the object.
-  void GotoRobotRestingState();
+  bool RobotMoveToRestingState();
   // Let the mocap acquire STATIC object poses assuming the robot is not blocking view.
   bool AcquireObjectStablePose(HomogTransf* pose_tf);
   bool ComputeAveragePose(HomogTransf* avg_pose_tf);
@@ -60,9 +63,12 @@ class PushExp {
   // 1) Move from the robot from rest state to pre-approach state.
   // 2) Approach object and push.
   // 3) Leave contact. 
-  bool GeneratePushPlan();
-  bool ExecuteRobotPushTraj();  
+  bool GeneratePushPlan(HomogTransf pre_push_obj_pose);
+  bool ExecRobotPushAndLogForce();  
+  bool RobotMoveToAbove(HomogTransf pose_below);
 
+  // Pipeline for single push and data logging.
+  bool SinglePushPipeline();
   // Log the pushing force while robot is pushing/in contact with the object.
   // Uses async spinner for logging. Call this function before calling robotSetCartesian.
   // Remember to stop the Async spinner after robotSetCartesian.

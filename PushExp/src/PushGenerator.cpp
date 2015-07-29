@@ -6,47 +6,11 @@ void PushGenerator::InitParameters() {
   DEFAULT_INITIAL_DISTANCE = GLParameters::default_init_dist;
   DEFAULT_PENETRATION_DISTANCE = GLParameters::default_penetration_dist;
   DEFAULT_RETRACTION_DISTANCE = GLParameters::default_retraction_dist;
+  DEFAULT_MOVECLOSE_DISTANCE = GLParameters::default_move_close_dist;
 }
 
 bool PushGenerator::checkPush(const PushObject obj, const PushAction push)
 {
-  /*
-  // First, let's confirm that the distances used by the push are
-  // non-negative
-  if (initialDist < 0 || penetrationDist < 0 || retractionDist < 0)
-    return false;
-
-  // Next, let's check that the push point is on the object
-  const std::vector<Edge>& edges = obj.GetEdges();  
-  size_t num_edges = edges.size();
-  double perimeter = 0.0; 
-  for (size_t i=0; i < num_edges; ++i)
-  {
-    // Compute where the push point is relative to this edge
-    // First, compute a vector from the left end of this edge to the push
-    // point, so we can decompose it into lengths along the edge and
-    // perpendicular to the edge
-    Vec rel_vec = pushPoint - edges[i].left_end;
-    double edge_length = edges[i].edge_vec.norm();
-    double along_edge_length = rel_vec * edges[i].edge_vec / edge_length; // project relative vector onto edge_vec
-    Vec perp_vec = pushPoint - (left_end + along_edge_length * edges[i].edge_vec / edge_length);
-    double perp_edge_length = 
-
-    // Subtract out the border region on each edge and 
-    //  use this as our useable length
-    edge_lengths[i] = edges[i].edge_vec.norm() - 2 * PushGenerator::MIN_EDGE_DISTANCE;
-    
-    // If the border regions overlap, then set our useable length to 0
-    if (edge_lengths[i] < 0)
-      edge_lengths[i] = 0;
-
-    // Compute the perimeter, and maintain a cumulative sum which will 
-    //  be used for picking a random point
-    perimeter += edge_lengths[i];
-    cum_sum[i] = perimeter;
-  }
-  */
-
   //***********************************
   // First, let's confirm that the distances used by the push are
   // non-negative
@@ -198,7 +162,7 @@ bool PushGenerator::generateRandomPush(const PushObject obj, PushAction *push)
   push->initialDist = PushGenerator::DEFAULT_INITIAL_DISTANCE;
   push->penetrationDist = PushGenerator::DEFAULT_PENETRATION_DISTANCE;
   push->retractionDist = PushGenerator::DEFAULT_RETRACTION_DISTANCE;
-
+  push->moveCloseDist = PushGenerator::DEFAULT_MOVECLOSE_DISTANCE;
   return true;
 }
 
@@ -224,11 +188,12 @@ bool PushGenerator::generateTrajectory(const PushAction push, const HomogTransf 
 
   // Now find the 3 translations of the robot. 
   Vec initialPoint = robotPoint - robotXDir * push.initialDist;
+  Vec moveClosePoint = robotPoint - robotXDir * push.moveCloseDist;
   Vec penetrationPoint = robotPoint + robotXDir * push.penetrationDist;
   Vec retractionPoint = penetrationPoint - robotXDir * push.retractionDist;
 
   // Store the poses in our array, and we're done
-  robotPoses->resize(3);
+  robotPoses->resize(4);
   (*robotPoses)[0] = HomogTransf(robot_orient, initialPoint);
   (*robotPoses)[1] = HomogTransf(robot_orient, penetrationPoint);
   (*robotPoses)[2] = HomogTransf(robot_orient, retractionPoint);
