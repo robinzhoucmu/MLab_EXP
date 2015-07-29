@@ -51,7 +51,7 @@ bool PushExp::AcquireObjectStablePose(HomogTransf* pose_tf) {
     // Average Reading.
     bool flag_average = ComputeAveragePose(pose_tf);
     if (!flag_average) {
-      std::cerr << "Acquired readings are wrong" << std::endl;
+      std::cerr << "Acquired readings are problematic" << std::endl;
       return false;
     } 
     return true;
@@ -62,8 +62,18 @@ bool PushExp::AcquireObjectStablePose(HomogTransf* pose_tf) {
 }
 
 bool PushExp::GeneratePushPlan() {
+  // Todo(Jiaji): The reset and pose reading logic might be better to call in a higher level
+  // function. Pass in pose parameter to this function instead.
+ 
   // Check whether the object needs to be reset.
   CheckForReset();
+  
+  // Read object pose.
+  HomogTransf pre_push_obj_pose;
+  if (!AcquireObjectStablePose(&pre_push_obj_pose)) {
+    std::cerr << "Cannot acquire object pose from mocap" << std::endl; 
+    return false;
+  }
 
   // Generate a random local pushing direction.
   PushAction push_action;
@@ -71,12 +81,7 @@ bool PushExp::GeneratePushPlan() {
     std::cerr << "Cannot generate a random push direction" << std::endl;
     return false;  
   }
-  // Read object pose.
-  HomogTransf pre_push_obj_pose;
-  if (!AcquireObjectStablePose(&pre_push_obj_pose)) {
-    std::cerr << "Cannot acquire object pose from mocap" << std::endl; 
-    return false;
-  }
+  
   // Generate robot trajectory in global robot frame.
   const Vec tableNormal = Vec("0 0 1", 3);
   if (!push_plan_gen.generateTrajectory(push_action, pre_push_obj_pose, 
@@ -93,5 +98,6 @@ bool PushExp::CheckForReset() {
 
 
 int main(int argc, char* argv[]) {
+  GLParameters::ReadParameters();
   return 0;
 }

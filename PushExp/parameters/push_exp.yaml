@@ -1,0 +1,13 @@
+PushExp: {
+# mm/ safe distance for robot to move above objects without touching.
+safe_height: 300.0,  
+# number of mocap readings to average.
+mocap_num_readings: 5,   
+mocap_read_duration: 1.0,
+min_edge_dist: 10.0,
+min_push_angle: 20.0,
+default_init_dist: 50.0,
+robot_rest_cart: [300.0, 0, 400, 1, 0, 0, 0],
+workobj_file_cali: 'obj_cali.txt',
+workobj_file_geometry: 'obj_geo.txt'
+}

@@ -14,16 +14,18 @@
 #include <Mocap/mocap_comm.h>
 #include <matVec/matVec.h>
 
+#include "gl_parameter.h"
 #include <push_action/PushGenerator.h>
 
 class PushExp {
  public:
-  PushExp();
+  PushExp(ros::NodeHandle *n);
   ~PushExp();
-  void InitPushObject(std::string file_name_reg, std::string file_name_geo);
+  void InitPushObject(std::string file_name_cali, std::string file_name_geo);
   
 
  private:
+  ros::NodeHandle *nodeHandle;
   RobotComm* robot;
   PushGenerator push_plan_gen;
   PushObject push_object;
@@ -37,7 +39,7 @@ class PushExp {
   // Number of push trials.
   int num_pushes;
   
-  // Flag indicating whether the robot is away from camera view, hence not
+  // Flag indicating whether the robot is away from camera view, i.e., not
   // blocking the mocap cameras view. 
   bool flag_robot_away;
   std::vector<HomogTransf> obj_poses;
