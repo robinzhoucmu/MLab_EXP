@@ -49,7 +49,7 @@ bool PushGenerator::checkPush(const PushObject obj, const PushAction push)
 
   // First, let's confirm that the distances used by the push are
   // non-negative
-  if (initialDist < 0 || penetrationDist < 0 || retractionDist < 0)
+  if (push.initialDist < 0 || push.penetrationDist < 0 || push.retractionDist < 0)
     return false;
 
   // Next, let's check that the push point is on the object
@@ -66,7 +66,7 @@ bool PushGenerator::checkPush(const PushObject obj, const PushAction push)
     Vec rel_vec = push.pushPoint - edges[i].left_end;
     double edge_length = edges[i].edge_vec.norm();
     double along_edge_length = rel_vec * edges[i].edge_vec / edge_length; // project relative vector onto edge_vec
-    Vec perp_vec = push.pushPoint - (left_end + along_edge_length * edges[i].edge_vec / edge_length);
+    Vec perp_vec = push.pushPoint - (edges[i].left_end + (edges[i].edge_vec * along_edge_length) / edge_length);
     double perp_edge_length = perp_vec.norm();
 
     // Now check if the point lies on this edge
