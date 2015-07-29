@@ -4,6 +4,7 @@
 
 bool PushGenerator::checkPush(const PushObject obj, const PushAction push)
 {
+  /*
   // First, let's confirm that the distances used by the push are
   // non-negative
   if (initialDist < 0 || penetrationDist < 0 || retractionDist < 0)
@@ -38,7 +39,7 @@ bool PushGenerator::checkPush(const PushObject obj, const PushAction push)
     perimeter += edge_lengths[i];
     cum_sum[i] = perimeter;
   }
-
+  */
 
   return true;
 }
