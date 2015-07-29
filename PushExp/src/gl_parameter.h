@@ -39,20 +39,19 @@ class GLParameters {
     ros::param::get("/PushExp/default_init_dist", GLParameters::default_init_dist);
     ros::param::get("/PushExp/workobj_file_cali", GLParameters::workobj_file_cali);
     ros::param::get("/PushExp/workobj_file_geometry", GLParameters::workobj_file_geometry);
-
+  
     // Read the robot resting position. 
-    //GLParameters::ReadList("/PushExp/robot_rest_cart", GLParameters::robot_rest_cart);
-    XmlRpc::XmlRpcValue list;
-    ros::param::get("/PushExp/robot_rest_cart", list);
-    for (int i = 0; i < list.size(); i++) {
-      ROS_ASSERT(list[i].getType() == XmlRpc::XmlRpcValue::TypeDouble);
-      robot_rest_cart[i] = static_cast<double>(list[i]);
-    }
+    GLParameters::ReadList("/PushExp/robot_rest_cart", GLParameters::robot_rest_cart);
+    // Read robot set tool.
+    GLParameters::ReadList("/PushExp/robot_set_workobj", GLParameters::robot_set_workobj);
+    // Read robot set workobj.
+    GLParameters::ReadList("/PushExp/robot_set_tool", GLParameters::robot_set_tool);
   }
 
   static void ReadList(std::string name, double data[]) {
+    // Caveat:: ros::init() must be called before to enable correct XmlRpc list reading.
     XmlRpc::XmlRpcValue list;
-    ros::param::get(name.c_str(), list);
+    ros::param::get(name, list);
     for (int i = 0; i < list.size(); i++) {
       ROS_ASSERT(list[i].getType() == XmlRpc::XmlRpcValue::TypeDouble);
       data[i] = static_cast<double>(list[i]);
@@ -69,6 +68,8 @@ double GLParameters::min_edge_dist = 10.0;
 double GLParameters::min_push_angle = 20.0;
 double GLParameters::default_init_dist = 50.0;
 double GLParameters::robot_rest_cart[7] = {300, 0, 400.0, 1, 0, 0, 0};
+double GLParameters::robot_set_workobj[7] = {0, 0, 0, 1, 0, 0, 0};
+double GLParameters::robot_set_tool[7] = {-125, 0, 115, 0, 0, 1, 0};
 std::string GLParameters::workobj_file_cali = "";
 std::string GLParameters::workobj_file_geometry = "";
 

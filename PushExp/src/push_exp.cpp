@@ -98,6 +98,7 @@ bool PushExp::CheckForReset() {
 
 
 int main(int argc, char* argv[]) {
+  ros::init(argc, argv, "PushExp");
   GLParameters::ReadParameters();
   return 0;
 }

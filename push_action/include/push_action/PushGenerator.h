@@ -3,6 +3,8 @@
 
 #include <matVec/matVec.h>
 #include <TrackingObj/push_obj.h>
+#include <PushExp/gl_parameters.h>
+
 #include <vector>
 #include <assert.h>
 #include <cstdlib>
@@ -20,7 +22,7 @@ class PushGenerator
 {
   public:
     // Minimum distance from the corner of a block that we will push (mm)
-    const static double MIN_EDGE_DISTANCE = 10.0;
+    const static double MIN_EDGE_DISTANCE = GLParameters::min_edge_dist;
     // Minimum angle the push direction makes with an edge (degrees)
     const static double MIN_PUSH_ANGLE = 20.0;
 
