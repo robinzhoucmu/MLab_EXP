@@ -22,9 +22,9 @@ class PushGenerator
 {
   public:
     // Minimum distance from the corner of a block that we will push (mm)
-    const static double MIN_EDGE_DISTANCE = 10.0;
+    double MIN_EDGE_DISTANCE;
     // Minimum angle the push direction makes with an edge (degrees)
-    const static double MIN_PUSH_ANGLE = 20.0;
+    double MIN_PUSH_ANGLE = 20.0;
 
     // The distance away from the push point to start the object (mm)
     const static double DEFAULT_INITIAL_DISTANCE = 50.0;
@@ -33,9 +33,12 @@ class PushGenerator
     // The distance to retract after pushing (mm)
     const static double DEFAULT_RETRACTION_DISTANCE = 5.0;
 
-    PushGenerator(){ srand(time(NULL)); }
+    PushGenerator() { 
+      srand(time(NULL)); 
+      InitParameters();
+    }
     ~PushGenerator(){}
-
+    void InitParameters();
 
     /** Determines whether a specified push of an object is valid
      * 

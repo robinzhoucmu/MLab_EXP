@@ -1,6 +1,12 @@
 #include "PushGenerator.h"
 
-
+void PushGenerator::InitParameters() {
+  MIN_EDGE_DISTANCE = GLParameters::min_edge_dist;
+  MIN_PUSH_ANGLE = GLParameters::min_push_angle;
+  DEFAULT_INITIAL_DISTANCE = GLParameters::default_init_dist;
+  DEFAULT_PENETRATION_DISTANCE = GLParameters::default_penetration_dist;
+  DEFAULT_RETRACTION_DISTANCE = GLParameters::default_retraction_dist;
+}
 
 bool PushGenerator::checkPush(const PushObject obj, const PushAction push)
 {

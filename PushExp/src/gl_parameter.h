@@ -20,7 +20,9 @@ class GLParameters {
   static double min_edge_dist;  // in mm.
   static double min_push_angle;  // in degree.
   static double default_init_dist; // in mm.
-  
+  static double default_penetration_dist; // in mm.
+  static double default_retraction_dist; // in mm.
+
   // Default robot resting position.
   static double robot_rest_cart[7]; // in mm.
   
@@ -37,6 +39,7 @@ class GLParameters {
     ros::param::get("/PushExp/mocap_num_readings", GLParameters::mocap_num_readings);
     ros::param::get("/PushExp/mocap_read_duration", GLParameters::mocap_read_duration);
     ros::param::get("/PushExp/default_init_dist", GLParameters::default_init_dist);
+    ros::param::get("/PushExp/default_penetration_dist", GLParameters::default_penetration_dist);
     ros::param::get("/PushExp/workobj_file_cali", GLParameters::workobj_file_cali);
     ros::param::get("/PushExp/workobj_file_geometry", GLParameters::workobj_file_geometry);
   
@@ -67,6 +70,7 @@ double GLParameters::mocap_read_duration = 1.0;
 double GLParameters::min_edge_dist = 10.0;
 double GLParameters::min_push_angle = 20.0;
 double GLParameters::default_init_dist = 50.0;
+double GLParameters::default_penetration_dist = 25.0;
 double GLParameters::robot_rest_cart[7] = {300, 0, 400.0, 1, 0, 0, 0};
 double GLParameters::robot_set_workobj[7] = {0, 0, 0, 1, 0, 0, 0};
 double GLParameters::robot_set_tool[7] = {-125, 0, 115, 0, 0, 1, 0};
