@@ -24,14 +24,14 @@ class PushGenerator
     // Minimum distance from the corner of a block that we will push (mm)
     double MIN_EDGE_DISTANCE;
     // Minimum angle the push direction makes with an edge (degrees)
-    double MIN_PUSH_ANGLE = 20.0;
+    double MIN_PUSH_ANGLE;
 
     // The distance away from the push point to start the object (mm)
-    double DEFAULT_INITIAL_DISTANCE = 50.0;
+    double DEFAULT_INITIAL_DISTANCE;
     // The distance past the push point to push the object (mm)
-    double DEFAULT_PENETRATION_DISTANCE = 20.0;
+    double DEFAULT_PENETRATION_DISTANCE;
     // The distance to retract after pushing (mm)
-    double DEFAULT_RETRACTION_DISTANCE = 5.0;
+    double DEFAULT_RETRACTION_DISTANCE;
 
     PushGenerator() { 
       srand(time(NULL)); 

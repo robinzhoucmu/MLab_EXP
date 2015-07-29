@@ -72,6 +72,7 @@ double GLParameters::min_edge_dist = 10.0;
 double GLParameters::min_push_angle = 20.0;
 double GLParameters::default_init_dist = 50.0;
 double GLParameters::default_penetration_dist = 25.0;
+double GLParameters::default_retraction_dist = 5.0;
 
 double GLParameters::robot_rest_cart[7] = {300, 0, 400.0, 1, 0, 0, 0};
 double GLParameters::robot_set_workobj[7] = {0, 0, 0, 1, 0, 0, 0};
