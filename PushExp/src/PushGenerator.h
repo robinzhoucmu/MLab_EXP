@@ -33,9 +33,7 @@ class PushGenerator
     // The distance to retract after pushing (mm)
     double DEFAULT_RETRACTION_DISTANCE;
 
-    // The distance off of an edge a point can be where check_push will
-    // still return true (mm)
-    const static double MAX_DIST_OFF_EDGE = 0.1;
+
 
     PushGenerator() { 
       srand(time(NULL)); 
@@ -94,8 +92,11 @@ class PushGenerator
         std::vector<HomogTransf> *robotPoses);
 
   private:
-
-
+    // The distance off of an edge a point can be where check_push will
+    // still return true (mm)
+    const static double MAX_DIST_OFF_EDGE = 0.1;
+    // Minimum norm of push vector
+    const static double MIN_VECTOR_NORM = 0.001;
 };
 
 #endif /* PUSH_GENERATOR_H */

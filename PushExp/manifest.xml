@@ -15,6 +15,7 @@
   <depend package="matVec"/>
   <depend package="Mocap"/>
   <depend package="TrackingObj"/>
+  <depend package="roslib"/>  
 </package>
 
 

@@ -39,4 +39,4 @@ rosbuild_add_executable(push_exp src/push_exp.cpp)
 target_link_libraries(push_exp push_action)
 
 rosbuild_add_executable(test_pg src/test_pg.cpp)
-target_link_libraries(test_pg PushGenerator)
+target_link_libraries(test_pg push_action)

@@ -47,17 +47,18 @@ bool PushGenerator::checkPush(const PushObject obj, const PushAction push)
   }
   */
 
+  //***********************************
   // First, let's confirm that the distances used by the push are
   // non-negative
   if (push.initialDist < 0 || push.penetrationDist < 0 || push.retractionDist < 0)
     return false;
 
+  //***********************************
   // Next, let's check that the push point is on the object
   int edge_idx = -1;
-  double best_perp_edge_dist;
+  double best_perp_edge_dist = -1;
   const std::vector<Edge>& edges = obj.GetEdges();  
-  size_t num_edges = edges.size();
-  for (size_t i=0; i < num_edges; ++i)
+  for (size_t i=0; i < edges.size(); ++i)
   {
     // Compute where the push point is relative to this edge
     // First, compute a vector from the left end of this edge to the push
@@ -66,6 +67,9 @@ bool PushGenerator::checkPush(const PushObject obj, const PushAction push)
     Vec rel_vec = push.pushPoint - edges[i].left_end;
     double edge_length = edges[i].edge_vec.norm();
     double along_edge_length = rel_vec * edges[i].edge_vec / edge_length; // project relative vector onto edge_vec
+
+    // Next compute the perpendicular vector and distance the point is away
+    // from the edge
     Vec perp_vec = push.pushPoint - (edges[i].left_end + (edges[i].edge_vec * along_edge_length) / edge_length);
     double perp_edge_length = perp_vec.norm();
 
@@ -100,18 +104,29 @@ bool PushGenerator::checkPush(const PushObject obj, const PushAction push)
   if (edge_idx == -1)
     return false;
 
+  //**********************************
   // Finally, check that the direction of the push is not too far away from
   // the normal direction, which will result in a collision or a missed
   // push
+
+  // Initially, make sure pushVector is not null
+  if (push.pushVector.norm() < MIN_VECTOR_NORM)
+    return false;
+
   // Compute the angle between the pushVector and the normal vector by
-  // taking the dot product of the vectors
-  double angle = 180/PI * acos(push.pushVector * (edges[edge_idx].normal_dir * -1) / (push.pushVector.norm() * edges[edge_idx].normal_dir.norm())); 
+  // taking the dot product of the vectors (Note that normal_dir from the
+  // object is an outward facing normal, so we'll multiply by -1 to make it
+  // inward facing)
+  double angle = 180/PI * acos(
+      push.pushVector * (edges[edge_idx].normal_dir * -1) / 
+      (push.pushVector.norm() * edges[edge_idx].normal_dir.norm())); 
   
   // If the angle between the push vector and the normal vector is too
   // large, this is not a valid push
   if (90 - angle < MIN_PUSH_ANGLE)
     return false;
   
+  //********************************
   // If we have passed all of the above tests, then this is a valid push
   return true;
 }

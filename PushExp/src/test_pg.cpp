@@ -32,8 +32,9 @@ int main(int argc, char** argv)
   {
     ret = pg.generateRandomPush(triangle, &push);
     std::cout << "Push Point: " << push.pushPoint << " Push Dir: " << push.pushVector << " ret = " << ret << std::endl;
+    ret = pg.checkPush(triangle, push);
+    std::cout << "CheckPush = " << ret << std::endl;
   }
-
 
   std::cout << "*******************************" << std::endl;
   push.pushPoint = Vec("50 50 0",3);
@@ -63,6 +64,48 @@ int main(int argc, char** argv)
     std::cout << robotPoses[i].getTranslation() << robotPoses[i].getQuaternion() << std::endl;
   }
 
+  std::cout << "*******************************" << std::endl;
+  std::cout << "Check Push Tests" << std::endl;
+  push.initialDist = -10;
+  push.penetrationDist = pg.DEFAULT_PENETRATION_DISTANCE;
+  push.retractionDist = pg.DEFAULT_RETRACTION_DISTANCE;
+  push.pushPoint = Vec("0 40 0",3);
+  push.pushVector = Vec("1 0 0",3);
+
+  std::cout << "Expected: 0, Got: " << pg.checkPush(triangle, push) << std::endl;
+
+  push.initialDist = pg.DEFAULT_INITIAL_DISTANCE;
+  push.penetrationDist = pg.DEFAULT_PENETRATION_DISTANCE;
+  push.retractionDist = pg.DEFAULT_RETRACTION_DISTANCE;
+  push.pushPoint = Vec("5 40 0",3);
+  push.pushVector = Vec("1 0 0",3);
+
+  std::cout << "Expected: 0, Got: " << pg.checkPush(triangle, push) << std::endl;
+
+  push.pushPoint = Vec("0 2 0",3);
+  push.pushVector = Vec("1 0 0",3);
+
+  std::cout << "Expected: 0, Got: " << pg.checkPush(triangle, push) << std::endl;
+
+  push.pushPoint = Vec("50 50 0",3);
+  push.pushVector = Vec("-0.7071 -0.7071 0",3);
+
+  std::cout << "Expected: 1, Got: " << pg.checkPush(triangle, push) << std::endl;
+  
+  push.pushPoint = Vec("0 40 0",3);
+  push.pushVector = Vec("-1 0 0",3);
+
+  std::cout << "Expected: 0, Got: " << pg.checkPush(triangle, push) << std::endl;
+
+  push.pushPoint = Vec("0 40 0",3);
+  push.pushVector = Vec("0 1 0",3);
+
+  std::cout << "Expected: 0, Got: " << pg.checkPush(triangle, push) << std::endl;
+
+  push.pushPoint = Vec("0 200 0",3);
+  push.pushVector = Vec("1 0 0",3);
+
+  std::cout << "Expected: 0, Got: " << pg.checkPush(triangle, push) << std::endl;
 
   return 0;
 }
