@@ -41,6 +41,72 @@ bool PushGenerator::checkPush(const PushObject obj, const PushAction push)
   }
   */
 
+  // First, let's confirm that the distances used by the push are
+  // non-negative
+  if (initialDist < 0 || penetrationDist < 0 || retractionDist < 0)
+    return false;
+
+  // Next, let's check that the push point is on the object
+  int edge_idx = -1;
+  double best_perp_edge_dist;
+  const std::vector<Edge>& edges = obj.GetEdges();  
+  size_t num_edges = edges.size();
+  for (size_t i=0; i < num_edges; ++i)
+  {
+    // Compute where the push point is relative to this edge
+    // First, compute a vector from the left end of this edge to the push
+    // point, so we can decompose it into lengths along the edge and
+    // perpendicular to the edge
+    Vec rel_vec = push.pushPoint - edges[i].left_end;
+    double edge_length = edges[i].edge_vec.norm();
+    double along_edge_length = rel_vec * edges[i].edge_vec / edge_length; // project relative vector onto edge_vec
+    Vec perp_vec = push.pushPoint - (left_end + along_edge_length * edges[i].edge_vec / edge_length);
+    double perp_edge_length = perp_vec.norm();
+
+    // Now check if the point lies on this edge
+    if (fabs(perp_edge_length) > MAX_DIST_OFF_EDGE)
+    {
+      // If the perpendicular distance is too large, the point is not on
+      // this edge
+      continue;
+    }
+    else if (along_edge_length < MIN_EDGE_DISTANCE || along_edge_length > edge_length - MIN_EDGE_DISTANCE)
+    {
+      // If the perpendicular distance is ok, but the point doesn't lie
+      // within the pushable region of the edge, then this is not a valid
+      // edge to push
+      continue;
+    }
+    else
+    {
+      // Otherwise, this is a valid push. Do some additional logic to make
+      // sure we pick the edge that the point is closest to.
+      if (edge_idx == -1 || perp_edge_length < best_perp_edge_dist)
+      {
+        edge_idx = i;
+        best_perp_edge_dist = perp_edge_length;
+      }
+    }
+  }
+
+  // If we couldn't find an edge that the push point was close to, then
+  // this is not a valid push
+  if (edge_idx == -1)
+    return false;
+
+  // Finally, check that the direction of the push is not too far away from
+  // the normal direction, which will result in a collision or a missed
+  // push
+  // Compute the angle between the pushVector and the normal vector by
+  // taking the dot product of the vectors
+  double angle = 180/PI * acos(push.pushVector * (edges[edge_idx].normal_dir * -1) / (push.pushVector.norm() * edges[edge_idx].normal_dir.norm())); 
+  
+  // If the angle between the push vector and the normal vector is too
+  // large, this is not a valid push
+  if (90 - angle < MIN_PUSH_ANGLE)
+    return false;
+  
+  // If we have passed all of the above tests, then this is a valid push
   return true;
 }
 

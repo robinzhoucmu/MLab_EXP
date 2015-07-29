@@ -33,6 +33,10 @@ class PushGenerator
     // The distance to retract after pushing (mm)
     const static double DEFAULT_RETRACTION_DISTANCE = 5.0;
 
+    // The distance off of an edge a point can be where check_push will
+    // still return true (mm)
+    const static double MAX_DIST_OFF_EDGE = 0.1;
+
     PushGenerator(){ srand(time(NULL)); }
     ~PushGenerator(){}
 
