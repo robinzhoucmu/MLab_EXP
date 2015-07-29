@@ -42,7 +42,10 @@ class PushGenerator
      *             the edge of the object where we will be making a push
      * \param[in] pushVector a 2d vector containing the direction of the 
      *             push in the frame of the PushObject
-     * \return boolean for whether or not this is a valid push
+     * \return boolean for whether or not this is a valid push. False will
+     * be returned for any of the following reasons: (1) pushPoint is not on
+     * the surface of the object, (2) pushVector is not within
+     * MIN_PUSH_ANGLE, (3) any of the distances are negative
      */
     bool checkPush(const PushObject obj, const PushAction push);
 
@@ -67,7 +70,7 @@ class PushGenerator
      *            frame used here is also used by the push action.
      * \param[in] tableNormal A 3d vector representing the normal vector the 
      *            table in the frame used by the robot, pointing upwards 
-     * \param[out] robotPoses A vector of poses to move the robot through to 
+     * \param[out] robotPoses A length 3 vector of poses to move the robot through to 
      *              execute the desired push. The robot will start an 
      *              'initialDist' away from the object, then move to contact
      *              the object and push it a 'penetrationDist' amount, and 
