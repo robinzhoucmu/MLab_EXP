@@ -15,7 +15,7 @@
 #include <matVec/matVec.h>
 
 #include "gl_parameter.h"
-#include <push_action/PushGenerator.h>
+#include "PushGenerator.h"
 
 class PushExp {
  public:

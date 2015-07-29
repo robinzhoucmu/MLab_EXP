@@ -21,14 +21,14 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 #uncomment if you have defined services
 #rosbuild_gensrv()
 
-ADD_CUSTOM_COMMAND(
-  OUTPUT gl_parameter.h
-  COMMAND cp ${PROJECT_SOURCE_DIR}/src/gl_parameter.h
-             ${PROJECT_SOURCE_DIR}/include/PushExp/gl_parameter.h
-  DEPENDS ${PROJECT_SOURCE_DIR}/src/gl_parameter.h 
-  )
+#ADD_CUSTOM_COMMAND(
+#  OUTPUT gl_parameter.h
+#  COMMAND cp ${PROJECT_SOURCE_DIR}/src/gl_parameter.h
+#             ${PROJECT_SOURCE_DIR}/include/PushExp/gl_parameter.h
+#  DEPENDS ${PROJECT_SOURCE_DIR}/src/gl_parameter.h 
+#  )
 
-ADD_CUSTOM_TARGET(makeH ALL DEPENDS gl_parameter.h)
+#ADD_CUSTOM_TARGET(makeH ALL DEPENDS gl_parameter.h)
 
 #common commands for building c++ executables and libraries
 #rosbuild_add_library(${PROJECT_NAME} src/example.cpp)
