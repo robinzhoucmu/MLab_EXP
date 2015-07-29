@@ -24,6 +24,10 @@ class GLParameters {
   // Default robot resting position.
   static double robot_rest_cart[7]; // in mm.
   
+  // Initial robot settings.
+  static double robot_set_workobj[7];  // in mm.
+  static double robot_set_tool[7]; //in mm.
+
   // Files that store work object geometry and calibration information.
   static std::string workobj_file_cali;
   static std::string workobj_file_geometry;
@@ -33,15 +37,26 @@ class GLParameters {
     ros::param::get("/PushExp/mocap_num_readings", GLParameters::mocap_num_readings);
     ros::param::get("/PushExp/mocap_read_duration", GLParameters::mocap_read_duration);
     ros::param::get("/PushExp/default_init_dist", GLParameters::default_init_dist);
-    ros::param::get("/PushExp/workobj_file_cali", GLParameters::work_obj_file_cali);
+    ros::param::get("/PushExp/workobj_file_cali", GLParameters::workobj_file_cali);
     ros::param::get("/PushExp/workobj_file_geometry", GLParameters::workobj_file_geometry);
 
-    // Read the robot resting position.
+    // Read the robot resting position. 
+    //GLParameters::ReadList("/PushExp/robot_rest_cart", GLParameters::robot_rest_cart);
     XmlRpc::XmlRpcValue list;
-    ros::param::get("/PushExp/safe_height", list);
+    ros::param::get("/PushExp/robot_rest_cart", list);
     for (int i = 0; i < list.size(); i++) {
       ROS_ASSERT(list[i].getType() == XmlRpc::XmlRpcValue::TypeDouble);
       robot_rest_cart[i] = static_cast<double>(list[i]);
+    }
+  }
+
+  static void ReadList(std::string name, double data[]) {
+    XmlRpc::XmlRpcValue list;
+    ros::param::get(name.c_str(), list);
+    for (int i = 0; i < list.size(); i++) {
+      ROS_ASSERT(list[i].getType() == XmlRpc::XmlRpcValue::TypeDouble);
+      data[i] = static_cast<double>(list[i]);
+      std::cout << data[i] << std::endl;
     }
   }
 };
@@ -52,7 +67,8 @@ int GLParameters::mocap_num_readings = 5;
 double GLParameters::mocap_read_duration = 1.0;
 double GLParameters::min_edge_dist = 10.0;
 double GLParameters::min_push_angle = 20.0;
-double robot_rest_cart[7] = {300, 0, 400.0, 1, 0, 0, 0};
+double GLParameters::default_init_dist = 50.0;
+double GLParameters::robot_rest_cart[7] = {300, 0, 400.0, 1, 0, 0, 0};
 std::string GLParameters::workobj_file_cali = "";
 std::string GLParameters::workobj_file_geometry = "";
 
