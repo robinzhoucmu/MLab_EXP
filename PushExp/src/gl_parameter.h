@@ -15,6 +15,7 @@ class GLParameters {
   
   static int mocap_num_readings;
   static double mocap_read_duration; // in seconds.
+  static double mocap_cali_tf[7];
 
   // Pushing parameters.
   static int num_pushes;
@@ -29,6 +30,8 @@ class GLParameters {
   static double robot_rest_cart[7]; // in mm.
   
   // Initial robot settings.
+  static double robot_tcp_speed; // in mm.
+  static double robot_ori_speed; // in degree.
   static double robot_set_workobj[7];  // in mm.
   static double robot_set_tool[7]; //in mm.
 
@@ -42,19 +45,27 @@ class GLParameters {
     ros::param::get("/PushExp/mocap_read_duration", GLParameters::mocap_read_duration);
 
     ros::param::get("/PushExp/num_pushes", GLParameters::num_pushes);
+    ros::param::get("/PushExp/min_edge_dist", GLParameters::min_edge_dist);
+    ros::param::get("/PushExp/min_push_angle", GLParameters::min_push_angle);
     ros::param::get("/PushExp/default_init_dist", GLParameters::default_init_dist);
     ros::param::get("/PushExp/default_penetration_dist", GLParameters::default_penetration_dist);
-    ros::param::get("/PushExp/default_retraction_dist", GLParameters::default_penetration_dist);
+    ros::param::get("/PushExp/default_retraction_dist", GLParameters::default_retraction_dist);
     ros::param::get("/PushExp/default_move_close_dist", GLParameters::default_move_close_dist);
     ros::param::get("/PushExp/workobj_file_cali", GLParameters::workobj_file_cali);
     ros::param::get("/PushExp/workobj_file_geometry", GLParameters::workobj_file_geometry);
-  
+    ros::param::get("/PushExp/robot_tcp_speed", GLParameters::robot_tcp_speed);
+    ros::param::get("/PushExp/robot_ori_speed", GLParameters::robot_ori_speed);
+
     // Read the robot resting position. 
     GLParameters::ReadList("/PushExp/robot_rest_cart", GLParameters::robot_rest_cart);
     // Read robot set tool.
     GLParameters::ReadList("/PushExp/robot_set_workobj", GLParameters::robot_set_workobj);
     // Read robot set workobj.
     GLParameters::ReadList("/PushExp/robot_set_tool", GLParameters::robot_set_tool);
+
+    // Read mocap calibration transform.
+    GLParameters::ReadList("/PushExp/mocap_cali_tf", GLParameters::mocap_cali_tf);
+    
   }
 
   static void ReadList(std::string name, double data[]) {
@@ -64,7 +75,7 @@ class GLParameters {
     for (int i = 0; i < list.size(); i++) {
       ROS_ASSERT(list[i].getType() == XmlRpc::XmlRpcValue::TypeDouble);
       data[i] = static_cast<double>(list[i]);
-      std::cout << data[i] << std::endl;
+      //std::cout << data[i] << std::endl;
     }
   }
 };
@@ -81,9 +92,12 @@ double GLParameters::default_init_dist = 50.0;
 double GLParameters::default_penetration_dist = 25.0;
 double GLParameters::default_retraction_dist = 5.0;
 double GLParameters::default_move_close_dist = 15.0;
+double GLParameters::robot_tcp_speed = 10.0;
+double GLParameters::robot_ori_speed = 5.0;
 double GLParameters::robot_rest_cart[7] = {300, 0, 400.0, 1, 0, 0, 0};
 double GLParameters::robot_set_workobj[7] = {0, 0, 0, 1, 0, 0, 0};
 double GLParameters::robot_set_tool[7] = {-125, 0, 115, 0, 0, 1, 0};
+double GLParameters::mocap_cali_tf[7] = {668.54, -260.52, 56.021, 0.49366, 0.49611, 0.50222, 0.50788};
 std::string GLParameters::workobj_file_cali = "";
 std::string GLParameters::workobj_file_geometry = "";
 

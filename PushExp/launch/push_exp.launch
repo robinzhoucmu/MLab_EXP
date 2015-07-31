@@ -1,4 +1,4 @@
 <launch>
     <rosparam command="load" file="$(find PushExp)/parameters/push_exp.yaml"/>
-    <node pkg="PushExp" type="push_exp" name="push_exp_node" output="screen"/>	
+    <node pkg="PushExp" type="push_exp" name="push_exp_node" output="screen" cwd="node"/>	
 </launch>

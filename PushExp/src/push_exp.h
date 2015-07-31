@@ -22,6 +22,7 @@ class PushExp {
   PushExp(ros::NodeHandle *n);
   ~PushExp(){};
   void Initialize();
+  bool ConfirmStart();
   void Run();  
 
  private:
@@ -50,10 +51,12 @@ class PushExp {
 
   // Robot movement trajectory for one single push.
   std::vector<HomogTransf> robot_push_traj;
-
+  
   // Robot resting cartesian position.
   double robot_rest_cart[7];
 
+  void InitializeRobot();
+  void InitializeMocapTransform();
   // Command the robot to a resting position that won't block the mocap nor touch the object.
   bool RobotMoveToRestingState();
   // Let the mocap acquire STATIC object poses assuming the robot is not blocking view.

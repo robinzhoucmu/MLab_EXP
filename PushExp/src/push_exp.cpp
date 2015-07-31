@@ -2,7 +2,7 @@
 #include "geometry_msgs/WrenchStamped.h"
 
 // Global flag indicating whether the robot is pushing the object.
-bool flag_is_pushing;
+bool flag_is_pushing = false;
 std::vector<geometry_msgs::Wrench> ft_wrenches;
 
 // Asynchronous force logging.
@@ -23,20 +23,53 @@ void PushExp::Initialize() {
   kReadDuration = GLParameters::mocap_read_duration;
   safe_height = GLParameters::safe_height;
 
-  memcpy(robot_rest_cart, GLParameters::robot_rest_cart, sizeof(robot_rest_cart));
+  memcpy(robot_rest_cart, GLParameters::robot_rest_cart, sizeof(GLParameters::robot_rest_cart));
   
+  std::cout << "constructing push object from file" << std::endl;
   std::string obj_file_cali = GLParameters::workobj_file_cali;
   std::string obj_file_geo = GLParameters::workobj_file_geometry;
+  std::cout << obj_file_cali << "," << obj_file_geo << std::endl;
   push_object = new PushObject(obj_file_cali, obj_file_geo);
   
+  std::cout << "new push generator" << std::endl;
   push_plan_gen = new PushGenerator();
   
   robot = new RobotComm(nh);
-  
+  // Set tool and work object transform.
+  InitializeRobot();
+  // Initialize mocap transform.
+  InitializeMocapTransform();
+  // Initialize force logging related stuffs.
+  std::cout << "async spinner" << std::endl;
   async_spinner = new ros::AsyncSpinner(1);
+  flag_is_pushing = false;
   force_sub = nh->subscribe("netft_data", 1000, CallBackForceLogging);
 }
 
+void PushExp::InitializeRobot() {
+  // Set tool.
+  double tf_tool[7];
+  memcpy(tf_tool, GLParameters::robot_set_tool, sizeof(GLParameters::robot_set_tool));
+  robot->SetTool(tf_tool[0], tf_tool[1], tf_tool[2], 
+		 tf_tool[3], tf_tool[4], tf_tool[5], tf_tool[6]);
+  // Set workobj.
+  double tf_workobj[7];
+  memcpy(tf_workobj, GLParameters::robot_set_workobj, sizeof(GLParameters::robot_set_workobj));
+  robot->SetWorkObject(tf_workobj[0], tf_workobj[1], tf_workobj[2], 
+		       tf_workobj[3], tf_workobj[4], tf_workobj[5], tf_workobj[6]);
+  // Set speed.
+  double tcp_speed = GLParameters::robot_tcp_speed;
+  double ori_speed = GLParameters::robot_ori_speed;
+  robot->SetSpeed(tcp_speed, ori_speed);
+}
+
+void PushExp::InitializeMocapTransform() {
+  ros::NodeHandle n;
+  MocapComm mocap_comm(&n);
+  double mocap_cali_tf[7];
+  memcpy(mocap_cali_tf, GLParameters::mocap_cali_tf, sizeof(GLParameters::mocap_cali_tf));
+  mocap_comm.SetMocapTransformation(mocap_cali_tf);
+}
 
 // Remember to stop async spinner after robot finishes pushing. 
 void PushExp::LogPushForceAsync() {
@@ -150,12 +183,14 @@ bool PushExp::ExecRobotPushAndLogForce() {
   assert(robot->SetCartesian(robot_push_traj[ind_approach]));
   // Move close to the object to prepare pushing.
   assert(robot->SetCartesian(robot_push_traj[ind_close]));
+  flag_is_pushing = true;
   // Now start logging. 
   LogPushForceAsync();
   // Push the object.
   assert(robot->SetCartesian(robot_push_traj[ind_push]));
   // After the robot pushes in, finish async force logging.
   async_spinner->stop();
+  flag_is_pushing = false;
   // Retract the robot to break contact.
   assert(robot->SetCartesian(robot_push_traj[ind_retract]));
   // Robot Leave Contact.
@@ -166,7 +201,10 @@ bool PushExp::ExecRobotPushAndLogForce() {
 bool PushExp::RobotMoveToRestingState() {
   bool flag_move_success = robot->SetCartesian(robot_rest_cart);
   if (!flag_move_success) {
+    flag_robot_away = false;
     std::cerr << "Robot did not successfully move to resting position" << std::endl;
+  } else {
+    flag_robot_away = true;
   }
   return flag_move_success;
 }
@@ -180,12 +218,9 @@ bool PushExp::RobotMoveToAbove(HomogTransf pose_below) {
   
   bool flag = robot->SetCartesian(pose_above); 
   if (!flag) {
-    flag_robot_away = false;
     std::cerr << "Robot fail to move above " << std::endl;
     std::cerr << pose_below << std::endl;
-  } else {
-    flag_robot_away = true;
-  }
+  } 
   return flag;
 }
 
@@ -193,11 +228,51 @@ bool PushExp::CheckForReset() {
   return true;
 }
 
+bool PushExp::ConfirmStart() {
+  std::cout << "Print diagnostic information to confirm starting experiment" << std::endl;
+ 
+  // Print robot information.
+  HomogTransf tf_tool;
+  HomogTransf tf_workobj;
+  double tcp, ori;
+  int zone;
+  robot->GetState(tcp, ori, zone, tf_workobj, tf_tool);
+  std::cout << "Robot tool setting:" << std::endl;
+  std::cout << tf_tool.getTranslation() << "," << tf_tool.getQuaternion() << std::endl;
+  std::cout << "Robot work object setting:" << std::endl;
+  std::cout << tf_workobj.getTranslation() << "," << tf_workobj.getQuaternion() << std::endl;
+  std::cout << "tpc, ori, zone:" << std::endl;
+  std::cout << tcp << "," << ori << "," << zone << std::endl;
+  HomogTransf robot_tf;
+  robot->GetCartesian(robot_tf);
+  std::cout << "Robot pose now:" << std::endl;
+  std::cout << robot_tf.getTranslation() << "," << robot_tf.getQuaternion() << std::endl;
+ 
+  // Print object pose.
+  HomogTransf obj_pose_tf;
+  push_object->GetGlobalObjPose(&obj_pose_tf);
+  std::cout << "Object pose in global robot frame:" << std::endl;
+  std::cout << obj_pose_tf.getTranslation() <<"," << obj_pose_tf.getQuaternion() << std::endl;
+  std::cout << "axis: " << obj_pose_tf.getQuaternion().getAxis() 
+	    << ", angle: " << obj_pose_tf.getQuaternion().getAngle() << std::endl;
+  // Ask to confirm start running experiments.
+  std::cout << "Press y for start and n for stop" << std::endl;
+  char ch;
+  std::cin >> ch;
+  if (ch == 'Y' || ch == 'y') {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 void PushExp::Run() {
   assert(num_pushes >= 1);
-  for (int i = 0; i < num_pushes; ++i) {
-    std::cout << "Started to run push " << i << std::endl;
-    SinglePushPipeline();
+  if (ConfirmStart()) {
+    for (int i = 0; i < num_pushes; ++i) {
+      std::cout << "Started to run push " << i << std::endl;
+      SinglePushPipeline();
+    }
   }
 }
 
