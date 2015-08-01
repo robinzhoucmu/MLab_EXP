@@ -18,6 +18,9 @@ PushExp::PushExp(ros::NodeHandle *n) {
 }
 
 void PushExp::Initialize() {
+  // Extract the flag indicating whether to execute the robot to goal position.
+  execution_flag = GLParameters::execution_flag;
+
   num_pushes = GLParameters::num_pushes;
   kNumMocapReadings = GLParameters::mocap_num_readings;
   kReadDuration = GLParameters::mocap_read_duration;
@@ -79,7 +82,41 @@ void PushExp::LogPushForceAsync() {
   async_spinner->start();
 }
 
-bool PushExp::ComputeAveragePose(HomogTransf* avg_pose_tf) {
+bool PushExp::SetCartesian(HomogTransf tf) {
+  if (execution_flag) {
+    return robot->SetCartesian(tf);
+  } else {
+    std::cout <<"Robot Set Cartesian: ";
+    std::cout << tf.getTranslation() << "," <<tf.getQuaternion() << std::endl;
+    return true;
+  }
+}
+// Average over a bunch of planar poses recorded in obj_poses. 
+bool PushExp::ComputeAveragePose(HomogTransf* pose_tf) {
+  // Convert vector of homogtransf to quaternion.
+  std::cout << "compute average pose" << std::endl;
+  const int num_poses = obj_poses.size();
+  assert(num_poses >= 1);
+  Vec sum_trans(0.0, 3);
+  Quaternion sum_quat(0.0);
+  for (int i = 0; i < num_poses; ++i) {
+    // TODO(Jiaji): Add consistency check logic.
+    const HomogTransf& pose_i = obj_poses[i];
+    // convert each homogtransformation to quaternion.
+    sum_trans = sum_trans + pose_i.getTranslation();
+    Quaternion q = pose_i.getQuaternion();
+    if (q[0] < 0) {
+      q = -q;
+    }
+    sum_quat = sum_quat + q;
+  }
+  // Compute average transformation and quaternion.
+  Vec avg_trans = sum_trans / num_poses;
+  Quaternion avg_quat = sum_quat / num_poses;
+  // Normalize the quaternion.
+  avg_quat.normalize();
+  pose_tf->setTranslation(avg_trans);
+  pose_tf->setQuaternion(avg_quat);
   return true;
 }
 
@@ -102,20 +139,24 @@ bool PushExp::AcquireObjectStablePose(HomogTransf* pose_tf) {
       // 	obj_poses.push_back(pose);
       // }
       if (push_object->GetGlobalObjPose(&obj_pose_tf)) {
+	//std::cout << obj_pose_tf << std::endl;
 	obj_poses.push_back(obj_pose_tf);
 	++num_acquired_frames;
       }
       ros::Duration(t_sleep).sleep();
       elapsed_time = ros::Time::now().toSec() - start_time;
-    }
+    } // while
     // Average Reading.
     bool flag_average = ComputeAveragePose(pose_tf);
     if (!flag_average) {
       std::cerr << "Acquired readings are problematic" << std::endl;
       return false;
-    } 
-    return true;
-  } else {
+    } else {
+      std::cout << "Successfully acquired pose" << std::endl;
+      //std::cout << *pose_tf << std::endl;
+      return true;
+    }
+  } else {       
     std::cerr << "Robot is NOT in a far away position" << std::endl;
     return false;
   }
@@ -178,28 +219,34 @@ bool PushExp::ExecRobotPushAndLogForce() {
 
   HomogTransf approach_pose = robot_push_traj[ind_approach];
   // Move to above. 
+  std::cout << "Move to Above" << std::endl;
   assert(RobotMoveToAbove(approach_pose));
   // Move to relatively far approach_pose.
-  assert(robot->SetCartesian(robot_push_traj[ind_approach]));
+  std::cout << "Approach" << std::endl;
+  assert(SetCartesian(robot_push_traj[ind_approach]));
   // Move close to the object to prepare pushing.
-  assert(robot->SetCartesian(robot_push_traj[ind_close]));
+  std::cout << "Getting close" << std::endl;
+  assert(SetCartesian(robot_push_traj[ind_close]));
   flag_is_pushing = true;
   // Now start logging. 
   LogPushForceAsync();
   // Push the object.
-  assert(robot->SetCartesian(robot_push_traj[ind_push]));
+  std::cout << "Push into" << std::endl;
+  assert(SetCartesian(robot_push_traj[ind_push]));
   // After the robot pushes in, finish async force logging.
   async_spinner->stop();
   flag_is_pushing = false;
   // Retract the robot to break contact.
-  assert(robot->SetCartesian(robot_push_traj[ind_retract]));
+  std::cout << "Retract" << std::endl;
+  assert(SetCartesian(robot_push_traj[ind_retract]));
   // Robot Leave Contact.
+  std::cout << "Move back to resting position" << std::endl;
   assert(RobotMoveToRestingState());
   return true;
 }
 
 bool PushExp::RobotMoveToRestingState() {
-  bool flag_move_success = robot->SetCartesian(robot_rest_cart);
+  bool flag_move_success = SetCartesian(robot_rest_cart);
   if (!flag_move_success) {
     flag_robot_away = false;
     std::cerr << "Robot did not successfully move to resting position" << std::endl;
@@ -216,7 +263,7 @@ bool PushExp::RobotMoveToAbove(HomogTransf pose_below) {
   trans[2] = safe_height;
   HomogTransf pose_above(quat, trans);
   
-  bool flag = robot->SetCartesian(pose_above); 
+  bool flag = SetCartesian(pose_above); 
   if (!flag) {
     std::cerr << "Robot fail to move above " << std::endl;
     std::cerr << pose_below << std::endl;

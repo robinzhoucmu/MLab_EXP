@@ -26,6 +26,7 @@ class PushExp {
   void Run();  
 
  private:
+  bool execution_flag;
   ros::NodeHandle *nh;
   RobotComm* robot;
   PushGenerator* push_plan_gen;
@@ -57,12 +58,15 @@ class PushExp {
 
   void InitializeRobot();
   void InitializeMocapTransform();
+  
+  // A wrapper function over robot_comm SetCartesian. 
+  bool SetCartesian(HomogTransf tf);
+
   // Command the robot to a resting position that won't block the mocap nor touch the object.
   bool RobotMoveToRestingState();
   // Let the mocap acquire STATIC object poses assuming the robot is not blocking view.
   bool AcquireObjectStablePose(HomogTransf* pose_tf);
-  bool ComputeAveragePose(HomogTransf* avg_pose_tf);
-
+  bool ComputeAveragePose(HomogTransf* pose_tf);
   // 1) Move from the robot from rest state to pre-approach state.
   // 2) Approach object and push.
   // 3) Leave contact. 

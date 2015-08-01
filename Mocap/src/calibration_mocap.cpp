@@ -5,9 +5,9 @@
 
 // Hand chosen values (in robot base frame) that avoid collision.
 // Robot Moves randomly around kCenter.
-const double kCenter[3] = {500, 0, 205};
+const double kCenter[3] = {500, 0, 310};
 // kCenter plus/minus kDelta as boundary.
-const double kDelta[3] = {145, 225, 40};
+const double kDelta[3] = {145, 225, 25};
 
 // Base frame: x pointing out to the vision node; 
 // Have the robot tool frame mostly facing downward.
@@ -215,7 +215,7 @@ int main(int argc, char* argv[]) {
   srand (time(NULL));
   ros::init(argc, argv, "MocapCalibration");
   MocapCalibration mocap_cali;
-  const int kNumRandSamples = 500;
+  const int kNumRandSamples = 300;
   mocap_cali.GenRandomTrajectory(kCenter, kDelta, kDeltaAngles, kNumRandSamples);
   
   std::ofstream fout;

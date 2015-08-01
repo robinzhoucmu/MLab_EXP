@@ -18,6 +18,7 @@ class GLParameters {
   static double mocap_cali_tf[7];
 
   // Pushing parameters.
+  static bool execution_flag;
   static int num_pushes;
   static double min_edge_dist;  // in mm.
   static double min_push_angle;  // in degree.
@@ -40,6 +41,7 @@ class GLParameters {
   static std::string workobj_file_geometry;
 
   static void ReadParameters() {
+    ros::param::get("/PushExp/execution_mode", GLParameters::execution_flag);
     ros::param::get("/PushExp/safe_height", GLParameters::safe_height);
     ros::param::get("/PushExp/mocap_num_readings", GLParameters::mocap_num_readings);
     ros::param::get("/PushExp/mocap_read_duration", GLParameters::mocap_read_duration);
@@ -81,6 +83,7 @@ class GLParameters {
 };
 
 // Need to be "initialized" outside of class. Otherwise won't compile.
+bool GLParameters::execution_flag = false;
 double GLParameters::safe_height = 300.0;
 int GLParameters::mocap_num_readings = 5;
 double GLParameters::mocap_read_duration = 1.0;
