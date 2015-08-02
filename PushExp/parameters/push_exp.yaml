@@ -1,12 +1,12 @@
 PushExp: {
 # flag to decide whether to run robot (true) or just output cartesian goal for debugging (false).
-execution_flag: false,
+execution_mode: true,
 # mm/ safe distance for robot to move above objects without touching.
 safe_height: 300.0,  
 # number of mocap readings to average.
 mocap_num_readings: 5,   
 mocap_read_duration: 1.0,
-num_pushes: 1,
+num_pushes: 2,
 min_edge_dist: 10.0,
 min_push_angle: 20.0,
 default_init_dist: 50.0,
@@ -15,10 +15,9 @@ default_retraction_dist: 5.0,
 default_move_close_dist: 15.0,
 robot_tcp_speed: 10.0,
 robot_ori_speed: 5.0,
-robot_rest_cart: [300.0, 0.0, 400.0, 1.0, 0.0, 0.0, 0.0],
+robot_rest_cart: [490.0, 0.0, 300.0, 1.0, 0.0, 0.0, 0.0],
 robot_set_workobj: [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0],
-robot_set_tool: [0.0, 0.0, 190.0, 0.0, 0.0, 1.0, 0.0],
-#robot_set_tool: [-125.0, 0.0, 115.0, 0.0, 0.0, 1.0, 0.0],
+robot_set_tool: [-125.0, 0.0, 90.5, 0.0, 0.0, 1.0, 0.0],
 mocap_cali_tf: [671.44, -260.31, 58.999, 0.49471, 0.49387, 0.50271, 0.50856],
 workobj_file_cali: '../parameters/aluminium_triangle/obj_cali.txt',
 workobj_file_geometry: '../parameters/aluminium_triangle/obj_geo.txt'

@@ -47,7 +47,6 @@ void ObjectReg::DeserializeHomog(std::istream& fin, HomogTransf* tf) {
   for (int i = 0; i < 4; ++i) {
     for (int j = 0; j < 4; ++j) {
       fin >> tf_mat[i][j];
-      std::cout << tf_mat[i][j] << std::endl;
     }
   }
   *tf = HomogTransf(tf_mat);

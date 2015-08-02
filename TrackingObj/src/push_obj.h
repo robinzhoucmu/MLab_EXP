@@ -25,7 +25,7 @@ class PushObject {
 
   const std::vector<Vec>& GetVertices() const {return obj_geo.vertices;}
   const std::vector<Edge>& GetEdges() const {return obj_geo.edges;}
-  
+  const double GetHeight() const {return obj_geo.height;}
   // Extract the transformation from object mocap marker frame to object local frame. 
   HomogTransf GetIntrinsicTf() const {return obj_reg.GetTransformation();} 
   // Get object name.

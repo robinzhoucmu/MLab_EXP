@@ -83,11 +83,11 @@ void PushExp::LogPushForceAsync() {
 }
 
 bool PushExp::SetCartesian(HomogTransf tf) {
+  std::cout <<"Robot Set Cartesian: ";
+  std::cout << tf.getTranslation() << "," <<tf.getQuaternion() << std::endl;
   if (execution_flag) {
     return robot->SetCartesian(tf);
   } else {
-    std::cout <<"Robot Set Cartesian: ";
-    std::cout << tf.getTranslation() << "," <<tf.getQuaternion() << std::endl;
     return true;
   }
 }
@@ -201,7 +201,18 @@ bool PushExp::GeneratePushPlan(HomogTransf pre_push_obj_pose) {
   
   // Generate robot trajectory in global robot frame.
   const Vec tableNormal = Vec("0 0 1", 3);
-  if (!push_plan_gen->generateTrajectory(push_action, pre_push_obj_pose, 
+  // Lift up the pushing plane a bit from the ground surface.
+  // To do so, lift up the Z value for object pose.
+  HomogTransf push_obj_pose_lifted;
+  Quaternion q = pre_push_obj_pose.getQuaternion();
+  Vec v = pre_push_obj_pose.getTranslation();
+  // Add half of the object height to Z.
+  const int ind_z = 2;
+  const double height_lift_ratio = 0.3;
+  v[ind_z] = v[ind_z] + push_object->GetHeight() * height_lift_ratio;
+  push_obj_pose_lifted.setTranslation(v);
+  push_obj_pose_lifted.setQuaternion(q);
+  if (!push_plan_gen->generateTrajectory(push_action, push_obj_pose_lifted, 
 					tableNormal, &robot_push_traj)) {
     std::cerr << "Cannot generate robot trajectory" << std::endl;
     return false;

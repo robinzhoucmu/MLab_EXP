@@ -53,6 +53,8 @@ class ObjectGeometry {
     for (int i = 0; i < numV; i++) {
       SerializeVector(vertices[i], fout);
     }
+    // object height.
+    fout << height;
     /*
     // All edges.
     for (int i = 0; i < numV; i++) {
@@ -78,6 +80,8 @@ class ObjectGeometry {
       Edge e(vertices[i], vertices[(i+1)%numV]);
       edges.push_back(e);
     }
+    // Get object height.
+    fin >> height;
     /*
     // Get all edges.
     for (int i = 0; i < numV; ++i) {
@@ -90,6 +94,7 @@ class ObjectGeometry {
   }
   std::vector<Vec> vertices;
   std::vector<Edge> edges;
+  double height;
  private:
   void SerializeVector(const Vec& v, std::ostream& fout) {
     fout << v[0] << " " << v[1] << " " << v[2] << std::endl;

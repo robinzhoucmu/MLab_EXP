@@ -40,7 +40,7 @@ class PushExp {
   
   // Safe height above the working object surface. 
   double safe_height;
-
+  
   // Flag indicating whether the robot is away from camera view, i.e., not
   // blocking the mocap cameras view. 
   bool flag_robot_away;

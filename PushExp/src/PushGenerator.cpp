@@ -179,7 +179,7 @@ bool PushGenerator::generateTrajectory(const PushAction push, const HomogTransf 
   Vec robotYDir = robotZDir ^ robotXDir;
 
   // Make sure the axes are normalized so we create our 
-  //  rotation matrix correctly
+  // rotation matrix correctly.
   robotXDir.normalize();
   robotYDir.normalize();
   robotZDir.normalize();
@@ -195,8 +195,9 @@ bool PushGenerator::generateTrajectory(const PushAction push, const HomogTransf 
   // Store the poses in our array, and we're done
   robotPoses->resize(4);
   (*robotPoses)[0] = HomogTransf(robot_orient, initialPoint);
-  (*robotPoses)[1] = HomogTransf(robot_orient, penetrationPoint);
-  (*robotPoses)[2] = HomogTransf(robot_orient, retractionPoint);
+  (*robotPoses)[1] = HomogTransf(robot_orient, moveClosePoint);
+  (*robotPoses)[2] = HomogTransf(robot_orient, penetrationPoint);
+  (*robotPoses)[3] = HomogTransf(robot_orient, retractionPoint);
 
   return true;
 }
