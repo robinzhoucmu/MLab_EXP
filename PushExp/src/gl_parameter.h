@@ -12,6 +12,7 @@ class GLParameters {
  public:
 
   static double safe_height; // in mm.
+  static double min_height; // in mm.
   
   static int mocap_num_readings;
   static double mocap_read_duration; // in seconds.
@@ -39,10 +40,14 @@ class GLParameters {
   // Files that store work object geometry and calibration information.
   static std::string workobj_file_cali;
   static std::string workobj_file_geometry;
+  
+  // File that stores the sensor log.
+  static std::string sensor_log_file;
 
   static void ReadParameters() {
     ros::param::get("/PushExp/execution_mode", GLParameters::execution_flag);
     ros::param::get("/PushExp/safe_height", GLParameters::safe_height);
+    ros::param::get("/PushExp/min_height", GLParameters::min_height);
     ros::param::get("/PushExp/mocap_num_readings", GLParameters::mocap_num_readings);
     ros::param::get("/PushExp/mocap_read_duration", GLParameters::mocap_read_duration);
 
@@ -55,6 +60,8 @@ class GLParameters {
     ros::param::get("/PushExp/default_move_close_dist", GLParameters::default_move_close_dist);
     ros::param::get("/PushExp/workobj_file_cali", GLParameters::workobj_file_cali);
     ros::param::get("/PushExp/workobj_file_geometry", GLParameters::workobj_file_geometry);
+    ros::param::get("/PushExp/sensor_log_file", GLParameters::sensor_log_file);
+
     ros::param::get("/PushExp/robot_tcp_speed", GLParameters::robot_tcp_speed);
     ros::param::get("/PushExp/robot_ori_speed", GLParameters::robot_ori_speed);
 
@@ -85,6 +92,7 @@ class GLParameters {
 // Need to be "initialized" outside of class. Otherwise won't compile.
 bool GLParameters::execution_flag = false;
 double GLParameters::safe_height = 300.0;
+double GLParameters::min_height = 20.0;
 int GLParameters::mocap_num_readings = 5;
 double GLParameters::mocap_read_duration = 1.0;
 
@@ -103,5 +111,6 @@ double GLParameters::robot_set_tool[7] = {-125, 0, 115, 0, 0, 1, 0};
 double GLParameters::mocap_cali_tf[7] = {668.54, -260.52, 56.021, 0.49366, 0.49611, 0.50222, 0.50788};
 std::string GLParameters::workobj_file_cali = "";
 std::string GLParameters::workobj_file_geometry = "";
+std::string GLParameters::sensor_log_file = "";
 
 #endif

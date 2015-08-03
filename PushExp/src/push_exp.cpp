@@ -1,14 +1,41 @@
 #include "push_exp.h"
 #include "geometry_msgs/WrenchStamped.h"
+#include "geometry_msgs/PoseStamped.h"
+#include <fstream>
 
 // Global flag indicating whether the robot is pushing the object.
 bool flag_is_pushing = false;
-std::vector<geometry_msgs::Wrench> ft_wrenches;
+std::vector<geometry_msgs::WrenchStamped> ft_wrenches;
+std::vector<geometry_msgs::PoseStamped> robot_poses;
 
 // Asynchronous force logging.
 void CallBackForceLogging(const geometry_msgs::WrenchStamped& msg_force) {
   if (flag_is_pushing) {
-    ft_wrenches.push_back(msg_force.wrench);
+    geometry_msgs::WrenchStamped contact_wrench;
+    contact_wrench.wrench = msg_force.wrench;
+    contact_wrench.header.stamp = ros::Time::now();
+    ft_wrenches.push_back(contact_wrench);
+  }
+}
+
+void CallBackRobotPoseLogging(const robot_comm::robot_CartesianLog& msg_robot_pose) {
+  if (flag_is_pushing) {
+    geometry_msgs::PoseStamped robot_pose_stamped;
+    // Extract cartesian pose information.
+    geometry_msgs::Point pt;
+    pt.x = msg_robot_pose.x;
+    pt.y = msg_robot_pose.y;
+    pt.z = msg_robot_pose.z;
+    robot_pose_stamped.pose.position = pt;
+    geometry_msgs::Quaternion q;
+    q.w = msg_robot_pose.q0;
+    q.x = msg_robot_pose.qx;
+    q.y = msg_robot_pose.qy;
+    q.z = msg_robot_pose.qz;
+    robot_pose_stamped.pose.orientation = q;
+    // Add time stamp.
+    robot_pose_stamped.header.stamp = ros::Time::now();
+    robot_poses.push_back(robot_pose_stamped);
   }
 }
 
@@ -44,9 +71,10 @@ void PushExp::Initialize() {
   InitializeMocapTransform();
   // Initialize force logging related stuffs.
   std::cout << "async spinner" << std::endl;
-  async_spinner = new ros::AsyncSpinner(1);
+  async_spinner = new ros::AsyncSpinner(2);
   flag_is_pushing = false;
-  force_sub = nh->subscribe("netft_data", 1000, CallBackForceLogging);
+  force_sub = nh->subscribe("netft_data", 10, CallBackForceLogging);
+  robot_pose_sub = nh->subscribe("robot_CartesianLog", 10, CallBackRobotPoseLogging);
 }
 
 void PushExp::InitializeRobot() {
@@ -75,18 +103,28 @@ void PushExp::InitializeMocapTransform() {
 }
 
 // Remember to stop async spinner after robot finishes pushing. 
-void PushExp::LogPushForceAsync() {
+void PushExp::LogPushForceAndRobotPoseAsync() {
   // Clear previous logged data.
   ft_wrenches.clear();
+  robot_poses.clear();
   // Start async thread for logging force.
   async_spinner->start();
 }
 
-bool PushExp::SetCartesian(HomogTransf tf) {
+bool PushExp::SetCartesian(HomogTransf tf, bool use_joint) {
+  // Check for z value greater than minimum height.
+  assert(tf.getTranslation()[2] > GLParameters::min_height);
+
   std::cout <<"Robot Set Cartesian: ";
   std::cout << tf.getTranslation() << "," <<tf.getQuaternion() << std::endl;
   if (execution_flag) {
-    return robot->SetCartesian(tf);
+    bool flag_robot_move = false;
+    if (use_joint) {
+      flag_robot_move = robot->SetCartesianJ(tf);
+    } else {
+      flag_robot_move = robot->SetCartesian(tf);
+    }
+    return flag_robot_move;
   } else {
     return true;
   }
@@ -124,7 +162,7 @@ bool PushExp::AcquireObjectStablePose(HomogTransf* pose_tf) {
   if (flag_robot_away) {
     //Mocap::mocap_frame mocap_msg;
     HomogTransf obj_pose_tf;
-    const int tractable_id = push_object->GetTractableId();
+    //const int tractable_id = push_object->GetTractableId();
     double t_sleep = kReadDuration / (kNumMocapReadings + 1);
     int num_acquired_frames = 0;
     double start_time = ros::Time::now().toSec();
@@ -167,7 +205,7 @@ bool PushExp::SinglePushPipeline() {
   CheckForReset();
   
   // Read object pose.
-  HomogTransf pre_push_obj_pose;
+ 
   if (!AcquireObjectStablePose(&pre_push_obj_pose)) {
     std::cerr << "Before Push: Cannot acquire object pose from mocap" << std::endl; 
     return false;
@@ -180,7 +218,6 @@ bool PushExp::SinglePushPipeline() {
   // Execute trajectory and log force data.
   assert(ExecRobotPushAndLogForce());
   // Read stable object pose after robot move back to initial position.
-  HomogTransf post_push_obj_pose;
   if (!AcquireObjectStablePose(&post_push_obj_pose)) {
     std::cerr << "After Push: Cannot acquire object pose from mocap" << std::endl; 
     return false;
@@ -188,35 +225,48 @@ bool PushExp::SinglePushPipeline() {
     std::cout << "After Push Pose" << std::endl;
     std::cout << post_push_obj_pose << std::endl;
   }
+  
   return true;
 }
 
 bool PushExp::GeneratePushPlan(HomogTransf pre_push_obj_pose) {
-  // Generate a random local pushing direction.
-  PushAction push_action;
-  if (!push_plan_gen->generateRandomPush(*push_object, &push_action)) {
-    std::cerr << "Cannot generate a random push direction" << std::endl;
-    return false;  
-  }
-  
-  // Generate robot trajectory in global robot frame.
-  const Vec tableNormal = Vec("0 0 1", 3);
-  // Lift up the pushing plane a bit from the ground surface.
-  // To do so, lift up the Z value for object pose.
-  HomogTransf push_obj_pose_lifted;
-  Quaternion q = pre_push_obj_pose.getQuaternion();
-  Vec v = pre_push_obj_pose.getTranslation();
-  // Add half of the object height to Z.
-  const int ind_z = 2;
-  const double height_lift_ratio = 0.3;
-  v[ind_z] = v[ind_z] + push_object->GetHeight() * height_lift_ratio;
-  push_obj_pose_lifted.setTranslation(v);
-  push_obj_pose_lifted.setQuaternion(q);
-  if (!push_plan_gen->generateTrajectory(push_action, push_obj_pose_lifted, 
-					tableNormal, &robot_push_traj)) {
-    std::cerr << "Cannot generate robot trajectory" << std::endl;
-    return false;
-  }
+  bool flag_kinematic_feasible = false;
+  while (!flag_kinematic_feasible) {
+    // Generate a random local pushing direction.
+    PushAction push_action;
+    if (!push_plan_gen->generateRandomPush(*push_object, &push_action)) {
+      std::cerr << "Cannot generate a random push direction" << std::endl;
+      return false;  
+    }
+    // Generate robot trajectory in global robot frame.
+    const Vec tableNormal = Vec("0 0 1", 3);
+    // Lift up the pushing plane a bit from the ground surface.
+    // To do so, lift up the Z value for object pose.
+    HomogTransf push_obj_pose_lifted;
+    Quaternion q = pre_push_obj_pose.getQuaternion();
+    Vec v = pre_push_obj_pose.getTranslation();
+    // Add half of the object height to Z.
+    const int ind_z = 2;
+    const double height_lift_ratio = 0.3;
+    v[ind_z] = v[ind_z] + push_object->GetHeight() * height_lift_ratio;
+    push_obj_pose_lifted.setTranslation(v);
+    push_obj_pose_lifted.setQuaternion(q);
+    if (!push_plan_gen->generateTrajectory(push_action, push_obj_pose_lifted, 
+					   tableNormal, &robot_push_traj)) {
+      std::cerr << "Cannot generate robot trajectory" << std::endl;
+      return false;
+    }
+    bool tmp_flag = true;
+    double dummy_joints[6];
+    // Check for trajectory kinematic feasiblity. 
+    for (int i = 0; i < robot_push_traj.size(); ++i) {
+      if (!robot->GetIK(robot_push_traj[i], dummy_joints)) {
+	tmp_flag = false;
+	break;
+      }
+    }
+    flag_kinematic_feasible = tmp_flag;
+  } // While
   return true;
 }
 
@@ -238,9 +288,11 @@ bool PushExp::ExecRobotPushAndLogForce() {
   // Move close to the object to prepare pushing.
   std::cout << "Getting close" << std::endl;
   assert(SetCartesian(robot_push_traj[ind_close]));
+  ros::Duration(0.5).sleep();
+  //sleep(3.0);
   flag_is_pushing = true;
   // Now start logging. 
-  LogPushForceAsync();
+  LogPushForceAndRobotPoseAsync();
   // Push the object.
   std::cout << "Push into" << std::endl;
   assert(SetCartesian(robot_push_traj[ind_push]));
@@ -256,8 +308,18 @@ bool PushExp::ExecRobotPushAndLogForce() {
   return true;
 }
 
+// Get current robot pose. Move straight up and then move to resting state.
 bool PushExp::RobotMoveToRestingState() {
-  bool flag_move_success = SetCartesian(robot_rest_cart);
+  // Read current pose, move up along z. 
+  const int ind_z = 2;
+  double robot_nxt_cart[7];
+  robot->GetCartesian(robot_nxt_cart);
+  robot_nxt_cart[ind_z] = robot_rest_cart[ind_z];
+  HomogTransf robot_nxt_tf(robot_nxt_cart);
+  assert(SetCartesian(robot_nxt_tf));
+
+  HomogTransf robot_rest_tf(robot_rest_cart);
+  bool flag_move_success = SetCartesian(robot_rest_tf, true);
   if (!flag_move_success) {
     flag_robot_away = false;
     std::cerr << "Robot did not successfully move to resting position" << std::endl;
@@ -274,12 +336,43 @@ bool PushExp::RobotMoveToAbove(HomogTransf pose_below) {
   trans[2] = safe_height;
   HomogTransf pose_above(quat, trans);
   
-  bool flag = SetCartesian(pose_above); 
+  bool flag = SetCartesian(pose_above, true); 
   if (!flag) {
     std::cerr << "Robot fail to move above " << std::endl;
     std::cerr << pose_below << std::endl;
   } 
   return flag;
+}
+
+void PushExp::SerializeSensorInfo(std::ostream& fout) {
+  // Output pre and post object poses.
+  SerializeHomogTransf(pre_push_obj_pose, fout);
+  SerializeHomogTransf(post_push_obj_pose, fout);
+  // Output force signals.
+  fout << ft_wrenches.size() << std::endl;
+  for (int i = 0; i < ft_wrenches.size(); ++i) {
+    const geometry_msgs::WrenchStamped& w= ft_wrenches[i];
+    fout << w.header.stamp << " " << w.wrench.force.x << " " 
+	 << w.wrench.force.y << std::endl;
+  }
+  fout << robot_poses.size() << std::endl;
+  for (int i = 0; i < robot_poses.size(); ++i) {
+    geometry_msgs::PoseStamped p = robot_poses[i];
+    fout << p.header.stamp << " ";
+    fout << p.pose.position.x << " " << p.pose.position.y << " " << p.pose.position.z << " ";
+    fout << p.pose.orientation.w << " " << p.pose.orientation.x << " " 
+	 <<  p.pose.orientation.y << " " << p.pose.orientation.z << std::endl; 
+    
+  }
+  // Output robot poses.
+}
+
+void PushExp::SerializeHomogTransf(const HomogTransf& tf, std::ostream& fout) {
+  Vec trans = tf.getTranslation();
+  Quaternion quat = tf.getQuaternion();
+  fout << trans[0] << " " << trans[1] << " " << trans[2] << " ";
+  fout << quat[0] << " " << quat[1] << " " << quat[2] << " " << quat[3] << std::endl;
+ 
 }
 
 bool PushExp::CheckForReset() {
@@ -327,13 +420,15 @@ bool PushExp::ConfirmStart() {
 void PushExp::Run() {
   assert(num_pushes >= 1);
   if (ConfirmStart()) {
+    std::ofstream fout(GLParameters::sensor_log_file.c_str());
     for (int i = 0; i < num_pushes; ++i) {
       std::cout << "Started to run push " << i << std::endl;
       SinglePushPipeline();
+      SerializeSensorInfo(fout);
     }
+    fout.close();
   }
 }
-
 
 int main(int argc, char* argv[]) {
   ros::init(argc, argv, "PushExp");

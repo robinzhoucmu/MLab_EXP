@@ -35,6 +35,9 @@ class PushExp {
   ros::AsyncSpinner* async_spinner; 
   // Force subscription.
   ros::Subscriber force_sub;
+  // Robot pose subscription.
+  ros::Subscriber robot_pose_sub;
+
   // Number of push trials.
   int num_pushes;  
   
@@ -45,14 +48,16 @@ class PushExp {
   // blocking the mocap cameras view. 
   bool flag_robot_away;
   std::vector<HomogTransf> obj_poses;
+  HomogTransf pre_push_obj_pose;
+  HomogTransf post_push_obj_pose;
   
   // Acquiring pose: read kNumMocapReadings number of frames in kReadDuration secs.
   int kNumMocapReadings;
   double kReadDuration;
 
   // Robot movement trajectory for one single push.
-  std::vector<HomogTransf> robot_push_traj;
-  
+  std::vector<HomogTransf> robot_push_traj;  
+
   // Robot resting cartesian position.
   double robot_rest_cart[7];
 
@@ -60,7 +65,7 @@ class PushExp {
   void InitializeMocapTransform();
   
   // A wrapper function over robot_comm SetCartesian. 
-  bool SetCartesian(HomogTransf tf);
+  bool SetCartesian(HomogTransf tf, bool use_joint = false);
 
   // Command the robot to a resting position that won't block the mocap nor touch the object.
   bool RobotMoveToRestingState();
@@ -79,11 +84,14 @@ class PushExp {
   // Log the pushing force while robot is pushing/in contact with the object.
   // Uses async spinner for logging. Call this function before calling robotSetCartesian.
   // Remember to stop the Async spinner after robotSetCartesian.
-  void LogPushForceAsync();
-  
+  void LogPushForceAndRobotPoseAsync();
+ 
   // Check for reset. Read Pose information and decide whether to initiate reset action.
   bool CheckForReset();
-  
+
+  // Serialize sensor information.
+  void SerializeSensorInfo(std::ostream& fout);
+  void SerializeHomogTransf(const HomogTransf& tf, std::ostream& fout);
 };
 
 #endif
