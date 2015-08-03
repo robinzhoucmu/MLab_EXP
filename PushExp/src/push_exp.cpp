@@ -73,8 +73,8 @@ void PushExp::Initialize() {
   std::cout << "async spinner" << std::endl;
   async_spinner = new ros::AsyncSpinner(2);
   flag_is_pushing = false;
-  force_sub = nh->subscribe("netft_data", 10, CallBackForceLogging);
-  robot_pose_sub = nh->subscribe("robot_CartesianLog", 10, CallBackRobotPoseLogging);
+  force_sub = nh->subscribe("netft_data", 1, CallBackForceLogging);
+  robot_pose_sub = nh->subscribe("robot_CartesianLog", 1, CallBackRobotPoseLogging);
 }
 
 void PushExp::InitializeRobot() {
@@ -247,7 +247,7 @@ bool PushExp::GeneratePushPlan(HomogTransf pre_push_obj_pose) {
     Vec v = pre_push_obj_pose.getTranslation();
     // Add half of the object height to Z.
     const int ind_z = 2;
-    const double height_lift_ratio = 0.3;
+    const double height_lift_ratio = 0.8;
     v[ind_z] = v[ind_z] + push_object->GetHeight() * height_lift_ratio;
     push_obj_pose_lifted.setTranslation(v);
     push_obj_pose_lifted.setQuaternion(q);
