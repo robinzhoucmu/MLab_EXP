@@ -4,20 +4,20 @@ execution_mode: true,
 
 # mm/ safe distance for robot to move above objects without touching.
 safe_height: 200.0,
-min_height: 20.0,
+min_height: 15.0,
 
 # number of mocap readings to average.
 mocap_num_readings: 5, 
 mocap_read_duration: 1.0,
 
-num_pushes: 5,
+num_pushes: 10,
 
 min_edge_dist: 15.0,
 min_push_angle: 45.0,
 default_init_dist: 50.0,
 default_penetration_dist: 25.0,
 default_retraction_dist: 25.0,
-default_move_close_dist: 2.5,
+default_move_close_dist: 2.0,
 
 robot_tcp_speed: 10.0,
 robot_ori_speed: 10.0,
@@ -26,13 +26,13 @@ robot_rest_cart: [500.0, 0.0, 200.0, 1.0, 0.0, 0.0, 0.0],
 
 robot_set_workobj: [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0],
 # Triangular pusher.
-#robot_set_tool: [-125.0, 0.0, 90.5, 0.0, 0.0, 1.0, 0.0],
+robot_set_tool: [-125.0, 0.0, 90.5, 0.0, 0.0, 1.0, 0.0],
 # Probe. 
-robot_set_tool: [-2.5, 0.0, 145.0, 0.0, 0.0, 1.0, 0.0],
+#robot_set_tool: [-2.5, 0.0, 145.0, 0.0, 0.0, 1.0, 0.0],
 
 mocap_cali_tf: [671.44, -260.31, 58.999, 0.49471, 0.49387, 0.50271, 0.50856],
 
-sensor_log_file: '../sensor_log/exp0.txt',
+sensor_log_file: '../sensor_log/exp1.txt',
 workobj_file_cali: '../parameters/aluminium_triangle/obj_cali.txt',
 workobj_file_geometry: '../parameters/aluminium_triangle/obj_geo.txt'
 }

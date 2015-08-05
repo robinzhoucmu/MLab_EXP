@@ -247,7 +247,7 @@ bool PushExp::GeneratePushPlan(HomogTransf pre_push_obj_pose) {
     Vec v = pre_push_obj_pose.getTranslation();
     // Add half of the object height to Z.
     const int ind_z = 2;
-    const double height_lift_ratio = 0.8;
+    const double height_lift_ratio = 0.25;
     v[ind_z] = v[ind_z] + push_object->GetHeight() * height_lift_ratio;
     push_obj_pose_lifted.setTranslation(v);
     push_obj_pose_lifted.setQuaternion(q);
@@ -421,6 +421,7 @@ void PushExp::Run() {
   assert(num_pushes >= 1);
   if (ConfirmStart()) {
     std::ofstream fout(GLParameters::sensor_log_file.c_str());
+    fout << num_pushes << std::endl;
     for (int i = 0; i < num_pushes; ++i) {
       std::cout << "Started to run push " << i << std::endl;
       SinglePushPipeline();
