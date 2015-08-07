@@ -1,7 +1,9 @@
 % F, V: 3*N. 
 % Assume V is normalized velocity.
-function [fig] = VisualizeForceVelPairs(F, V)
-fig = figure;
+function [] = VisualizeForceVelPairs(F, V, fig_h)
+%fig = figure;
+hold on;
+figure(fig_h);
 numF = size(F,2);
 numV = size(V,2);
 avg_f_norm = mean(sqrt(sum(F.^2)));

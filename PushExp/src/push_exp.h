@@ -66,6 +66,8 @@ class PushExp {
   
   // A wrapper function over robot_comm SetCartesian. 
   bool SetCartesian(HomogTransf tf, bool use_joint = false);
+  // A wrapper function over robot_comm SetJoints.
+  bool SetJoints(double joints[6]);
 
   // Command the robot to a resting position that won't block the mocap nor touch the object.
   bool RobotMoveToRestingState();
@@ -78,7 +80,8 @@ class PushExp {
   bool GeneratePushPlan(HomogTransf pre_push_obj_pose);
   bool ExecRobotPushAndLogForce();  
   bool RobotMoveToAbove(HomogTransf pose_below);
-
+  
+  HomogTransf GetPoseAbove(HomogTransf pose_below);
   // Pipeline for single push and data logging.
   bool SinglePushPipeline();
   // Log the pushing force while robot is pushing/in contact with the object.

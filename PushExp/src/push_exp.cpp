@@ -129,6 +129,18 @@ bool PushExp::SetCartesian(HomogTransf tf, bool use_joint) {
     return true;
   }
 }
+
+bool PushExp::SetJoints(double joints[6]) {
+  HomogTransf tf;
+  robot->GetFK(joints, tf);
+  // Check for z value greater than minimum height.
+  assert(tf.getTranslation()[2] > GLParameters::min_height);
+  if (execution_flag) {
+    return robot->SetJoints(joints);
+  }
+  return true;
+}
+
 // Average over a bunch of planar poses recorded in obj_poses. 
 bool PushExp::ComputeAveragePose(HomogTransf* pose_tf) {
   // Convert vector of homogtransf to quaternion.
@@ -169,13 +181,6 @@ bool PushExp::AcquireObjectStablePose(HomogTransf* pose_tf) {
     double elapsed_time = 0.0;
     obj_poses.clear();
     while (num_acquired_frames < kNumMocapReadings && elapsed_time < kReadDuration) {
-      // if (mocap_comm.GetMocapFrame(&mocap_msg)) {
-      // 	++num_acquired_frames;
-      // 	assert(tractable_id <= mocap_msg.body_poses.size());
-      // 	const geometry_msgs::Pose pose = mocap_msg.body_poses[tractable_id - 1];
-      // 	// Add to obj_poses vector.
-      // 	obj_poses.push_back(pose);
-      // }
       if (push_object->GetGlobalObjPose(&obj_pose_tf)) {
 	//std::cout << obj_pose_tf << std::endl;
 	obj_poses.push_back(obj_pose_tf);
@@ -258,7 +263,13 @@ bool PushExp::GeneratePushPlan(HomogTransf pre_push_obj_pose) {
     }
     bool tmp_flag = true;
     double dummy_joints[6];
-    // Check for trajectory kinematic feasiblity. 
+    // Check for the first move above pose feasibility.
+    const int ind_approach = 0;
+    HomogTransf tf_above = GetPoseAbove(robot_push_traj[ind_approach]);
+    if (!robot->GetIK(tf_above, dummy_joints)) {
+      tmp_flag = false;
+    }
+    // Check for trajectory kinematic feasiblity.
     for (int i = 0; i < robot_push_traj.size(); ++i) {
       if (!robot->GetIK(robot_push_traj[i], dummy_joints)) {
 	tmp_flag = false;
@@ -279,17 +290,25 @@ bool PushExp::ExecRobotPushAndLogForce() {
   assert(robot_push_traj.size() == 4);
 
   HomogTransf approach_pose = robot_push_traj[ind_approach];
-  // Move to above. 
+  std::cout << "Move to the resting position first" << std::endl;
+  assert(RobotMoveToRestingState());
+   // Move to above. 
   std::cout << "Move to Above" << std::endl;
   assert(RobotMoveToAbove(approach_pose));
   // Move to relatively far approach_pose.
   std::cout << "Approach" << std::endl;
+  // Set slower speed for moving downwards to approach pose.
+  robot->SetSpeed(20.0,10.0);
   assert(SetCartesian(robot_push_traj[ind_approach]));
+  // Recover original speed. 
+  robot->SetSpeed(GLParameters::robot_tcp_speed, GLParameters::robot_ori_speed);
   // Move close to the object to prepare pushing.
   std::cout << "Getting close" << std::endl;
   assert(SetCartesian(robot_push_traj[ind_close]));
-  ros::Duration(0.5).sleep();
-  //sleep(3.0);
+  ros::Duration(2.5).sleep();
+  const double slow_speed_tcp = 10.0;
+  const double slow_speed_ori = 5.0;
+  robot->SetSpeed(slow_speed_tcp, slow_speed_ori);
   flag_is_pushing = true;
   // Now start logging. 
   LogPushForceAndRobotPoseAsync();
@@ -299,6 +318,8 @@ bool PushExp::ExecRobotPushAndLogForce() {
   // After the robot pushes in, finish async force logging.
   async_spinner->stop();
   flag_is_pushing = false;
+  // Recover original speed. 
+  robot->SetSpeed(GLParameters::robot_tcp_speed, GLParameters::robot_ori_speed);
   // Retract the robot to break contact.
   std::cout << "Retract" << std::endl;
   assert(SetCartesian(robot_push_traj[ind_retract]));
@@ -319,7 +340,19 @@ bool PushExp::RobotMoveToRestingState() {
   assert(SetCartesian(robot_nxt_tf));
 
   HomogTransf robot_rest_tf(robot_rest_cart);
-  bool flag_move_success = SetCartesian(robot_rest_tf, true);
+  //bool flag_move_success = SetCartesian(robot_rest_tf, true);
+  // A hack: joint 6 could be \theta +- 360. We always choose the angle closer to 0 so
+  // it's harder to hit joint limit. 
+  double joints[6];
+  assert(robot->GetIK(robot_rest_tf, joints));
+  const int ind_last_j = 5;
+  joints[ind_last_j] = 
+    (joints[ind_last_j] > 360)?(joints[ind_last_j] - 360):joints[ind_last_j];
+  joints[ind_last_j] = 
+    (joints[ind_last_j] < -360)?(joints[ind_last_j] + 360):joints[ind_last_j];
+
+  bool flag_move_success = SetJoints(joints);
+
   if (!flag_move_success) {
     flag_robot_away = false;
     std::cerr << "Robot did not successfully move to resting position" << std::endl;
@@ -330,12 +363,7 @@ bool PushExp::RobotMoveToRestingState() {
 }
 
 bool PushExp::RobotMoveToAbove(HomogTransf pose_below) {
-  Vec trans = pose_below.getTranslation();
-  Quaternion quat = pose_below.getQuaternion();
-  // Set the z compenent to safe_height.
-  trans[2] = safe_height;
-  HomogTransf pose_above(quat, trans);
-  
+  HomogTransf pose_above = GetPoseAbove(pose_below);
   bool flag = SetCartesian(pose_above, true); 
   if (!flag) {
     std::cerr << "Robot fail to move above " << std::endl;
@@ -344,6 +372,14 @@ bool PushExp::RobotMoveToAbove(HomogTransf pose_below) {
   return flag;
 }
 
+HomogTransf PushExp::GetPoseAbove(HomogTransf pose_below) {
+  Vec trans = pose_below.getTranslation();
+  Quaternion quat = pose_below.getQuaternion();
+  // Set the z compenent to safe_height.
+  trans[2] = safe_height;
+  HomogTransf pose_above(quat, trans);
+  return pose_above;
+}
 void PushExp::SerializeSensorInfo(std::ostream& fout) {
   // Output pre and post object poses.
   SerializeHomogTransf(pre_push_obj_pose, fout);
@@ -355,6 +391,7 @@ void PushExp::SerializeSensorInfo(std::ostream& fout) {
     fout << w.header.stamp << " " << w.wrench.force.x << " " 
 	 << w.wrench.force.y << std::endl;
   }
+  // Output robot poses.
   fout << robot_poses.size() << std::endl;
   for (int i = 0; i < robot_poses.size(); ++i) {
     geometry_msgs::PoseStamped p = robot_poses[i];
@@ -364,7 +401,6 @@ void PushExp::SerializeSensorInfo(std::ostream& fout) {
 	 <<  p.pose.orientation.y << " " << p.pose.orientation.z << std::endl; 
     
   }
-  // Output robot poses.
 }
 
 void PushExp::SerializeHomogTransf(const HomogTransf& tf, std::ostream& fout) {

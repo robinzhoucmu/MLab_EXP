@@ -3,11 +3,14 @@
 #include <assert.h>
 #include <math.h>
 
-// Hand chosen values (in robot base frame) that avoid collision.
-// Robot Moves randomly around kCenter.
-const double kCenter[3] = {500, 0, 310};
+
 // kCenter plus/minus kDelta as boundary.
 const double kDelta[3] = {145, 225, 25};
+// A bit bigger than the measured length between the center of tool to the mocap marker. 
+const double safe_height = 150 + 45;
+// Hand chosen values (in robot base frame) that avoid collision.
+// Robot Moves randomly around kCenter.
+const double kCenter[3] = {500, 0, safe_height + kDelta[2]};
 
 // Base frame: x pointing out to the vision node; 
 // Have the robot tool frame mostly facing downward.
@@ -55,7 +58,7 @@ void MocapCalibration::InitRobotTransformation() {
   // Set identical between work object frame and robot base frame.
   robot->SetWorkObject(0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0);
   // Set relatively high speed.
-  const double tcp = 100;
+  const double tcp = 50;
   const double ori = 10;
   robot->SetSpeed(tcp, ori);
 }
@@ -219,7 +222,7 @@ int main(int argc, char* argv[]) {
   mocap_cali.GenRandomTrajectory(kCenter, kDelta, kDeltaAngles, kNumRandSamples);
   
   std::ofstream fout;
-  fout.open("mocap_log.txt");
+  fout.open("mocap_log_2.txt");
   mocap_cali.RunTrajectory(fout);
   // Debugging. 
   //mocap_cali.RunTrajectory(std::cout);
