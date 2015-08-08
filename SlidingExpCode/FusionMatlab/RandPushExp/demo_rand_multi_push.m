@@ -1,11 +1,22 @@
 clear all; close all;
-log_file_name = 'SensorLogs/exp4_10_2.txt';
+log_file_name = 'SensorLogs/exp8_35_mixed.txt';
 unit_scale = 1000;
 H_tf = eye(4,4);
 trans = [50;50;0];
-H_tf = [eye(3,3), trans;
-       0,0,0,1];
-Tri_pho = 0.1;
+%H_tf = [eye(3,3), trans;
+%       0,0,0,1];
+
+% Parameters for trianglular block.         
+Tri_mass = 1.518;
+Tri_com = [0.15/3; 0.15/3];
+
+% support Points
+Tri_pts = [0.03    0.09    0.03;
+           0.03    0.03    0.09];
+
+[Tri_pds, Tri_pho] = GetObjParaFromSupportPts(Tri_pts, Tri_com, Tri_mass);
+
+%Tri_pho = 0.1;
 %rng(1);
 
 [pre_push_poses, post_push_poses, ft_readings, robot_pose_readings] = ParseLog(log_file_name);
@@ -31,7 +42,7 @@ for i = 1:1:num_pushes
     force = - force;
     % Minus offset. 
     force = bsxfun(@minus, force, force(:,1));
-    figure, plot(t, force');
+    %figure, plot(t, force');
     
     %Eliminate forces before the jump of the signal.
     avg_f = mean(force,2);
@@ -41,11 +52,12 @@ for i = 1:1:num_pushes
     
     % Hack: only use 25%-100% of the force signal.
     %index_pre_touch = 1:ceil(length(t) * 0.25);
-    index_pre_touch = 1:length(t) < ceil(length(t) * 0.25);
+    starting_p = 0.3;
+    index_pre_touch = 1:length(t) < ceil(length(t) * starting_p);
     index_rm = index_pre_touch | index_small;
     force(:, index_rm) = [];
     t(index_rm) = [];
-    hold on; plot(t, force', 'y-*');
+    %hold on; plot(t, force', 'y-*');
     
     N = length(t); 
     
@@ -100,7 +112,7 @@ slider_velocities_test = slider_velocities(index_perm(NDataTrain+1:end), :);
 flag_convex = 1;
 w_force = 1;
 w_vel = 1;
-w_reg = 10;
+w_reg = 1;
 [coeffs, xi, delta, pred_v_train, s] = Fit4thOrderPolyCVX(push_wrenches_train', slider_velocities_train', w_reg, w_vel, w_force, flag_convex);
 
 %Linear Prediction (Quadratic fitting) baseline.

@@ -3,19 +3,19 @@ PushExp: {
 execution_mode: true,
 
 # mm/ safe distance for robot to move above objects without touching.
-safe_height: 200.0,
-min_height: 15.0,
+safe_height: 150.0,
+min_height: 12.5,
 
 # number of mocap readings to average.
 mocap_num_readings: 5, 
 mocap_read_duration: 1.0,
 
-num_pushes: 15,
+num_pushes: 50,
 
-min_edge_dist: 15.0,
-min_push_angle: 37.5,
-default_init_dist: 50.0,
-default_penetration_dist: 25.0,
+min_edge_dist: 12.5,
+min_push_angle: 30.0,
+default_init_dist: 27.5,
+default_penetration_dist: 12.5,
 default_retraction_dist: 25.0,
 default_move_close_dist: 2.5,
 
@@ -33,7 +33,7 @@ robot_set_tool: [-125.0, 0.0, 90.5, 0.0, 0.0, 1.0, 0.0],
 #mocap_cali_tf: [671.44, -260.31, 58.999, 0.49471, 0.49387, 0.50271, 0.50856],
 mocap_cali_tf: [715.42,-213.72,57.829,0.5007,0.50199,0.49812,0.49918],
 
-sensor_log_file: '../sensor_log/exp5_15.txt',
+sensor_log_file: '../sensor_log/exp8_50.txt',
 workobj_file_cali: '../parameters/aluminium_triangle/obj_cali_new.txt',
 workobj_file_geometry: '../parameters/aluminium_triangle/obj_geo.txt'
 }

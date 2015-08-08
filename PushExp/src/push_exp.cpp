@@ -250,9 +250,9 @@ bool PushExp::GeneratePushPlan(HomogTransf pre_push_obj_pose) {
     HomogTransf push_obj_pose_lifted;
     Quaternion q = pre_push_obj_pose.getQuaternion();
     Vec v = pre_push_obj_pose.getTranslation();
-    // Add half of the object height to Z.
+    // Add part of the object height to Z.
     const int ind_z = 2;
-    const double height_lift_ratio = 0.25;
+    const double height_lift_ratio = 0.3;
     v[ind_z] = v[ind_z] + push_object->GetHeight() * height_lift_ratio;
     push_obj_pose_lifted.setTranslation(v);
     push_obj_pose_lifted.setQuaternion(q);
@@ -298,15 +298,15 @@ bool PushExp::ExecRobotPushAndLogForce() {
   // Move to relatively far approach_pose.
   std::cout << "Approach" << std::endl;
   // Set slower speed for moving downwards to approach pose.
-  robot->SetSpeed(20.0,10.0);
+  robot->SetSpeed(10.0,10.0);
   assert(SetCartesian(robot_push_traj[ind_approach]));
   // Recover original speed. 
   robot->SetSpeed(GLParameters::robot_tcp_speed, GLParameters::robot_ori_speed);
   // Move close to the object to prepare pushing.
   std::cout << "Getting close" << std::endl;
   assert(SetCartesian(robot_push_traj[ind_close]));
-  ros::Duration(2.5).sleep();
-  const double slow_speed_tcp = 10.0;
+  ros::Duration(2.0).sleep();
+  const double slow_speed_tcp = 2.5;
   const double slow_speed_ori = 5.0;
   robot->SetSpeed(slow_speed_tcp, slow_speed_ori);
   flag_is_pushing = true;
