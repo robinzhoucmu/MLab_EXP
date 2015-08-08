@@ -37,7 +37,7 @@ for i = 1:1:size(pos_2d,1)
 %     plot([x_axis_end(1), y_axis_end(1)], [x_axis_end(2), y_axis_end(2)], 'y*', 'MarkerSize', 10);
 %     
     % Plot robot.
-    plot(pos_finger(i, 1), pos_finger(i, 2), 'r*', 'MarkerSize', 5);
+    plot(pos_finger(i, 1), pos_finger(i, 2), 'r*', 'MarkerSize', 6);
     frame = getframe(gcf);
     writeVideo(movieObj, frame);
     clf;

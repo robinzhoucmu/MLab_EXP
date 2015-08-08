@@ -1,7 +1,7 @@
 % input: coefficients r, data X_{n,3} 
 function [h] = Plot4thPoly(r, X)
 maxd = max(abs(X)) * 5;
-step = maxd / 200;
+step = maxd / 100;
 x = X(:,1);
 y = X(:,2);
 z = X(:,3);

@@ -1,11 +1,12 @@
-log_file_name = 'SensorLogs/exp5_15.txt';
+clear all; close all;
+log_file_name = 'SensorLogs/exp4_10_2.txt';
 unit_scale = 1000;
 H_tf = eye(4,4);
 trans = [50;50;0];
 H_tf = [eye(3,3), trans;
        0,0,0,1];
 Tri_pho = 0.1;
-rng(1);
+%rng(1);
 
 [pre_push_poses, post_push_poses, ft_readings, robot_pose_readings] = ParseLog(log_file_name);
 num_pushes = size(pre_push_poses, 2);
@@ -13,6 +14,7 @@ num_pushes = size(pre_push_poses, 2);
 push_wrenches = zeros(num_pushes, 3);
 slider_velocities = zeros(num_pushes, 3);
 %i=2;
+%num_pushes = 5;
 for i = 1:1:num_pushes
     % Get object pre and post push pose.
     obj_start_pos = pre_push_poses(:,i);
@@ -29,14 +31,23 @@ for i = 1:1:num_pushes
     force = - force;
     % Minus offset. 
     force = bsxfun(@minus, force, force(:,1));
-    % Eliminate forces before the jump of the signal.
+    figure, plot(t, force');
+    
+    %Eliminate forces before the jump of the signal.
     avg_f = mean(force,2);
     index_small = sum(force.^2,1) < sum(avg_f.^2);
-    force(:, index_small) = [];
-    t(index_small) = [];
+    %force(:, index_small) = [];
+    %t(index_small) = [];
     
-    N = length(t);
+    % Hack: only use 25%-100% of the force signal.
+    %index_pre_touch = 1:ceil(length(t) * 0.25);
+    index_pre_touch = 1:length(t) < ceil(length(t) * 0.25);
+    index_rm = index_pre_touch | index_small;
+    force(:, index_rm) = [];
+    t(index_rm) = [];
+    hold on; plot(t, force', 'y-*');
     
+    N = length(t); 
     
     % Interpolate (linear) object poses. 
     [ obj_2d_traj ] = LinearInterpObjPos(obj_start_pos', obj_end_pos', N, unit_scale, H_tf);
@@ -47,25 +58,25 @@ for i = 1:1:num_pushes
     bsxfun(@minus, t_robot, t0);
     % Align the first and last value of t_robot and t to be the same for
     % interpolation purpose.
-    t_robot(end) = t(end);
-    t_robot(1) = t(1);
+    %t_robot(end) = t(end);
+    if (t_robot(1) > t(1))
+    %    t_robot(1) = t(1);
+    end
     % Linear interpolate robot_pose.
-    robot_traj = interp1(t_robot,robot_traj_0',t)';
+    robot_traj = interp1(t_robot,robot_traj_0',t, 'linear','extrap')';
     robot_2d_pos = get2dPos(robot_traj',eye(4,4), unit_scale);
     % Convert into meters.
     %robot_traj = robot_traj / unit_scale;
-    
     
     % Compute wrench in object local coordinate.
     wrench = ComputeWrench(obj_2d_traj, force', robot_2d_pos);
     % Minus offset. 
     %wrench = bsxfun(@minus, wrench, wrench(1,:));
     wrench(:,3) = wrench(:,3) / Tri_pho;
-    %plot3curves(wrench, t);
     
     vd_file = strcat('videos/out', int2str(i), '.avi');    
     % Trajectory video generation.
-    %finger_2d_traj = robot_traj(1:2,:)'; [h] = check2dtraj_visualize(vd_file, obj_start_pos', obj_end_pos', finger_2d_traj);
+    %finger_2d_traj = robot_traj(1:2,:)'; [h] = check2dtraj_visualize(vd_file, obj_start_pos', obj_end_pos', finger_2d_traj/unit_scale);
     
     % Compute average wrench as the pushing force and normalized slider velocity. 
     push_wrenches(i,:) = mean(wrench);
@@ -94,7 +105,7 @@ w_reg = 10;
 
 %Linear Prediction (Quadratic fitting) baseline.
 w_force_qp = 1;
-w_reg_qp = 10;
+w_reg_qp = 2;
 [A, xi_elip, delta_elip, pred_v_lr_train, s_lr] = FitElipsoidForceVelocityCVX(push_wrenches', slider_velocities', w_force_qp, w_reg_qp, flag_convex);
 
 % Evaluate on training. 
