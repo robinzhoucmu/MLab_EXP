@@ -3,8 +3,8 @@ log_file_name = 'SensorLogs/exp8_35_mixed.txt';
 unit_scale = 1000;
 H_tf = eye(4,4);
 trans = [50;50;0];
-%H_tf = [eye(3,3), trans;
-%       0,0,0,1];
+H_tf = [eye(3,3), trans;
+      0,0,0,1];
 
 % Parameters for trianglular block.         
 Tri_mass = 1.518;
@@ -14,7 +14,9 @@ Tri_com = [0.15/3; 0.15/3];
 Tri_pts = [0.03    0.09    0.03;
            0.03    0.03    0.09];
 
-[Tri_pds, Tri_pho] = GetObjParaFromSupportPts(Tri_pts, Tri_com, Tri_mass);
+%[Tri_pds, Tri_pho] = GetObjParaFromSupportPts(Tri_pts, Tri_com, Tri_mass);
+Tri_pts = bsxfun(@minus, Tri_pts, Tri_com);
+[Tri_pds, Tri_pho] = GetObjParaFromSupportPts(Tri_pts, [0;0], Tri_mass);
 
 %Tri_pho = 0.1;
 %rng(1);
@@ -24,6 +26,7 @@ num_pushes = size(pre_push_poses, 2);
 
 push_wrenches = zeros(num_pushes, 3);
 slider_velocities = zeros(num_pushes, 3);
+slider_vel_raw = zeros(num_pushes, 3);
 %i=2;
 %num_pushes = 5;
 for i = 1:1:num_pushes
@@ -93,18 +96,28 @@ for i = 1:1:num_pushes
     % Compute average wrench as the pushing force and normalized slider velocity. 
     push_wrenches(i,:) = mean(wrench);
     d = obj_2d_traj(end,:) - obj_2d_traj(1,:);
+    % Rotate to initial object frame.
+    theta = obj_2d_traj(1,3);
+    R = [cos(theta), -sin(theta); ...
+         sin(theta), cos(theta)];
+    d(1:2) = (R' * d(1:2)')';
+    slider_vel_raw(i,:) = d / norm(d);
     d(3) = d(3) * Tri_pho;
     slider_velocities(i,:) = d / norm(d);
 end
+push_wrenches_dir = bsxfun(@rdivide, push_wrenches, sqrt(sum(push_wrenches.^2, 2)));
 
 % Split training and testing data.
-ratio_train = 0.75;
+ratio_train = 0.5;
 NDataTrain = floor(num_pushes * ratio_train);
 index_perm = randperm(num_pushes);
 
 % Split train, test data.
 push_wrenches_train = push_wrenches(index_perm(1:NDataTrain), :);
 push_wrenches_test = push_wrenches(index_perm(NDataTrain+1:end), :);
+push_wrenches_dir_train = push_wrenches_dir(index_perm(1:NDataTrain), :);
+push_wrenches_dir_test = push_wrenches_dir(index_perm(NDataTrain+1:end), :);
+
 slider_velocities_train = slider_velocities(index_perm(1:NDataTrain), :);
 slider_velocities_test = slider_velocities(index_perm(NDataTrain+1:end), :);
 
@@ -112,12 +125,12 @@ slider_velocities_test = slider_velocities(index_perm(NDataTrain+1:end), :);
 flag_convex = 1;
 w_force = 1;
 w_vel = 1;
-w_reg = 1;
+w_reg = 5;
 [coeffs, xi, delta, pred_v_train, s] = Fit4thOrderPolyCVX(push_wrenches_train', slider_velocities_train', w_reg, w_vel, w_force, flag_convex);
 
 %Linear Prediction (Quadratic fitting) baseline.
 w_force_qp = 1;
-w_reg_qp = 2;
+w_reg_qp = 5;
 [A, xi_elip, delta_elip, pred_v_lr_train, s_lr] = FitElipsoidForceVelocityCVX(push_wrenches', slider_velocities', w_force_qp, w_reg_qp, flag_convex);
 
 % Evaluate on training. 
@@ -139,9 +152,11 @@ disp('Mean test error Linear');
 [err, dev_angle] = EvaluateLinearPredictor(push_wrenches_test, slider_velocities_test, A)
 
 % Combine with symmetric data for training GP.
-push_wrenches_train_gp = [push_wrenches_train; -push_wrenches_train];
+
+push_wrenches_dir_train_gp = [push_wrenches_dir_train; -push_wrenches_dir_train];
+
 slider_velocities_train_gp = [slider_velocities_train; -slider_velocities_train];
-[hyp, err_angle_train, err_angle_test] = GP_Fitting(push_wrenches_train_gp, slider_velocities_train_gp, push_wrenches_test, slider_velocities_test);
+[hyp, err_angle_train, err_angle_test] = GP_Fitting(push_wrenches_dir_train_gp, slider_velocities_train_gp, push_wrenches_dir_test, slider_velocities_test);
 err_angle_test
 err_angle_train
 

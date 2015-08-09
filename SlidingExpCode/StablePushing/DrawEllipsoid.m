@@ -1,6 +1,10 @@
-function [h] = DrawEllipsoid(r)
-maxd = 20;
-step = maxd / 80;
+function [h] = DrawEllipsoid(r, X)
+r
+maxd = max(abs(X)) * 2;
+step = maxd / 100;
+x = X(:,1);
+y = X(:,2);
+z = X(:,3);
 
 [ xx, yy, zz ] = meshgrid( -maxd:step:maxd, -maxd:step:maxd, -maxd:step:maxd);
 shape = r(1) * xx.^2 + r(2) * yy.^2 + r(3) * zz.^2 + ...

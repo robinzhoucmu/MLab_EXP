@@ -49,5 +49,9 @@ pred_V = A*F;
 pred_V_dir = bsxfun(@rdivide, pred_V, sqrt(sum(pred_V.^2)));
 disp('poly2: velocity direction alignment l2 distance')
 err = mean(sqrt(sum((pred_V_dir - V).^2)))
+tmp = 2.0; r = [A(1,1), A(2,2), A(3,3), A(1,2)*tmp, A(1,3)*tmp, A(2,3)*tmp]
+%r = [A(1,1), A(2,2), A(3,3), 0,0,0];
+h = DrawEllipsoid(r, F');
+VisualizeForceVelPairs(F, V, h);
 
 end
