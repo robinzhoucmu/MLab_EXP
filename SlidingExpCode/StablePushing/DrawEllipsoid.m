@@ -1,5 +1,4 @@
 function [h] = DrawEllipsoid(r, X)
-r
 maxd = max(abs(X)) * 2;
 step = maxd / 100;
 x = X(:,1);

@@ -155,7 +155,7 @@ end
 pred_V = Z;
 pred_V_dir = bsxfun(@rdivide, pred_V, sqrt(sum(pred_V.^2, 2)));
 disp('poly4: velocity direction alignment l2 distance')
-err = mean(sqrt(sum((pred_V_dir - Vel').^2, 2)))
+err = mean(sqrt(sum((pred_V_dir - Vel').^2, 2)));
 
 h = Plot4thPoly(v, Force');
 VisualizeForceVelPairs(Force, Vel, h);

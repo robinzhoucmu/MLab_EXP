@@ -4,7 +4,7 @@ unit_scale = 1000;
 H_tf = eye(4,4);
 trans = [50;50;0];
 H_tf = [eye(3,3), trans;
-      0,0,0,1];
+       0,0,0,1];
 
 % Parameters for trianglular block.         
 Tri_mass = 1.518;
@@ -18,7 +18,7 @@ Tri_pts = [0.03    0.09    0.03;
 Tri_pts = bsxfun(@minus, Tri_pts, Tri_com);
 [Tri_pds, Tri_pho] = GetObjParaFromSupportPts(Tri_pts, [0;0], Tri_mass);
 
-%Tri_pho = 0.1;
+Tri_pho = 0.1;
 %rng(1);
 
 [pre_push_poses, post_push_poses, ft_readings, robot_pose_readings] = ParseLog(log_file_name);
@@ -28,7 +28,7 @@ push_wrenches = zeros(num_pushes, 3);
 slider_velocities = zeros(num_pushes, 3);
 slider_vel_raw = zeros(num_pushes, 3);
 %i=2;
-%num_pushes = 5;
+%num_pushes = 15;
 for i = 1:1:num_pushes
     % Get object pre and post push pose.
     obj_start_pos = pre_push_poses(:,i);
@@ -108,7 +108,7 @@ end
 push_wrenches_dir = bsxfun(@rdivide, push_wrenches, sqrt(sum(push_wrenches.^2, 2)));
 
 % Split training and testing data.
-ratio_train = 0.5;
+ratio_train = 0.9
 NDataTrain = floor(num_pushes * ratio_train);
 index_perm = randperm(num_pushes);
 
@@ -125,31 +125,37 @@ slider_velocities_test = slider_velocities(index_perm(NDataTrain+1:end), :);
 flag_convex = 1;
 w_force = 1;
 w_vel = 1;
-w_reg = 5;
+w_reg = 10;
 [coeffs, xi, delta, pred_v_train, s] = Fit4thOrderPolyCVX(push_wrenches_train', slider_velocities_train', w_reg, w_vel, w_force, flag_convex);
 
 %Linear Prediction (Quadratic fitting) baseline.
 w_force_qp = 1;
-w_reg_qp = 5;
-[A, xi_elip, delta_elip, pred_v_lr_train, s_lr] = FitElipsoidForceVelocityCVX(push_wrenches', slider_velocities', w_force_qp, w_reg_qp, flag_convex);
+w_reg_qp = 10;
+[A, xi_elip, delta_elip, pred_v_lr_train, s_lr] = FitElipsoidForceVelocityCVX(push_wrenches_train', slider_velocities_train', w_force_qp, w_reg_qp, flag_convex);
 
 % Evaluate on training. 
-[pred_vel_dir_train] = GetVelFrom4thOrderPoly(coeffs, push_wrenches_train');
+%[pred_vel_dir_train] = GetVelFrom4thOrderPoly(coeffs, push_wrenches_train');
 % Compute mean deviation angle.
-angles_train = acos(diag(slider_velocities_train * pred_vel_dir_train')) * 180 / pi;
+% angles_train = acos(diag(slider_velocities_train * pred_vel_dir_train')) * 180 / pi;
+% disp('Mean Train Angle(Degree) Deviation');
+% mean(angles_train)
+
 disp('Mean Train Angle(Degree) Deviation');
-mean(angles_train)
+[err_poly ,dev_angle_poly] = EvaluatePoly4Predictor(push_wrenches_dir_train, slider_velocities_train, coeffs)
 
 % Predict test data velocity and evaluate performance.
-[pred_vel_dir_test] = GetVelFrom4thOrderPoly(coeffs, push_wrenches_test');
-angles_test = acos(diag(slider_velocities_test * pred_vel_dir_test')) * 180 / pi;
 disp('Mean Test Angle(Degree) Deviation');
-mean(angles_test)
+[err_poly ,dev_angle_poly] = EvaluatePoly4Predictor(push_wrenches_dir_test, slider_velocities_test, coeffs)
+
+% [pred_vel_dir_test] = GetVelFrom4thOrderPoly(coeffs, push_wrenches_test');
+% angles_test = acos(diag(slider_velocities_test * pred_vel_dir_test')) * 180 / pi;
+% disp('Mean Test Angle(Degree) Deviation');
+% mean(angles_test)
 
 disp('Mean train error Linear');
-[err, dev_angle] = EvaluateLinearPredictor(push_wrenches_train, slider_velocities_train, A)
+[err, dev_angle] = EvaluateLinearPredictor(push_wrenches_dir_train, slider_velocities_train, A)
 disp('Mean test error Linear');
-[err, dev_angle] = EvaluateLinearPredictor(push_wrenches_test, slider_velocities_test, A)
+[err, dev_angle] = EvaluateLinearPredictor(push_wrenches_dir_test, slider_velocities_test, A)
 
 % Combine with symmetric data for training GP.
 
@@ -159,6 +165,21 @@ slider_velocities_train_gp = [slider_velocities_train; -slider_velocities_train]
 [hyp, err_angle_train, err_angle_test] = GP_Fitting(push_wrenches_dir_train_gp, slider_velocities_train_gp, push_wrenches_dir_test, slider_velocities_test);
 err_angle_test
 err_angle_train
+
+
+% Sample from the ideal pressure distribution and evaluate how good each
+% predictor is. 
+Nc = 200;
+CORs = GenerateRandomCORs(Tri_pts, Nc, 300);
+[F, bv] = GenFVPairsFromPD(Tri_pts, Tri_pds, CORs);
+pho=Tri_pho;
+F(3,:) = F(3,:) / pho;
+bv(:,3) = bv(:,3) * pho;
+bv = bsxfun(@rdivide, bv, sqrt(sum(bv.^2,2)));
+F_dir = bsxfun(@rdivide, F, sqrt(sum(F.^2,1)));
+[hyp, err_gp_train, dev_angle_gp] = GP_Fitting(push_wrenches_dir_train_gp, slider_velocities_train_gp, F_dir', bv)
+[err_poly4,dev_angle_poly4] = EvaluatePoly4Predictor(F_dir', bv, coeffs)
+[err_linear,dev_angle_linear] = EvaluateLinearPredictor(F_dir', bv, A)
 
 
  
