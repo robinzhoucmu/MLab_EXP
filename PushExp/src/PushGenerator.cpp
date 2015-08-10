@@ -173,7 +173,16 @@ bool PushGenerator::generateTrajectory(const PushAction push, const HomogTransf 
   // Compute the push point and push direction in the robot frame
   Vec robotPoint = objectPose * push.pushPoint;
   Vec robotXDir = objectPose.getRotation() * push.pushVector;
-
+  // Eliminate the z component(exists due to perception error: XoY plane tilted a bit).
+  const int ind_z = 2;
+  robotXDir[ind_z] = 0;
+  robotXDir.normalize();
+  // Set z to be the same as object z. 
+  const double obj_position_z = objectPose.getTranslation()[ind_z];
+  robotPoint[ind_z] = obj_position_z; 
+  std::cout << "push point: " << push.pushPoint << std::endl;
+  std::cout << "robot Point: " << robotPoint << std::endl;
+  std::cout << "robotXDir: " << robotXDir << std::endl;
   // Compute the frame of the robot
   Vec robotZDir = tableNormal;
   Vec robotYDir = robotZDir ^ robotXDir;

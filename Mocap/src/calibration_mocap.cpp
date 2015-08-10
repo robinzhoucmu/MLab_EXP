@@ -218,11 +218,11 @@ int main(int argc, char* argv[]) {
   srand (time(NULL));
   ros::init(argc, argv, "MocapCalibration");
   MocapCalibration mocap_cali;
-  const int kNumRandSamples = 300;
+  const int kNumRandSamples = 200;
   mocap_cali.GenRandomTrajectory(kCenter, kDelta, kDeltaAngles, kNumRandSamples);
   
   std::ofstream fout;
-  fout.open("mocap_log_2.txt");
+  fout.open("mocap_log_08_10.txt");
   mocap_cali.RunTrajectory(fout);
   // Debugging. 
   //mocap_cali.RunTrajectory(std::cout);
