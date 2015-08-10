@@ -2,7 +2,7 @@ close all;
 % Give initialization from physical measurement.
 %v0 = [0; 0; 200];
 v0 = [0;0;150];
-file_name = '../mocap_log_2.txt';
+file_name = '../mocap_log_08_10.txt';
 [RotMats, ToolPts, MocapPts] = ReadFromRosOutput(file_name);
 N = size(ToolPts, 2);
 % Use first 80% for fitting.

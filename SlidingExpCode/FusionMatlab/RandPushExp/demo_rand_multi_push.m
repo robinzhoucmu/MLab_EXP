@@ -1,10 +1,12 @@
 clear all; close all;
-log_file_name = 'SensorLogs/exp8_35_mixed.txt';
+log_file_name = 'SensorLogs/exp10_15.txt';
 unit_scale = 1000;
 H_tf = eye(4,4);
 trans = [50;50;0];
 H_tf = [eye(3,3), trans;
       0,0,0,1];
+R_tool = [sqrt(2)/2, sqrt(2)/2;
+          sqrt(2)/2, -sqrt(2)/2]';
 
 % Parameters for trianglular block.         
 Tri_mass = 1.518;
@@ -40,7 +42,8 @@ for i = 1:1:num_pushes
     force = ft_readings{i}(2:3, :);
     % Force torque sensor positive x is in the opposite direction of global
     % robot frame.
-    force(1,:) = - force(1,:);
+    %force(1,:) = - force(1,:);
+    force = R_tool * force;
     % Negate sign to get force applied on the object.
     force = - force;
     % Minus offset. 

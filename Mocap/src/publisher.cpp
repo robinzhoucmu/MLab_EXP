@@ -144,10 +144,10 @@ void MocapPublisher::PublishToTopic() {
     MocapFrame frame(frameListener->pop(&valid).first);
     // Quit if the listener has no more frames.
     if(!valid) {
-      fprintf(stderr,"No valid frame available \n");       
+      // fprintf(stderr,"No valid frame available \n");       
     }
     else {
-      std::cout << frame << std::endl;
+      // std::cout << frame << std::endl;
       // Extract rigid bodies and publish to ROS.
       Mocap::mocap_frame msg;
       ExtractPoseMsg(frame, &msg);
