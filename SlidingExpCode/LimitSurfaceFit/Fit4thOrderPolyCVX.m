@@ -6,7 +6,7 @@
 % beta: weight for force matching.
 % Output:
 % v_{15,1}: for the coeffs of the polynomial.
-function [v, xi, delta, pred_V, s] = Fit4thOrderPolyCVX(Force, Vel, lambda, gamma, beta, flag_convex)
+function [v, xi, delta, pred_V, s] = Fit4thOrderPolyCVX(Force, Vel, lambda, gamma, beta, flag_convex, flag_plot)
 if (nargin == 2) 
     lambda = 1;
     gamma = 1;
@@ -22,6 +22,9 @@ end
 % Default is with convexity constraint.
 if (nargin < 6)
     flag_convex = 1;
+end
+if (nargin < 7)
+    flag_plot = 1;
 end
 % Extract row vector.
 x = Force(1,:);
@@ -156,8 +159,9 @@ pred_V = Z;
 pred_V_dir = bsxfun(@rdivide, pred_V, sqrt(sum(pred_V.^2, 2)));
 disp('poly4: velocity direction alignment l2 distance')
 err = mean(sqrt(sum((pred_V_dir - Vel').^2, 2)));
-
-h = Plot4thPoly(v, Force');
-VisualizeForceVelPairs(Force, Vel, h);
+if (flag_plot)
+    h = Plot4thPoly(v, Force');
+    VisualizeForceVelPairs(Force, Vel, h);
+end
 end
 

@@ -4,10 +4,14 @@
 % lambda: tradeoff parameter for fitting force.
 % gamma: tradeoff parameter for regularization.
 % A: x^Ax - 1 = 0;
-function [A, xi, delta, pred_V_dir, s] = FitElipsoidForceVelocityCVX(F, V, lambda, gamma, flag_convex)
+function [A, xi, delta, pred_V_dir, s] = FitElipsoidForceVelocityCVX(F, V, lambda, gamma, flag_convex, flag_plot)
 if nargin <=4
     flag_convex = 1;
 end
+if nargin <=5
+    flag_plot = 1;
+end
+
 [d, n] = size(F);
 scale_min = eps;
 if (flag_convex)
@@ -49,9 +53,9 @@ pred_V = A*F;
 pred_V_dir = bsxfun(@rdivide, pred_V, sqrt(sum(pred_V.^2)));
 disp('poly2: velocity direction alignment l2 distance')
 err = mean(sqrt(sum((pred_V_dir - V).^2)));
-tmp = 2.0; r = [A(1,1), A(2,2), A(3,3), A(1,2)*tmp, A(1,3)*tmp, A(2,3)*tmp];
-%r = [A(1,1), A(2,2), A(3,3), 0,0,0];
-h = DrawEllipsoid(r, F');
-VisualizeForceVelPairs(F, V, h);
-
+if (flag_plot)
+    r = [A(1,1), A(2,2), A(3,3), A(1,2)*2, A(1,3)*2, A(2,3)*2];
+    h = DrawEllipsoid(r, F');
+    VisualizeForceVelPairs(F, V, h);
+end
 end

@@ -23,7 +23,7 @@ num_near = Nc * ratio_near;
 num_medium = Nc * ratio_medium;
 CORs(:, 1:num_near) = bsxfun(@plus,(bsxfun(@minus, rand(2, num_near) , [0.5;0.5]))* 2 * avgR, pC);
 CORs(:, num_near+1: num_near + num_medium) = ...
-    bsxfun(@plus,(bsxfun(@minus, rand(2, num_medium) , [0.5;0.5]))* 20 * avgR, pC);
+    bsxfun(@plus,(bsxfun(@minus, rand(2, num_medium) , [0.5;0.5]))* 5 * avgR, pC);
 CORs(:, num_near+num_medium+1: Nc) = ...
     bsxfun(@minus, rand(2, Nc - num_near - num_medium), [0.5;0.5])* 100000;
 % Rotation about support points.
