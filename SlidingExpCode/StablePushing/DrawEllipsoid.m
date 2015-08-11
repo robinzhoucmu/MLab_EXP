@@ -1,5 +1,5 @@
 function [h] = DrawEllipsoid(r, X)
-maxd = max(abs(X)) * 5;
+maxd = max(abs(X)) * 10;
 step = maxd / 100;
 x = X(:,1);
 y = X(:,2);

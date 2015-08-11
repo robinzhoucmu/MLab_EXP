@@ -51,8 +51,8 @@ else
 end
 pred_V = A*F;
 pred_V_dir = bsxfun(@rdivide, pred_V, sqrt(sum(pred_V.^2)));
-disp('poly2: velocity direction alignment l2 distance')
-err = mean(sqrt(sum((pred_V_dir - V).^2)));
+%disp('poly2: velocity direction alignment l2 distance')
+%err = mean(sqrt(sum((pred_V_dir - V).^2)));
 if (flag_plot)
     r = [A(1,1), A(2,2), A(3,3), A(1,2)*2, A(1,3)*2, A(2,3)*2];
     h = DrawEllipsoid(r, F');

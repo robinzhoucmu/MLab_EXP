@@ -1,5 +1,5 @@
 clear all; close all;
-log_file_name = 'SensorLogs/exp10_15.txt';
+log_file_name = 'SensorLogs/10_90_10_10_30_130/exp_08_11_30.txt';
 unit_scale = 1000;
 H_tf = eye(4,4);
 trans = [50;50;0];
@@ -13,14 +13,15 @@ Tri_mass = 1.518;
 Tri_com = [0.15/3; 0.15/3];
 
 % support Points
-Tri_pts = [0.03    0.09    0.03;
-           0.03    0.03    0.09];
+% Tri_pts = [0.03    0.09    0.03;
+%            0.03    0.03    0.09];
+Tri_pts = [0.01, 0.09,0.01;0.01,0.03,0.13];
 
 %[Tri_pds, Tri_pho] = GetObjParaFromSupportPts(Tri_pts, Tri_com, Tri_mass);
 Tri_pts = bsxfun(@minus, Tri_pts, Tri_com);
 [Tri_pds, Tri_pho] = GetObjParaFromSupportPts(Tri_pts, [0;0], Tri_mass);
 
-%Tri_pho = 0.1;
+Tri_pho = 0.1;
 %rng(1);
 
 [pre_push_poses, post_push_poses, ft_readings, robot_pose_readings] = ParseLog(log_file_name);
@@ -48,7 +49,7 @@ for i = 1:1:num_pushes
     force = - force;
     % Minus offset. 
     force = bsxfun(@minus, force, force(:,1));
-    %figure, plot(t, force');
+    figure, plot(t, force');
     
     %Eliminate forces before the jump of the signal.
     avg_f = mean(force,2);
@@ -63,7 +64,7 @@ for i = 1:1:num_pushes
     index_rm = index_pre_touch | index_small;
     force(:, index_rm) = [];
     t(index_rm) = [];
-    %hold on; plot(t, force', 'y-*');
+    hold on; plot(t, force', 'y-*');
     
     N = length(t); 
     
@@ -111,35 +112,49 @@ end
 push_wrenches_dir = bsxfun(@rdivide, push_wrenches, sqrt(sum(push_wrenches.^2, 2)));
 
 % Split training and testing data.
-ratio_train = 0.8;
+ratio_train = 0.75;
 [slider_velocities_train, slider_velocities_test, push_wrenches_train, push_wrenches_test] = ...
     SplitTrainTestData(slider_velocities, push_wrenches, ratio_train);
 push_wrenches_dir_train = UnitNormalize(push_wrenches_train);
 push_wrenches_dir_test = UnitNormalize(push_wrenches_test);
 
-% Fit limit surface.
-flag_convex = 1;
-w_force = 1;
-w_vel = 1;
-w_reg = 1;
-[coeffs, xi, delta, pred_v_train, s] = Fit4thOrderPolyCVX(push_wrenches_train', slider_velocities_train', w_reg, w_vel, w_force, flag_convex);
+options_poly4.method = 'poly4';
+options_poly4.flag_dir = 0;
+[para_poly4] = CrossValidationSearchParameters(push_wrenches_train, slider_velocities_train, push_wrenches_test, slider_velocities_test, options_poly4)
+h_poly4 = Plot4thPoly(para_poly4.coeffs, push_wrenches_train);
+VisualizeForceVelPairs(push_wrenches_train', slider_velocities_train', h_poly4);
 
-%Linear Prediction (Quadratic fitting) baseline.
-w_force_qp = 1;
-w_reg_qp = 1;
-[A, xi_elip, delta_elip, pred_v_lr_train, s_lr] = FitElipsoidForceVelocityCVX(push_wrenches_train', slider_velocities_train', w_force_qp, w_reg_qp, flag_convex);
+options_quadratic.method = 'quadratic';
+options_quadratic.flag_dir = 0;
+[para_quadratic] = CrossValidationSearchParameters(push_wrenches_train, slider_velocities_train, push_wrenches_test, slider_velocities_test, options_quadratic)
+A = para_quadratic.coeffs;
+r = [A(1,1), A(2,2), A(3,3), A(1,2)*2, A(1,3)*2, A(2,3)*2];
+h_quadratic = DrawEllipsoid(r, push_wrenches_dir_train);
+VisualizeForceVelPairs(push_wrenches_train', slider_velocities_train', h_quadratic);
 
-disp('Mean Train Angle(Degree) Deviation');
-[err_poly ,dev_angle_poly] = EvaluatePoly4Predictor(push_wrenches_dir_train, slider_velocities_train, coeffs)
-
-% Predict test data velocity and evaluate performance.
-disp('Mean Test Angle(Degree) Deviation');
-[err_poly ,dev_angle_poly] = EvaluatePoly4Predictor(push_wrenches_dir_test, slider_velocities_test, coeffs)
-
-disp('Mean train error Linear');
-[err, dev_angle] = EvaluateLinearPredictor(push_wrenches_dir_train, slider_velocities_train, A)
-disp('Mean test error Linear');
-[err, dev_angle] = EvaluateLinearPredictor(push_wrenches_dir_test, slider_velocities_test, A)
+% % Fit limit surface.
+% flag_convex = 1;
+% w_force = 1;
+% w_vel = 1;
+% w_reg = 1;
+% [coeffs, xi, delta, pred_v_train, s] = Fit4thOrderPolyCVX(push_wrenches_train', slider_velocities_train', w_reg, w_vel, w_force, flag_convex);
+% 
+% %Linear Prediction (Quadratic fitting) baseline.
+% w_force_qp = 1;
+% w_reg_qp = 1;
+% [A, xi_elip, delta_elip, pred_v_lr_train, s_lr] = FitElipsoidForceVelocityCVX(push_wrenches_train', slider_velocities_train', w_force_qp, w_reg_qp, flag_convex);
+% 
+% disp('Mean Train Angle(Degree) Deviation');
+% [err_poly ,dev_angle_poly] = EvaluatePoly4Predictor(push_wrenches_dir_train, slider_velocities_train, coeffs)
+% 
+% % Predict test data velocity and evaluate performance.
+% disp('Mean Test Angle(Degree) Deviation');
+% [err_poly ,dev_angle_poly] = EvaluatePoly4Predictor(push_wrenches_dir_test, slider_velocities_test, coeffs)
+% 
+% disp('Mean train error Linear');
+% [err, dev_angle] = EvaluateLinearPredictor(push_wrenches_dir_train, slider_velocities_train, A)
+% disp('Mean test error Linear');
+% [err, dev_angle] = EvaluateLinearPredictor(push_wrenches_dir_test, slider_velocities_test, A)
 
 % Combine with symmetric data for training GP.
 push_wrenches_dir_train_gp = [push_wrenches_dir_train; -push_wrenches_dir_train];
@@ -152,7 +167,7 @@ disp('GP train and test');
 % Sample from the ideal pressure distribution and evaluate how good each
 % predictor is. 
 Nc = 400;
-CORs = GenerateRandomCORs3(Tri_pts, Nc, 300);
+CORs = GenerateRandomCORs(Tri_pts, Nc, 300);
 [F, bv] = GenFVPairsFromPD(Tri_pts, Tri_pds, CORs);
 % Change to row representation.
 F = F';
@@ -163,8 +178,8 @@ F_dir = UnitNormalize(F);
 figure; plot3(F(:,1), F(:,2), F(:,3), '.');
 
 [hyp, err_gp_train, dev_angle_gp] = GP_Fitting(push_wrenches_dir_train_gp, slider_velocities_train_gp, F_dir, bv)
-[err_poly4,dev_angle_poly4] = EvaluatePoly4Predictor(F_dir, bv, coeffs)
-[err_linear,dev_angle_linear] = EvaluateLinearPredictor(F_dir, bv, A)
+[err_poly4,dev_angle_poly4] = EvaluatePoly4Predictor(F_dir, bv, para_poly4.coeffs)
+[err_linear,dev_angle_linear] = EvaluateLinearPredictor(F_dir, bv, para_quadratic.coeffs)
 
 
  
