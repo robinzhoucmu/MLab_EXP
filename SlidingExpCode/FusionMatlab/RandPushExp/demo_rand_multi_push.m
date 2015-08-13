@@ -112,7 +112,7 @@ end
 push_wrenches_dir = bsxfun(@rdivide, push_wrenches, sqrt(sum(push_wrenches.^2, 2)));
 
 % Split training and testing data.
-ratio_train = 0.5;
+ratio_train = 0.75;
 [slider_velocities_train, slider_velocities_test, push_wrenches_train, push_wrenches_test] = ...
     SplitTrainTestData(slider_velocities, push_wrenches, ratio_train);
 push_wrenches_dir_train = UnitNormalize(push_wrenches_train);
@@ -182,7 +182,7 @@ F_dir = UnitNormalize(F);
 
 figure; plot3(F(:,1), F(:,2), F(:,3), '.');
 
-[err_gp, dev_angle_gp_train, dev_angle_gp] = GP_Fitting(push_wrenches_dir_train_gp, slider_velocities_train_gp, F_dir, bv, para_gp.gp_prior)
+[err_gp, dev_angle_gp_train, dev_angle_gp] = GP_Fitting(push_wrenches_dir_train_gp, slider_velocities_train_gp, F_dir, bv, para_gp.coeffs)
 [err_poly4,dev_angle_poly4] = EvaluatePoly4Predictor(F_dir, bv, para_poly4.coeffs)
 [err_linear,dev_angle_linear] = EvaluateLinearPredictor(F_dir, bv, para_quadratic.coeffs)
 

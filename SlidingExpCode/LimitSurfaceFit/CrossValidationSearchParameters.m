@@ -24,7 +24,7 @@ if ~strcmp(method, 'gp')
     if (flag_dir)
         w_force = [0];
     else
-        w_force = [0.25, 0.5, 1, 2, 4, 8];
+        w_force = [0.5, 1, 2, 4, 8];
     end
     for ind_f = 1:length(w_force)
         for ind_r = 1:length(w_reg)
@@ -69,8 +69,8 @@ else
     F_train_dir_gp = [F_train_dir; -F_train_dir];
     V_train_dir_gp = [V_train; -V_train];
     F_val_dir = UnitNormalize(F_val);
-    sn = [0.1, 0.5, 1];
-    l = [0.1, 0.25, 0.5, 1];
+    sn = [0.1, 0.5, 1, 2.5];
+    l = [0.1,  0.5, 1], 2.5;
     for ind_sn = 1:length(sn)
         for ind_l = 1:length(l)
             prior_gp.sn = sn(ind_sn);
@@ -81,9 +81,9 @@ else
                 para.dev_angle = best_dev_angle;
                 para.train_dev_angle_record = err_angle_train;
                 para.gp_hyp = hyp;
-                para.gp_prior = prior_gp;
+                para.coeffs = prior_gp;
             end
-            fprintf('gp: sn:%f, l:%f, dev_angle_train:%f, dev_angle_val:%f', prior_gp.sn, prior_gp.l, err_angle_train, err_angle_val);
+            fprintf('gp: sn:%f, l:%f, dev_angle_train:%f, dev_angle_val:%f\n', prior_gp.sn, prior_gp.l, err_angle_train, err_angle_val);
         end
     end
 end
