@@ -171,8 +171,8 @@ options_gp.method = 'gp';
 
 % Sample from the ideal pressure distribution and evaluate how good each
 % predictor is. 
-Nc = 400;
-CORs = GenerateRandomCORs3(Tri_pts, Nc, 300);
+Nc = 402;
+CORs = GenerateRandomCORs3(Tri_pts, Nc, 402/3);
 [F, bv] = GenFVPairsFromPD(Tri_pts, Tri_pds, CORs);
 % Change to row representation.
 F = F';

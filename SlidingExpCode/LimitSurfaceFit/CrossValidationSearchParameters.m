@@ -6,7 +6,7 @@ flag_plot = 0;
 % weight for velocity matching is fixed at 1.
 w_vel = 1;
 % regularization of parameters w.r.t velocity matching.
-w_reg = [0, 1, 10];
+w_reg = [0, 0.1, 1];
 
 method = options.method;
 
@@ -70,7 +70,7 @@ else
     V_train_dir_gp = [V_train; -V_train];
     F_val_dir = UnitNormalize(F_val);
     sn = [0.1, 0.5, 1, 2.5];
-    l = [0.1,  0.5, 1], 2.5;
+    l = [0.1, 0.5, 1, 2.5];
     for ind_sn = 1:length(sn)
         for ind_l = 1:length(l)
             prior_gp.sn = sn(ind_sn);

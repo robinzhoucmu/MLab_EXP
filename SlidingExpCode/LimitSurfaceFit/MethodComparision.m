@@ -1,5 +1,5 @@
 function [record] = MethodComparision(train_data, validation_data, test_data)
-record.method = {'poly4_convex', 'quadratic', 'poly4_plain', 'GP'};
+record.method = {'poly4_convex', 'poly4_plain', 'quadratic' 'gp'};
 % record deviation angle.
 record.err_train = zeros(4,1);
 record.err_validation = zeros(4,1);
@@ -17,6 +17,7 @@ V_test = test_data.V;
 
 num_methods = 4;
 for i = 1:1:num_methods
+    fprintf('Use Method:%s\n', record.method{i});
     if (i == 1)
         % Poly4.
         options.flag_convex = 1;
@@ -33,7 +34,9 @@ for i = 1:1:num_methods
         options.flag_dir = 0;
     else
         options.method = 'gp';
-    end
+    end    
+    %h = figure; VisualizeForceVelPairs(F_train', V_train', h);
+
     [info] = CrossValidationSearchParameters(F_train, V_train, F_valid, V_valid, options);
 
     record.err_train(i) = info.train_dev_angle_record;
