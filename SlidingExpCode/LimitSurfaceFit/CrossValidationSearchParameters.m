@@ -6,7 +6,7 @@ flag_plot = 0;
 % weight for velocity matching is fixed at 1.
 w_vel = 1;
 % regularization of parameters w.r.t velocity matching.
-w_reg = [0, 1];
+w_reg = [0, 0.1, 2, 8];
 
 method = options.method;
 
@@ -34,14 +34,14 @@ if ~strcmp(method, 'gp')
                % Evaluate on validation set.
                [err ,dev_angle] = EvaluatePoly4Predictor(F_val, V_val, coeffs);
                [train_err, train_dev_angle] = EvaluatePoly4Predictor(F_train, V_train, coeffs);
-               %fprintf('poly4: w_force:%f, w_reg:%f, dev_angle_train:%f, dev_angle_val:%f\n', w_force(ind_f), w_reg(ind_r), train_dev_angle, dev_angle);
+               fprintf('poly4: w_force:%f, w_reg:%f, dev_angle_train:%f, dev_angle_val:%f\n', w_force(ind_f), w_reg(ind_r), train_dev_angle, dev_angle);
 
            elseif (strcmp(method, 'quadratic'))
                [coeffs, xi_elip, delta_elip, pred_v_lr_train, s_lr] = ...
                    FitElipsoidForceVelocityCVX(F_train', V_train',  w_force(ind_f),  w_reg(ind_r), flag_convex, flag_plot);
                [err, dev_angle] = EvaluateLinearPredictor(F_val, V_val, coeffs);
                [train_err, train_dev_angle] = EvaluateLinearPredictor(F_train, V_train, coeffs);
-               %fprintf('quadratic: w_force:%f, w_reg:%f, dev_angle_train:%f, dev_angle_val:%f\n', w_force(ind_f), w_reg(ind_r), train_dev_angle, dev_angle);
+               fprintf('quadratic: w_force:%f, w_reg:%f, dev_angle_train:%f, dev_angle_val:%f\n', w_force(ind_f), w_reg(ind_r), train_dev_angle, dev_angle);
            end
            % Update the best so far.
            if (best_dev_angle > dev_angle) 
@@ -69,8 +69,8 @@ else
     F_train_dir_gp = [F_train_dir; -F_train_dir];
     V_train_dir_gp = [V_train; -V_train];
     F_val_dir = UnitNormalize(F_val);
-    sn = [0.1, 0.5, 1, 2.5];
-    l = [0.1, 0.5, 1, 2.5];
+    sn = [0.05, 0.1, 0.2, 0.4, 0.8, 1.6, 3.2];
+    l = [0.05, 0.1, 0.2, 0.4, 0.8, 1.6, 3.2];
     for ind_sn = 1:length(sn)
         for ind_l = 1:length(l)
             prior_gp.sn = sn(ind_sn);
