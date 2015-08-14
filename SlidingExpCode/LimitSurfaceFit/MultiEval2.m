@@ -3,8 +3,14 @@ if (nargin < 8)
     noise.f = 0;
     noise.v = 0;
 end
+exp_record = {};
 for ind_eval = 1:1:num_evals
+    test_data = {};
+    train_data = {};
+    validation_data = {};
+    fprintf('-----------------------\n');
     fprintf('percentage completed:%f\n', (ind_eval-1) * 100 / num_evals);
+    fprintf('-----------------------\n');
     % Sample support points.
     [Pts] = SampleSupportPoint(num_pts, options_pt);
     % Sample pressure distribution.
@@ -26,28 +32,30 @@ for ind_eval = 1:1:num_evals
     pho = 1;
     F = F';
     [V, F] = NormalizeForceAndVelocities(V, F, pho);
+    mean(sqrt(sum(F.^2, 2)));
     %h = figure; VisualizeForceVelPairs(F', V', h);
     % Split out test data.
     [V_train_val, V_test, F_train_val, F_test] = SplitTrainTestData(V, F, r_train);
     test_data.V = V_test;
     test_data.F = F_test;
-    % Among all data for training and validation, use 80% to construct
-    % whole training set.
-    [V_train_all, V_val, F_train_all, F_val] = SplitTrainTestData(V_train_val, F_train_val, 0.8);
     % Add noise(if any) to training forces data.
     noise_eps_f = noise.f;
-    F_train_all = F_train_all + noise_eps_f * randn(size(F_train_all));
     noise_eps_v = noise.v;
-    V_train_all = V_train_all + noise_eps_v * randn(size(V_train_all));
-    V_train_all = UnitNormalize(V_train_all);
+    F_train_val = F_train_val + noise_eps_f * randn(size(F_train_val));
+    V_train_val = V_train_val + noise_eps_v * randn(size(V_train_val));
+    V_train_val = UnitNormalize(V_train_val);
     
-    r = [0.125, 0.2, 0.4, 0.8, 1.0];
+    % Among all data for training and validation, use 60% to construct
+    % whole training set.
+    [V_train_all, V_val, F_train_all, F_val] = SplitTrainTestData(V_train_val, F_train_val, 0.6);
+    
+    r = [0.15, 0.3, 0.5, 1.0];
     num_train_all = size(V_train_all,1);
     for ind_ratio = 1:1:length(r)
         % Use subset of the training data set as specified by r.
         V_train = V_train_all(1:floor(num_train_all * r(ind_ratio)), :);
         F_train = F_train_all(1:floor(num_train_all * r(ind_ratio)), :);
-        size(V_train,1)
+        fprintf('*********\nUse training size:%d\n', size(V_train,1));
         train_data.V = V_train;
         train_data.F = F_train;
         validation_data.V = V_val;
@@ -61,7 +69,7 @@ for ind_eval = 1:1:num_evals
             exp_record.err_test{ind_method}(ind_eval, ind_ratio) = record.err_test(ind_method);
             exp_record.err_train{ind_method}(ind_eval, ind_ratio) = record.err_train(ind_method);
             exp_record.err_validation{ind_method}(ind_eval, ind_ratio) = record.err_validation(ind_method);
-        end
+        end    
     end
 end
 

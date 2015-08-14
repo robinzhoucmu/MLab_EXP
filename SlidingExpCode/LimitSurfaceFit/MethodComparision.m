@@ -17,7 +17,7 @@ V_test = test_data.V;
 
 num_methods = 4;
 for i = 1:1:num_methods
-    fprintf('Use Method:%s\n', record.method{i});
+    %fprintf('Method:%s\n', record.method{i});
     if (i == 1)
         % Poly4.
         options.flag_convex = 1;
@@ -53,7 +53,7 @@ for i = 1:1:num_methods
         [err, dev_angle_train, dev_angle] = GP_Fitting(F_train_gp, V_train_gp, F_test, V_test, info.coeffs);
     end
     record.err_test(i) = dev_angle;
-    sprintf('method: %s, err:%f\n', record.method{i}, dev_angle);
+    fprintf('%s, err:%f\n', record.method{i}, dev_angle);
 end
 
 end

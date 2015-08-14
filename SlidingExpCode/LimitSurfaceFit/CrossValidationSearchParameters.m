@@ -6,7 +6,7 @@ flag_plot = 0;
 % weight for velocity matching is fixed at 1.
 w_vel = 1;
 % regularization of parameters w.r.t velocity matching.
-w_reg = [0, 0.1, 1];
+w_reg = [0, 1];
 
 method = options.method;
 
@@ -24,7 +24,7 @@ if ~strcmp(method, 'gp')
     if (flag_dir)
         w_force = [0];
     else
-        w_force = [0.5, 1, 2, 4, 8];
+        w_force = [0.5, 1, 4];
     end
     for ind_f = 1:length(w_force)
         for ind_r = 1:length(w_reg)
@@ -34,14 +34,14 @@ if ~strcmp(method, 'gp')
                % Evaluate on validation set.
                [err ,dev_angle] = EvaluatePoly4Predictor(F_val, V_val, coeffs);
                [train_err, train_dev_angle] = EvaluatePoly4Predictor(F_train, V_train, coeffs);
-               fprintf('poly4: w_force:%f, w_reg:%f, dev_angle_train:%f, dev_angle_val:%f\n', w_force(ind_f), w_reg(ind_r), train_dev_angle, dev_angle);
+               %fprintf('poly4: w_force:%f, w_reg:%f, dev_angle_train:%f, dev_angle_val:%f\n', w_force(ind_f), w_reg(ind_r), train_dev_angle, dev_angle);
 
            elseif (strcmp(method, 'quadratic'))
                [coeffs, xi_elip, delta_elip, pred_v_lr_train, s_lr] = ...
                    FitElipsoidForceVelocityCVX(F_train', V_train',  w_force(ind_f),  w_reg(ind_r), flag_convex, flag_plot);
                [err, dev_angle] = EvaluateLinearPredictor(F_val, V_val, coeffs);
                [train_err, train_dev_angle] = EvaluateLinearPredictor(F_train, V_train, coeffs);
-               fprintf('quadratic: w_force:%f, w_reg:%f, dev_angle_train:%f, dev_angle_val:%f\n', w_force(ind_f), w_reg(ind_r), train_dev_angle, dev_angle);
+               %fprintf('quadratic: w_force:%f, w_reg:%f, dev_angle_train:%f, dev_angle_val:%f\n', w_force(ind_f), w_reg(ind_r), train_dev_angle, dev_angle);
            end
            % Update the best so far.
            if (best_dev_angle > dev_angle) 
@@ -83,7 +83,7 @@ else
                 para.gp_hyp = hyp;
                 para.coeffs = prior_gp;
             end
-            fprintf('gp: sn:%f, l:%f, dev_angle_train:%f, dev_angle_val:%f\n', prior_gp.sn, prior_gp.l, err_angle_train, err_angle_val);
+            %fprintf('gp: sn:%f, l:%f, dev_angle_train:%f, dev_angle_val:%f\n', prior_gp.sn, prior_gp.l, err_angle_train, err_angle_val);
         end
     end
 end
