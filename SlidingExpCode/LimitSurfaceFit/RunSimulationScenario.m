@@ -22,7 +22,15 @@ elseif strcmp(scenario,'3-points')
     options_pd.mode = 'random';
     [exp_record] = MultiEval2(num_evals, num_pts, num_data, options_pt, ...
                                   options_pd, r_facet, r_train, noise)
-
+elseif strcmp(scenario, '10-points')
+    options_pt.hyper_mode = 'random';
+    options_pt.mode = 'circle';
+    options_pt.vertices = [-0.5, -0.5, 0.5, 0.5; -0.5, 0.5, 0.5, -0.5]';
+    options_pt.range = 1;
+    num_pts = 10;
+    options_pd.mode = 'random';
+    [exp_record] = MultiEval2(num_evals, num_pts, num_data, options_pt, ...
+                                  options_pd, r_facet, r_train, noise)                           
 elseif strcmp(scenario,'360-ring')
     options_pt.hyper_mode = 'grid';
     options_pt.mode = 'rim'
