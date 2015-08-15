@@ -11,8 +11,12 @@ for ind_eval = 1:1:num_evals
     fprintf('-----------------------\n');
     fprintf('percentage completed:%f\n', (ind_eval-1) * 100 / num_evals);
     fprintf('-----------------------\n');
-    % Sample support points.
-    [Pts] = SampleSupportPoint(num_pts, options_pt);
+    if (strcmp(options_pt.hyper_mode, 'grid'))
+        [Pts] = GridSupportPoint(num_pts, options_pt);
+    else
+        % Sample support points.
+        [Pts] = SampleSupportPoint(num_pts, options_pt);
+    end
     % Sample pressure distribution.
     [Pds] = AssignPressure(Pts, options_pd);
     Pts = Pts';

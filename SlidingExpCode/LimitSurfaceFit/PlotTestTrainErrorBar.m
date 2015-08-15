@@ -5,8 +5,13 @@ colors = ['r','g','b','k'];
 h1 = figure;
 title('testing error');
 hold on;
+
+
+
+r = [0.15, 0.3, 0.5, 1.0];
 for i = 1:1:num_methods
-    p = errorbar(1:1:size(exp_record.err_test{i}, 2), mean(exp_record.err_test{i}), std(exp_record.err_test{i}), ...
+    [mu, sigma, muci, sigmaci] = normfit(exp_record.err_test{i}, 0.05);
+    p = errorbar(r, mu, muci(2,:)-mu, ...
         'Color', colors(i), 'Marker', '*', 'MarkerSize', 6);
 end
 legend('poly4-cvx','poly4-plain','quadratic', 'gp');
@@ -15,7 +20,8 @@ h2 = figure;
 title('training error');
 hold on;
 for i = 1:1:num_methods
-    p = errorbar(1:1:size(exp_record.err_train{i}, 2), mean(exp_record.err_train{i}), std(exp_record.err_train{i}), ...
+    [mu, sigma, muci, sigmaci] = normfit(exp_record.err_train{i}, 0.05);
+    p = errorbar(r, mu, muci(2,:)-mu, ...
         'Color', colors(i), 'Marker', '*', 'MarkerSize', 6);
 end
 legend('poly4-cvx','poly4-plain','quadratic', 'gp');
