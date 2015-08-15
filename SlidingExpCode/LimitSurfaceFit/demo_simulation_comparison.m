@@ -35,6 +35,6 @@ exp_para.r_facet = 0;
 toc;
 [h1_square,h2_square] = PlotTestTrainErrorBar(exp_record_square);
 
-save('ExpRecord/50_evals_150_data_0f_0v_Grid', 'exp_record_360_ring', 'exp_record_square');
+save('ExpRecord/50_evals_150_data_0.1f_0.1v_Grid', 'exp_record_360_ring', 'exp_record_square');
 
 
