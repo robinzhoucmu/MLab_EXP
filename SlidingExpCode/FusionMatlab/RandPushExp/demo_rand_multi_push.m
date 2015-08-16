@@ -125,6 +125,14 @@ options_poly4.flag_dir = 0;
 h_poly4 = Plot4thPoly(para_poly4.coeffs, push_wrenches_train);
 VisualizeForceVelPairs(push_wrenches_train', slider_velocities_train', h_poly4);
 
+% Add non-convex constrained poly5.
+options_poly4.flag_convex = 0;
+options_poly4.method = 'poly4';
+options_poly4.flag_dir = 0;
+[para_poly4_plain] = CrossValidationSearchParameters(push_wrenches_train, slider_velocities_train, push_wrenches_test, slider_velocities_test, options_poly4)
+h_poly4_plain = Plot4thPoly(para_poly4_plain.coeffs, push_wrenches_train);
+VisualizeForceVelPairs(push_wrenches_train', slider_velocities_train', h_poly4_plain);
+
 options_quadratic.flag_convex = 1;
 options_quadratic.method = 'quadratic';
 options_quadratic.flag_dir = 0;
@@ -184,6 +192,7 @@ figure; plot3(F(:,1), F(:,2), F(:,3), '.');
 
 [err_gp, dev_angle_gp_train, dev_angle_gp] = GP_Fitting(push_wrenches_dir_train_gp, slider_velocities_train_gp, F_dir, bv, para_gp.coeffs)
 [err_poly4,dev_angle_poly4] = EvaluatePoly4Predictor(F_dir, bv, para_poly4.coeffs)
+[err_poly4_plain,dev_angle_poly4_plain] = EvaluatePoly4Predictor(F_dir, bv, para_poly4_plain.coeffs)
 [err_linear,dev_angle_linear] = EvaluateLinearPredictor(F_dir, bv, para_quadratic.coeffs)
 
 

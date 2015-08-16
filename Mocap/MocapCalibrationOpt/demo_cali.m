@@ -2,7 +2,7 @@ close all;
 % Give initialization from physical measurement.
 %v0 = [0; 0; 200];
 v0 = [0;0;150];
-file_name = '../mocap_log_08_10.txt';
+file_name = '../mocap_log_08_15.txt';
 [RotMats, ToolPts, MocapPts] = ReadFromRosOutput(file_name);
 N = size(ToolPts, 2);
 % Use first 80% for fitting.
@@ -43,7 +43,7 @@ threshold = 10;
 err_train_1 = ValidFitting(ToolPts_Train, MocapPts_Train, RotMats_Train, R_final, t_final, v_final) 
 err_test_1 = ValidFitting(ToolPts_Test, MocapPts_Test, RotMats_Test, R_final, t_final, v_final)
 
-output_file_name = '../matlab_cali_result3.txt';
+output_file_name = '../matlab_cali_result_08_15.txt';
 quat = qGetQ(R_final);
 T = [t_final; quat]';
 dlmwrite(output_file_name, T, ' ');

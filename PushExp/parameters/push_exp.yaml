@@ -10,7 +10,7 @@ min_height: 12.5,
 mocap_num_readings: 50, 
 mocap_read_duration: 2.0,
 
-num_pushes: 5,
+num_pushes: 50,
 
 min_edge_dist: 12.5,
 min_push_angle: 30.0,
@@ -34,8 +34,10 @@ robot_set_tool: [49.50, 49.50, 90.5, 0.0, 0.9239, 0.3827, 0.0],
 
 #mocap_cali_tf: [671.44, -260.31, 58.999, 0.49471, 0.49387, 0.50271, 0.50856],
 #mocap_cali_tf: [715.42,-213.72,57.829,0.5007,0.50199,0.49812,0.49918],
-mocap_cali_tf:[763.25,-277.11,57.956,0.4954,0.49503,0.50548,0.504],
-sensor_log_file: '../sensor_log/10_90_10_10_30_130/exp_08_13_5.txt',
-workobj_file_cali: '../parameters/aluminium_triangle/obj_cali_08_10.txt',
+mocap_cali_tf:[754.55,-239.08,58.711,0.49582,0.49698,0.50252,0.50463],
+
+sensor_log_file: '../sensor_log/10_90_10_10_30_130/exp_08_15_50.txt',
+
+workobj_file_cali: '../parameters/aluminium_triangle/obj_cali_08_15.txt',
 workobj_file_geometry: '../parameters/aluminium_triangle/obj_geo.txt'
 }
