@@ -17,7 +17,7 @@ plot3(x,y,z, 'r*');
 
 p = patch(isosurface(xx,yy,zz,shape,1));
 set( p, 'FaceColor', 'g','FaceAlpha', 0.25, 'EdgeColor', 'none' );
-view(-10, 20);
+%view(-10, 20);
 %view(3);
 camlight
 end

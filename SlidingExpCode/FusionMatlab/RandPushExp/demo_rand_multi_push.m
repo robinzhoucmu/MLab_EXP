@@ -1,6 +1,6 @@
 clear all; close all;
-%log_file_name = 'SensorLogs/10_90_10_10_30_130/exp_08_11_30.txt';
-log_file_name = 'SensorLogs/exp_08_11_50_mixed.txt';
+log_file_name = 'SensorLogs/10_90_10_10_30_130/exp_08_15_50.txt';
+%log_file_name = 'SensorLogs/exp_08_11_50_mixed.txt';
 unit_scale = 1000;
 H_tf = eye(4,4);
 trans = [50;50;0];
@@ -11,15 +11,17 @@ R_tool = [sqrt(2)/2, sqrt(2)/2;
 
 % Parameters for trianglular block.         
 Tri_mass = 1.518;
+mu_f = 4.2 / (Tri_mass * 9.8);
+Tri_pressure = Tri_mass * mu_f;
 Tri_com = [0.15/3; 0.15/3];
 
 % support Points
-Tri_pts = [0.03    0.09    0.03; 0.03    0.03    0.09];
-%Tri_pts = [0.01, 0.09,0.01;0.01,0.03,0.13];
+%Tri_pts = [0.03    0.09    0.03; 0.03    0.03    0.09];
+Tri_pts = [0.01, 0.09,0.01;0.01,0.03,0.13];
 
 %[Tri_pds, Tri_pho] = GetObjParaFromSupportPts(Tri_pts, Tri_com, Tri_mass);
 Tri_pts = bsxfun(@minus, Tri_pts, Tri_com);
-[Tri_pds, Tri_pho] = GetObjParaFromSupportPts(Tri_pts, [0;0], Tri_mass);
+[Tri_pds, Tri_pho] = GetObjParaFromSupportPts(Tri_pts, [0;0], Tri_pressure);
 
 Tri_pho = 0.1;
 %rng(1);
@@ -112,7 +114,7 @@ end
 push_wrenches_dir = bsxfun(@rdivide, push_wrenches, sqrt(sum(push_wrenches.^2, 2)));
 
 % Split training and testing data.
-ratio_train = 0.75;
+ratio_train = 0.5;
 [slider_velocities_train, slider_velocities_test, push_wrenches_train, push_wrenches_test] = ...
     SplitTrainTestData(slider_velocities, push_wrenches, ratio_train);
 push_wrenches_dir_train = UnitNormalize(push_wrenches_train);
@@ -189,6 +191,10 @@ pho=Tri_pho;
 F_dir = UnitNormalize(F);
 
 figure; plot3(F(:,1), F(:,2), F(:,3), '.');
+
+figure;
+k = convhull(F(:,1)', F(:,2)', F(:,3)');
+trimesh(k, F(:,1)', F(:,2)', F(:,3)');
 
 [err_gp, dev_angle_gp_train, dev_angle_gp] = GP_Fitting(push_wrenches_dir_train_gp, slider_velocities_train_gp, F_dir, bv, para_gp.coeffs)
 [err_poly4,dev_angle_poly4] = EvaluatePoly4Predictor(F_dir, bv, para_poly4.coeffs)
