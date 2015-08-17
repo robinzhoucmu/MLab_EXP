@@ -36,7 +36,7 @@ robot_set_tool: [49.50, 49.50, 90.5, 0.0, 0.9239, 0.3827, 0.0],
 #mocap_cali_tf: [715.42,-213.72,57.829,0.5007,0.50199,0.49812,0.49918],
 mocap_cali_tf:[754.55,-239.08,58.711,0.49582,0.49698,0.50252,0.50463],
 
-sensor_log_file: '../sensor_log/10_90_10_10_30_130/exp_08_15_50.txt',
+sensor_log_file: '../sensor_log/wood_10_130_10_10_10_130/exp_08_17_50.txt',
 
 workobj_file_cali: '../parameters/aluminium_triangle/obj_cali_08_15.txt',
 workobj_file_geometry: '../parameters/aluminium_triangle/obj_geo.txt'

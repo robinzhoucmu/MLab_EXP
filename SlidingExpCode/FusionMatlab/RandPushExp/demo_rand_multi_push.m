@@ -1,6 +1,9 @@
 clear all; close all;
-log_file_name = 'SensorLogs/10_90_10_10_30_130/exp_08_15_50.txt';
+%log_file_name = 'SensorLogs/10_90_10_10_30_130/exp_08_15_50.txt';
 %log_file_name = 'SensorLogs/exp_08_11_50_mixed.txt';
+%log_file_name = 'SensorLogs/30_63.33_43.33_30_43.33_63.33/exp_08_17_50.txt';
+%log_file_name = 'SensorLogs/10_130_10_10_10_130/exp_08_17_50.txt';
+log_file_name = 'SensorLogs/wood_10_130_10_10_10_130/exp_08_17_50.txt';
 unit_scale = 1000;
 H_tf = eye(4,4);
 trans = [50;50;0];
@@ -17,8 +20,9 @@ Tri_com = [0.15/3; 0.15/3];
 
 % support Points
 %Tri_pts = [0.03    0.09    0.03; 0.03    0.03    0.09];
-Tri_pts = [0.01, 0.09,0.01;0.01,0.03,0.13];
-
+%Tri_pts = [0.01, 0.09,0.01;0.01,0.03,0.13];
+%Tri_pts = [0.03, 0.06333, 0.04333; 0.03, 0.04333, 0.06333];
+Tri_pts = [0.01, 0.01, 0.13; 0.01,0.13,0.01];
 %[Tri_pds, Tri_pho] = GetObjParaFromSupportPts(Tri_pts, Tri_com, Tri_mass);
 Tri_pts = bsxfun(@minus, Tri_pts, Tri_com);
 [Tri_pds, Tri_pho] = GetObjParaFromSupportPts(Tri_pts, [0;0], Tri_pressure);
