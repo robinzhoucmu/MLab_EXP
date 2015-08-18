@@ -252,7 +252,7 @@ bool PushExp::GeneratePushPlan(HomogTransf pre_push_obj_pose) {
     Vec v = pre_push_obj_pose.getTranslation();
     // Add part of the object height to Z.
     const int ind_z = 2;
-    const double height_lift_ratio = 0.2;
+    const double height_lift_ratio = 0.25;
     v[ind_z] = v[ind_z] + push_object->GetHeight() * height_lift_ratio;
     push_obj_pose_lifted.setTranslation(v);
     push_obj_pose_lifted.setQuaternion(q);
