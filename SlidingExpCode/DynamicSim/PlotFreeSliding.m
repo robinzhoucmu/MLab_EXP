@@ -25,11 +25,11 @@ t_interval = (t(end) - t(1)) / num_interval_plot;
 ind_interval = 1;
 for i = 1:1:num_poses
     % Get plotting origin point coordinate.
-    cord_xy = pos_2d(1:2,i) + shift;
     theta = pos_2d(3,i);
     % Plot object.
     R = [cos(theta), -sin(theta); ...
          sin(theta), cos(theta)];
+    cord_xy = pos_2d(1:2,i) + R * shift;
     V = R * vertices;
     flag_draw_intermediate = 0;
     for j = 1:1:num_vertices
@@ -52,7 +52,7 @@ for i = 1:1:num_poses
             'LineStyle', '--', 'LineWidth', 2);   
         elseif (t(i+1) > (t_interval * ind_interval) && t(i) <= (t_interval * ind_interval))
             plot([x, nxt_x], [y, nxt_y], 'Color', colors(mod(j-1,3) + 1), ...
-                'LineStyle', ':', 'LineWidth', 1);
+                'LineStyle', ':', 'LineWidth', 1.5);
             flag_draw_intermediate = 1;
         end
         %plot(x,y, 'Color', colors(mod(j-1,3) + 1), 'Marker', '^', 'MarkerSize', 5);   
@@ -74,7 +74,7 @@ xlim([x_min-margin_x, x_max + margin_x]);
 ylim([y_min-margin_x, y_max + margin_y]);
 % Plot point of origin trajectory.
 cord_com = pos_2d(1:2,:);
-%plot(cord_com(1,:), cord_com(2,:), 'k.', 'MarkerSize', 5);
+plot(cord_com(1,:), cord_com(2,:), 'k.', 'MarkerSize', 5);
 
 % Add marker to vertices.
 for i = 1:1:num_vertices

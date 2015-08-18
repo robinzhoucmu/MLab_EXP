@@ -19,6 +19,7 @@ p = patch(isosurface(xx,yy,zz,shape,1));
 set( p, 'FaceColor', 'g','FaceAlpha', 0.25, 'EdgeColor', 'none' );
 %view(-10, 20);
 %view(3);
+grid on;
 camlight
 end
 

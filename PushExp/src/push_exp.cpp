@@ -463,7 +463,7 @@ void PushExp::Run() {
       std::cout << "Started to run push " << i << std::endl;
       SinglePushPipeline();
       SerializeSensorInfo(fout);
-      ros::Duration(2.0).sleep();
+      ros::Duration(4.0).sleep();
     }
     fout.close();
   }

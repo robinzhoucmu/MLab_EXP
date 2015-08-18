@@ -3,7 +3,9 @@ clear all; close all;
 %log_file_name = 'SensorLogs/exp_08_11_50_mixed.txt';
 %log_file_name = 'SensorLogs/30_63.33_43.33_30_43.33_63.33/exp_08_17_50.txt';
 %log_file_name = 'SensorLogs/10_130_10_10_10_130/exp_08_17_50.txt';
-log_file_name = 'SensorLogs/wood_10_130_10_10_10_130/exp_08_17_50.txt';
+%log_file_name = 'SensorLogs/wood_10_130_10_10_10_130/exp_08_17_50.txt';
+%log_file_name = 'SensorLogs/wood_patch/exp_08_17_0839_50.txt';
+log_file_name = 'SensorLogs/wood_30_90_30_30_30_90/exp_08_17_0922_50.txt';
 unit_scale = 1000;
 H_tf = eye(4,4);
 trans = [50;50;0];
@@ -118,7 +120,7 @@ end
 push_wrenches_dir = bsxfun(@rdivide, push_wrenches, sqrt(sum(push_wrenches.^2, 2)));
 
 % Split training and testing data.
-ratio_train = 0.5;
+ratio_train = 0.75;
 [slider_velocities_train, slider_velocities_test, push_wrenches_train, push_wrenches_test] = ...
     SplitTrainTestData(slider_velocities, push_wrenches, ratio_train);
 push_wrenches_dir_train = UnitNormalize(push_wrenches_train);
