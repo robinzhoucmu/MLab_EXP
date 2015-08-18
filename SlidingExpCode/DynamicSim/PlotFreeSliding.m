@@ -70,8 +70,8 @@ y_max = max(max(cord_V_y));
 margin_x = 0.025;
 margin_y = 0.025;
 
-xlim([x_min-margin_x, x_max + margin_x]);
-ylim([y_min-margin_x, y_max + margin_y]);
+%xlim([x_min-margin_x, x_max + margin_x]);
+%ylim([y_min-margin_x, y_max + margin_y]);
 % Plot point of origin trajectory.
 cord_com = pos_2d(1:2,:);
 plot(cord_com(1,:), cord_com(2,:), 'k.', 'MarkerSize', 5);
