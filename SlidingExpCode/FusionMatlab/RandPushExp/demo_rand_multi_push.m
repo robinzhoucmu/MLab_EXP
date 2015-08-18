@@ -21,10 +21,10 @@ Tri_pressure = Tri_mass * mu_f;
 Tri_com = [0.15/3; 0.15/3];
 
 % support Points
-%Tri_pts = [0.03    0.09    0.03; 0.03    0.03    0.09];
+Tri_pts = [0.03    0.09    0.03; 0.03    0.03    0.09];
 %Tri_pts = [0.01, 0.09,0.01;0.01,0.03,0.13];
 %Tri_pts = [0.03, 0.06333, 0.04333; 0.03, 0.04333, 0.06333];
-Tri_pts = [0.01, 0.01, 0.13; 0.01,0.13,0.01];
+%Tri_pts = [0.01, 0.01, 0.13; 0.01,0.13,0.01];
 %[Tri_pds, Tri_pho] = GetObjParaFromSupportPts(Tri_pts, Tri_com, Tri_mass);
 Tri_pts = bsxfun(@minus, Tri_pts, Tri_com);
 [Tri_pds, Tri_pho] = GetObjParaFromSupportPts(Tri_pts, [0;0], Tri_pressure);

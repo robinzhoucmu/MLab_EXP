@@ -52,7 +52,7 @@ for i = 1:1:num_poses
             'LineStyle', '--', 'LineWidth', 2);   
         elseif (t(i+1) > (t_interval * ind_interval) && t(i) <= (t_interval * ind_interval))
             plot([x, nxt_x], [y, nxt_y], 'Color', colors(mod(j-1,3) + 1), ...
-                'LineStyle', ':', 'LineWidth', 1.5);
+                'LineStyle', ':', 'LineWidth', 1);
             flag_draw_intermediate = 1;
         end
         %plot(x,y, 'Color', colors(mod(j-1,3) + 1), 'Marker', '^', 'MarkerSize', 5);   
@@ -80,7 +80,7 @@ plot(cord_com(1,:), cord_com(2,:), 'k.', 'MarkerSize', 5);
 for i = 1:1:num_vertices
     plot(cord_V_x(1,i), cord_V_y(1,i), 'Color', colors(mod(i-1,3) + 1), 'Marker', '^', 'MarkerSize', 8, 'LineStyle', 'none');
     plot(cord_V_x(end,i), cord_V_y(end,i), 'Color', colors(mod(i-1,3) + 1), 'Marker', 's', 'MarkerSize', 8, 'LineStyle', 'none');
-    plot(cord_V_x(:,i), cord_V_y(:,i), 'Color', colors(mod(i-1,3) + 1), 'Marker', '.', 'MarkerSize', 5, 'LineStyle', 'none');
+    plot(cord_V_x(:,i), cord_V_y(:,i), 'Color', colors(mod(i-1,3) + 1), 'Marker', '.', 'MarkerSize', 5, 'LineStyle', '-');
 end
 
 end
