@@ -156,6 +156,10 @@ options_gp.method = 'gp';
 % Combine with symmetric data for training GP.
  push_wrenches_dir_train_gp = [push_wrenches_dir_train; -push_wrenches_dir_train];
  slider_velocities_train_gp = [slider_velocities_train; -slider_velocities_train];
+% disp('GP train and test');
+% [hyp, err_angle_train, err_angle_test] = ...
+%     GP_Fitting(push_wrenches_dir_train_gp, slider_velocities_train_gp, push_wrenches_dir_test, slider_velocities_test)
+
 
 % Sample from the ideal pressure distribution and evaluate how good each
 % predictor is. 
