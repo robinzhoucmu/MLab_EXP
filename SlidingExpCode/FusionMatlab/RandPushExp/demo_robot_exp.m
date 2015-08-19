@@ -1,5 +1,6 @@
 clear all; close all;
 %rng(1);
+tic;
 
 %log_file_name = 'SensorLogs/10_90_10_10_30_130/exp_08_15_50.txt';
 %log_file_name = 'SensorLogs/30_90_30_30_30_90/exp_08_11_50_mixed.txt';
@@ -41,12 +42,6 @@ Tri_pts = bsxfun(@minus, Tri_pts, Tri_com);
 Tri_pho = 0.05;
 [ record_log ] = ExtractFromLog( log_file_name, Tri_pho, R_tool, H_tf, unit_scale);
 
-ratio_validation = 0.2;
-[slider_velocities_train, slider_velocities_val, push_wrenches_train, push_wrenches_val] = ...
-    SplitTrainTestData(record_log.slider_velocities, record_log.push_wrenches, 1 - ratio_validation);
-validation_data.V = slider_velocities_val;
-validation_data.F = push_wrenches_val;
-
 % Sample from the ideal pressure distribution as test data. 
 Nc = 402;
 CORs = GenerateRandomCORs3(Tri_pts, Nc, 402/3);
@@ -55,13 +50,59 @@ CORs = GenerateRandomCORs3(Tri_pts, Nc, 402/3);
 F = F';
 pho=Tri_pho;
 [bv, F] = NormalizeForceAndVelocities(bv, F, pho);
+testsim_data.V = bv;
+testsim_data.F = F;
 
-r = [0.25, 0.5, 0.75, 1.0];
-num_train_all = size(slider_velocities_train, 1);
-for ind_ratio = 1:1:length(r)
-    train_data.V = slider_velocities_train(1:floor(num_train_all * r(ind_ratio)), :);
-    train_data.F = push_wrenches_train()
+num_evals = 10;
+for ind_eval = 1:1:num_evals
+    fprintf('-----------------------\n');
+    fprintf('percentage completed:%f\n', (ind_eval-1) * 100 / num_evals);
+    fprintf('-----------------------\n');
+    % Split out test data. 50*0.2 = 10;
+    ratio_test = 0.2;
+    [slider_velocities_train_val, slider_velocities_test, push_wrenches_train_val, push_wrenches_test] = ...
+        SplitTrainTestData(record_log.slider_velocities, record_log.push_wrenches, 1 - ratio_test);
+    testexp_data.V = slider_velocities_test;
+    testexp_data.F = push_wrenches_test;
+
+    % Split out validation data from experiment data. 
+    % (1 - ratio_test) * num_data * ratio_val
+    % 40*0.25 = 10;
+    ratio_val = 0.25;
+    [slider_velocities_train, slider_velocities_val, push_wrenches_train, push_wrenches_val] = ...
+         SplitTrainTestData(slider_velocities_train_val, push_wrenches_train_val, 1 - ratio_val);
+    validation_data.V = slider_velocities_val;
+    validation_data.F = push_wrenches_val;
+
+    r = [1/3, 2/3, 1.0];
+    num_methods = 4;
+    num_train_all = size(slider_velocities_train, 1);
+    for ind_ratio = 1:1:length(r)
+        num_train = floor(num_train_all * r(ind_ratio));
+        fprintf('*********\nUse training size:%d\n', num_train);
+        train_data.V = slider_velocities_train(1:num_train, :);
+        train_data.F = push_wrenches_train(1:num_train, :);
+        % Evaluate on experimental test data.
+        [record_exp] = MethodComparision(train_data, validation_data, testexp_data);
+        for ind_method = 1:1:num_methods
+            exp_record.err_test{ind_method}(ind_eval, ind_ratio) = record_exp.err_test(ind_method);
+            exp_record.err_train{ind_method}(ind_eval, ind_ratio) = record_exp.err_train(ind_method);
+            exp_record.err_validation{ind_method}(ind_eval, ind_ratio) = record_exp.err_validation(ind_method);
+        end
+        % Evaluate on simulation test data.
+        [record_sim] = MethodComparision(train_data, validation_data, testsim_data);
+        for ind_method = 1:1:num_methods
+            sim_record.err_test{ind_method}(ind_eval, ind_ratio) = record_sim.err_test(ind_method);
+            sim_record.err_train{ind_method}(ind_eval, ind_ratio) = record_sim.err_train(ind_method);
+            sim_record.err_validation{ind_method}(ind_eval, ind_ratio) = record_sim.err_validation(ind_method);
+        end
+        
+    end
+
 end
-
+toc;
+% Plot error bars. 
+PlotTestTrainErrorBar(r, exp_record);
+PlotTestTrainErrorBar(r, sim_record);
 
 

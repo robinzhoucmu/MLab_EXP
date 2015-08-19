@@ -11,10 +11,11 @@ shape = r(1) * xx.^2 + r(2) * yy.^2 + r(3) * zz.^2 + ...
 h = figure;
 
 p = patch(isosurface(xx,yy,zz,shape,1));
-set( p, 'FaceColor', 'g','FaceAlpha', 0.25, 'EdgeColor', 'none' );
+set( p, 'FaceColor', 'g','FaceAlpha', 0.5, 'EdgeColor', 'none' );
 view(-10, 20);
 %view(3);
 grid on;
+axis equal;
 camlight
 end
 

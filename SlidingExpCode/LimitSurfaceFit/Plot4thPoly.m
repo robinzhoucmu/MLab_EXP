@@ -16,10 +16,11 @@ h = figure;
 plot3(x,y,z, 'r*');
 
 p = patch(isosurface(xx,yy,zz,shape,1));
-set( p, 'FaceColor', 'g','FaceAlpha', 0.25, 'EdgeColor', 'none' );
+set( p, 'FaceColor', 'g','FaceAlpha', 0.5, 'EdgeColor', 'none' );
 %view(-10, 20);
 %view(3);
 grid on;
 camlight
+axis equal;
 end
 
