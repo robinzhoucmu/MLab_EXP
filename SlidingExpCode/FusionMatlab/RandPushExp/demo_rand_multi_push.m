@@ -28,8 +28,8 @@ Tri_com = [0.15/3; 0.15/3];
 
 % support Points
 
-Tri_pts = [0.03    0.09    0.03; 0.03    0.03    0.09];
-%Tri_pts = [0.01, 0.09,0.01;0.01,0.03,0.13];
+%Tri_pts = [0.03    0.09    0.03; 0.03    0.03    0.09];
+Tri_pts = [0.01, 0.09,0.01;0.01,0.03,0.13];
 %Tri_pts = [0.03, 0.06333, 0.04333; 0.03, 0.04333, 0.06333];
 %Tri_pts = [0.01, 0.01, 0.13; 0.01,0.13,0.01];
 %[Tri_pds, Tri_pho] = GetObjParaFromSupportPts(Tri_pts, Tri_com, Tri_mass);
@@ -40,7 +40,7 @@ Tri_pts = bsxfun(@minus, Tri_pts, Tri_com);
 [Tri_pds, Tri_pho] = GetObjParaFromSupportPts(Tri_pts, [0;0], Tri_pressure);
 Tri_pho = 0.1;
 
-h_tri = DrawTriangle(Tri_V, Tri_com, Tri_pts_cp, Tri_pds);
+%h_tri = DrawTriangle(Tri_V, Tri_com, Tri_pts_cp, Tri_pds);
 
 
 [pre_push_poses, post_push_poses, ft_readings, robot_pose_readings] = ParseLog(log_file_name);
@@ -58,7 +58,7 @@ for i = 1:1:num_pushes
     % Use force reading time as timeline.
     t = ft_readings{i}(1, :);
     t0 = t(1);
-    bsxfun(@minus, t, t0);
+    t = bsxfun(@minus, t, t0);
     force = ft_readings{i}(2:3, :);
     % Force torque sensor positive x is in the opposite direction of global
     % robot frame.
@@ -73,8 +73,6 @@ for i = 1:1:num_pushes
     %Eliminate forces before the jump of the signal.
     avg_f = mean(force,2);
     index_small = sum(force.^2,1) < sum(avg_f.^2);
-    %force(:, index_small) = [];
-    %t(index_small) = [];
     
     % Hack: only use 25%-100% of the force signal.
     %index_pre_touch = 1:ceil(length(t) * 0.25);
@@ -93,7 +91,7 @@ for i = 1:1:num_pushes
     % Get robot trajectory. 
     robot_traj_0 = robot_pose_readings{i}(2:end, :);
     t_robot = robot_pose_readings{i}(1,:);
-    bsxfun(@minus, t_robot, t0);
+   t_robot =  bsxfun(@minus, t_robot, t0);
     % Align the first and last value of t_robot and t to be the same for
     % interpolation purpose.
     %t_robot(end) = t(end);
@@ -131,7 +129,7 @@ end
 push_wrenches_dir = bsxfun(@rdivide, push_wrenches, sqrt(sum(push_wrenches.^2, 2)));
 
 % Split training and testing data.
-ratio_train = 0.75;
+ratio_train = 0.5;
 [slider_velocities_train, slider_velocities_test, push_wrenches_train, push_wrenches_test] = ...
     SplitTrainTestData(slider_velocities, push_wrenches, ratio_train);
 push_wrenches_dir_train = UnitNormalize(push_wrenches_train);
@@ -161,6 +159,7 @@ r = [A(1,1), A(2,2), A(3,3), A(1,2)*2, A(1,3)*2, A(2,3)*2];
 h_quadratic = DrawEllipsoid(r, push_wrenches_dir_train);
 VisualizeForceVelPairs(push_wrenches_train', slider_velocities_train', h_quadratic);
 
+
 options_gp.method = 'gp';
 [para_gp] = CrossValidationSearchParameters(push_wrenches_train, slider_velocities_train, push_wrenches_test, slider_velocities_test, options_gp)
 
@@ -180,7 +179,6 @@ pho=Tri_pho;
 F_dir = UnitNormalize(F);
 
 figure; plot3(F(:,1), F(:,2), F(:,3), '.');
-
 figure;
 k = convhull(F(:,1)', F(:,2)', F(:,3)');
 trimesh(k, F(:,1)', F(:,2)', F(:,3)');
