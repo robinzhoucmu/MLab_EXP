@@ -1,4 +1,7 @@
-function [h] = PlotBarsWithErrors(data, group_name)
+function [h] = PlotBarsWithErrors(data, group_name, flag_legend)
+if (nargin <=2)
+    flag_legend = 0;
+end
 num_methods = 4;
 h = figure;
 
@@ -9,7 +12,9 @@ for i = 1:1:num_methods
     BarWidth(i,:) = real(muci(2,:) - mu);
 end
 barwitherr(BarWidth', MeanErr');
-legend('poly4cvx','poly4','quad', 'gp', 'Location','northwest');
+if (flag_legend)
+    legend('poly4cvx','poly4','quad', 'gp', 'Location','best');
+end
 set(gca,'XTickLabel', group_name);
 xlabel('amount of training data');
 ylabel('velocity alignment error(degree)');
