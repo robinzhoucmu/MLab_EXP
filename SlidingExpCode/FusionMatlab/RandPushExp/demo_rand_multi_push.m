@@ -22,7 +22,10 @@ R_tool = [sqrt(2)/2, sqrt(2)/2;
 
 % Parameters for trianglular block.         
 Tri_mass = 1.518;
+% Black board.
 mu_f = 4.2 / (Tri_mass * 9.8);
+% Wodd board.
+mu_f = 5.0 / (Tri_mass * 9.8);
 Tri_pressure = Tri_mass * mu_f;
 Tri_com = [0.15/3; 0.15/3];
 
@@ -40,7 +43,7 @@ Tri_pts = bsxfun(@minus, Tri_pts, Tri_com);
 [Tri_pds, Tri_pho] = GetObjParaFromSupportPts(Tri_pts, [0;0], Tri_pressure);
 Tri_pho = 0.1;
 
-%h_tri = DrawTriangle(Tri_V, Tri_com, Tri_pts_cp, Tri_pds);
+h_tri = DrawTriangle(Tri_V, Tri_com, Tri_pts_cp, Tri_pds);
 
 
 [pre_push_poses, post_push_poses, ft_readings, robot_pose_readings] = ParseLog(log_file_name);
@@ -179,14 +182,17 @@ pho=Tri_pho;
 F_dir = UnitNormalize(F);
 
 figure; plot3(F(:,1), F(:,2), F(:,3), '.');
-figure;
+h_lc_ideal = figure;
 k = convhull(F(:,1)', F(:,2)', F(:,3)');
-trimesh(k, F(:,1)', F(:,2)', F(:,3)');
+tmp = (bv(:,1)+bv(:,2)).*bv(:,3); trimesh(k, F(:,1)', F(:,2)', F(:,3)', tmp, 'EdgeColor', 'flat'); axis equal;view(-30,10);
+%trimesh(k, F(:,1)', F(:,2)', F(:,3)');
+%axis equal;
 
 [err_gp, dev_angle_gp_train, dev_angle_gp] = GP_Fitting(push_wrenches_dir_train_gp, slider_velocities_train_gp, F_dir, bv, para_gp.coeffs)
 [err_poly4,dev_angle_poly4] = EvaluatePoly4Predictor(F_dir, bv, para_poly4.coeffs)
 [err_poly4_plain,dev_angle_poly4_plain] = EvaluatePoly4Predictor(F_dir, bv, para_poly4_plain.coeffs)
 [err_linear,dev_angle_linear] = EvaluateLinearPredictor(F_dir, bv, para_quadratic.coeffs)
 
-
+% Useful script to generate comparison plot.
+%a = 50; b=5; figure(10); view(a,b);figure(9); view(a, b); camlight(a,b);figure(4); view(a,b);camlight(a,b)
  
