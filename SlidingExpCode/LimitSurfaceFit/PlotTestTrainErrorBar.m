@@ -10,7 +10,7 @@ xlabel('amount of data(percentage)');
 xlim([10,105]);
 ylabel('velocity alignment error(degree)');
 for i = 1:1:num_methods
-    [mu, sigma, muci, sigmaci] = normfit(exp_record.err_test{i}, 0.05)
+    [mu, sigma, muci, sigmaci] = normfit(real(exp_record.err_test{i}), 0.05)
     p = errorbar(r, mu, muci(2,:)-mu, ...
         'Color', colors(i), 'Marker', 'o', 'MarkerSize', 6, 'LineStyle','--');
 end
@@ -20,7 +20,7 @@ h2 = figure;
 %title('training error');
 hold on;
 for i = 1:1:num_methods
-    [mu, sigma, muci, sigmaci] = normfit(exp_record.err_train{i}, 0.05);
+    [mu, sigma, muci, sigmaci] = normfit(real(exp_record.err_train{i}), 0.05);
     p = errorbar(r, mu, muci(2,:)-mu, ...
         'Color', colors(i), 'Marker', 'o', 'MarkerSize', 6, 'LineStyle','--');
 end

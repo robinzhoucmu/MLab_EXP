@@ -40,6 +40,10 @@ Tri_pts_cp = Tri_pts;
 Tri_pts = bsxfun(@minus, Tri_pts, Tri_com);
 [Tri_pds, Tri_pho] = GetObjParaFromSupportPts(Tri_pts, [0;0], Tri_pressure);
 Tri_pho = 0.05;
+
+h_tri = DrawTriangle(Tri_V, Tri_com, Tri_pts_cp, Tri_pds);
+
+
 [ record_log ] = ExtractFromLog( log_file_name, Tri_pho, R_tool, H_tf, unit_scale);
 
 % Sample from the ideal pressure distribution as test data. 
@@ -101,6 +105,14 @@ for ind_eval = 1:1:num_evals
 
 end
 toc;
+group_name = {'10', '20', '30'};
+
+data_exp = exp_record.err_test;
+h_exp = PlotBarsWithErrors(data_exp, group_name);
+
+data_sim = sim_record.err_test;
+h_sim = PlotBarsWithErrors(data_sim, group_name);
+
 % Plot error bars. 
-PlotTestTrainErrorBar(r, exp_record);
-PlotTestTrainErrorBar(r, sim_record);
+%PlotTestTrainErrorBar(r, exp_record);
+%PlotTestTrainErrorBar(r, sim_record);

@@ -83,7 +83,7 @@ else
                 para.gp_hyp = hyp;
                 para.coeffs = prior_gp;
             end
-            %fprintf('gp: sn:%f, l:%f, dev_angle_train:%f, dev_angle_val:%f\n', prior_gp.sn, prior_gp.l, err_angle_train, err_angle_val);
+            fprintf('gp: sn:%f, l:%f, dev_angle_train:%f, dev_angle_val:%f\n', prior_gp.sn, prior_gp.l, err_angle_train, err_angle_val);
         end
     end
 end
