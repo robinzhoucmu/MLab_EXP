@@ -43,7 +43,7 @@ Tri_pho = 0.05;
 [ record_log ] = ExtractFromLog( log_file_name, Tri_pho, R_tool, H_tf, unit_scale);
 
 % Sample from the ideal pressure distribution as test data. 
-Nc = 402;
+Nc = 603;
 CORs = GenerateRandomCORs3(Tri_pts, Nc, 402/3);
 [F, bv] = GenFVPairsFromPD(Tri_pts, Tri_pds, CORs);
 % Change to row representation.
@@ -104,5 +104,3 @@ toc;
 % Plot error bars. 
 PlotTestTrainErrorBar(r, exp_record);
 PlotTestTrainErrorBar(r, sim_record);
-
-
