@@ -84,27 +84,29 @@ for ind_log = 1:num_logs
             train_data.V = slider_velocities_train(1:num_train, :);
             train_data.F = push_wrenches_train(1:num_train, :);
             % Evaluate on experimental test data.
+            fprintf('Evaluate On Exp Data\n');
             [record_exp] = MethodComparision(train_data, validation_data, testexp_data);
             for ind_method = 1:1:num_methods
                 exp_record.err_test{ind_method}(ind_eval, ind_ratio) = record_exp.err_test(ind_method);
                 exp_record.err_train{ind_method}(ind_eval, ind_ratio) = record_exp.err_train(ind_method);
                 exp_record.err_validation{ind_method}(ind_eval, ind_ratio) = record_exp.err_validation(ind_method);
+                exp_record.coeffs{ind_method}(ind_eval, ind_ratio) = record_exp.coeffs(ind_method);
             end
+            fprintf('Evaluate on Sim Datn');
             % Evaluate on simulation test data.
             [record_sim] = MethodComparision(train_data, validation_data, testsim_data);
             for ind_method = 1:1:num_methods
                 sim_record.err_test{ind_method}(ind_eval, ind_ratio) = record_sim.err_test(ind_method);
                 sim_record.err_train{ind_method}(ind_eval, ind_ratio) = record_sim.err_train(ind_method);
                 sim_record.err_validation{ind_method}(ind_eval, ind_ratio) = record_sim.err_validation(ind_method);
+                sim_record.coeffs{ind_method}(ind_eval, ind_ratio) = record_sim.coeffs(ind_method);
             end
-
         end
-
     end
     toc;
     
     exp_record_set{ind_log} = exp_record;
-    sim_record_set{ind_log} = sim_record;s
+    sim_record_set{ind_log} = sim_record;
     
     group_name = {'10', '20', '30'};
 

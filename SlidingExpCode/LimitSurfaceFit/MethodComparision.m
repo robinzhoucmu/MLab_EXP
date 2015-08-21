@@ -50,7 +50,7 @@ for i = 1:1:num_methods
     else
         F_train_gp = [F_train_dir; -F_train_dir];
         V_train_gp = [V_train; -V_train];
-        [err, dev_angle_train, dev_angle] = GP_Fitting(F_train_gp, V_train_gp, F_test, V_test, info.coeffs);
+        [hyp, dev_angle_train, dev_angle] = GP_Fitting(F_train_gp, V_train_gp, F_test_dir, V_test, info.coeffs);
     end
     record.err_test(i) = dev_angle;
     fprintf('%s, err:%f\n', record.method{i}, dev_angle);

@@ -28,11 +28,11 @@ for i = 1:1:3
 end
 
 %Normalize v.
-v_gp_test = bsxfun(@rdivide, v_gp_test, sqrt(sum(v_gp_test.^2,2)));
+v_gp_test = bsxfun(@rdivide, v_gp_test, sqrt(sum(v_gp_test.^2,2)) + eps);
 angles_test = acos(diag(bv_test * v_gp_test')) * 180 / pi;
 err_angle_test = mean(angles_test);
 
-v_gp_train = bsxfun(@rdivide, v_gp_train, sqrt(sum(v_gp_train.^2,2)));
+v_gp_train = bsxfun(@rdivide, v_gp_train, sqrt(sum(v_gp_train.^2,2)) + eps);
 angles_train = acos(diag(bv_train * v_gp_train')) * 180 / pi;
 err_angle_train = mean(angles_train);
 
