@@ -6,7 +6,7 @@ flag_plot = 0;
 % weight for velocity matching is fixed at 1.
 w_vel = 1;
 % regularization of parameters w.r.t velocity matching.
-w_reg = [0, 0.1, 2, 8];
+w_reg = [0.1, 2, 8, 16];
 
 method = options.method;
 
@@ -24,7 +24,7 @@ if ~strcmp(method, 'gp')
     if (flag_dir)
         w_force = [0];
     else
-        w_force = [0.5, 1, 4];
+        w_force = [0.1, 0.5, 1, 4];
     end
     for ind_f = 1:length(w_force)
         for ind_r = 1:length(w_reg)
