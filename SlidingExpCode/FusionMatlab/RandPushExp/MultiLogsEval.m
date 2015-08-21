@@ -57,7 +57,7 @@ for ind_log = 1:num_logs
     sim_record = {};
     for ind_eval = 1:1:num_evals
         fprintf('-----------------------\n');
-        fprintf('percentage completed:%f\n', (ind_eval-1) * 100 / (num_evals * num_logs));
+        fprintf('percentage completed:%f\n', ind_log*(ind_eval-1) * 100 / num_logs);
         fprintf('-----------------------\n');
         % Split out test data. 50*0.2 = 10;
         ratio_test = 0.2;
@@ -75,7 +75,7 @@ for ind_log = 1:num_logs
         validation_data.V = slider_velocities_val;
         validation_data.F = push_wrenches_val;
 
-        r = [1/3, 2/3, 1.0];
+        r = [1/6, 1/3, 2/3, 1.0];
         num_methods = 4;
         num_train_all = size(slider_velocities_train, 1);
         for ind_ratio = 1:1:length(r)
@@ -92,7 +92,7 @@ for ind_log = 1:num_logs
                 exp_record.err_validation{ind_method}(ind_eval, ind_ratio) = record_exp.err_validation(ind_method);
                 exp_record.coeffs{ind_method}(ind_eval, ind_ratio) = record_exp.coeffs(ind_method);
             end
-            fprintf('Evaluate on Sim Datn');
+            fprintf('Evaluate on Sim Data\n');
             % Evaluate on simulation test data.
             [record_sim] = MethodComparision(train_data, validation_data, testsim_data);
             for ind_method = 1:1:num_methods
@@ -108,7 +108,7 @@ for ind_log = 1:num_logs
     exp_record_set{ind_log} = exp_record;
     sim_record_set{ind_log} = sim_record;
     
-    group_name = {'10', '20', '30'};
+    group_name = {'5', '10', '20', '30'};
 
     data_exp = exp_record.err_test;
     h_exp = PlotBarsWithErrors(data_exp, group_name);
