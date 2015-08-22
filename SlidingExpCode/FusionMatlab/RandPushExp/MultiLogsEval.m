@@ -103,7 +103,6 @@ for ind_log = 1:num_logs
             end
         end
     end
-    toc;
     
     exp_record_set{ind_log} = exp_record;
     sim_record_set{ind_log} = sim_record;

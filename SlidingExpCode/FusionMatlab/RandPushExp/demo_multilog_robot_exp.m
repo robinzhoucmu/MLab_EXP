@@ -42,10 +42,11 @@ Tri_pts_set{2} = [0.03    0.09    0.03; 0.03    0.03    0.09];
 Tri_pts_set{3} = [0.01, 0.09,0.01;0.01,0.03,0.13];
 Tri_pts_set{4} = [0.03, 0.06333, 0.04333; 0.03, 0.04333, 0.06333];
 
-num_evals = 15;
+num_evals = 16;
 num_cors = 603;
 r_facet = 0.5;
 unit_scale = 1000;
-
+tic;
 [exp_record_set, sim_record_set] = ...
     MultiLogsEval(log_files_set, num_evals, Tri_pts_set, Tri_mass, Tri_com, mu_f_wood, Tri_pho, R_tool, H_tf, num_cors, r_facet, unit_scale);
+toc;
