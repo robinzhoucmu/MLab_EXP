@@ -6,8 +6,8 @@ flag_plot = 0;
 % weight for velocity matching is fixed at 1.
 w_vel = 1;
 % regularization of parameters w.r.t velocity matching.
-%w_reg = [0.1, 2, 8, 16];
-w_reg = [0, 0.1, 1];
+w_reg = [0.1, 2, 8, 16];
+%w_reg = [0, 0.1, 1];
 method = options.method;
 
 best_err = 1e+9;
@@ -25,7 +25,7 @@ if ~strcmp(method, 'gp')
         w_force = [0];
     else
         %w_force = [0.1, 0.5, 1, 4];
-        w_force = [0.05, 0.1, 0.5, 1, 4, 8];
+        w_force = [0.1, 1, 4, 8];
     end
     for ind_f = 1:length(w_force)
         for ind_r = 1:length(w_reg)
@@ -84,7 +84,7 @@ else
                 para.gp_hyp = hyp;
                 para.coeffs = prior_gp;
             end
-            fprintf('gp: sn:%f, l:%f, dev_angle_train:%f, dev_angle_val:%f\n', prior_gp.sn, prior_gp.l, err_angle_train, err_angle_val);
+            %fprintf('gp: sn:%f, l:%f, dev_angle_train:%f, dev_angle_val:%f\n', prior_gp.sn, prior_gp.l, err_angle_train, err_angle_val);
         end
     end
 end
