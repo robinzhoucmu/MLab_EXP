@@ -1,0 +1,47 @@
+exp_para.num_evals = 50;
+exp_para.num_data = 150;
+exp_para.r_facet = 0.5;
+exp_para.r_train = 0.5;
+exp_para.noise.f = 0.1;
+exp_para.noise.v = 0.1;
+
+scenario = '3-points';
+[exp_record_3pts_noisy] = RunSimulationScenario(scenario, exp_para);
+toc;
+
+exp_para.noise.f = 0;
+exp_para.noise.v = 0;
+[exp_record_3pts_noisefree] = RunSimulationScenario(scenario, exp_para);
+toc;
+
+
+scenario = '360-ring';
+exp_para.r_facet = 0;
+
+exp_para.noise.f = 0.1;
+exp_para.noise.v = 0.1;
+[exp_record_360_ring_noisy] = RunSimulationScenario(scenario, exp_para);
+toc;
+
+
+exp_para.noise.f = 0;
+exp_para.noise.v = 0;
+[exp_record_360_ring_noisefree] = RunSimulationScenario(scenario, ...
+                                                  exp_para);
+toc;
+
+save('new_50_evals_3pts_ring.mat', 'exp_record_3pts_noisy', ...
+     'exp_record_3pts_noisefree', 'exp_record_360_ring_noisy','exp_record_360_ring_noisefree');
+     
+     
+-------training ratio
+
+r = [0.15, 0.3, 0.5, 1.0];
+
+
+--------cross validation
+w_reg = [0, 0.1, 2, 8];
+w_force = [0.5, 1, 4];
+
+ sn = [0.05, 0.1, 0.2, 0.4, 0.8, 1.6, 3.2];
+    l = [0.05, 0.1, 0.2, 0.4, 0.8, 1.6, 3.2];
