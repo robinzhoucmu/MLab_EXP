@@ -1,5 +1,6 @@
 % Scripts to generate average plots.
-load 15_evals_exp_sim_compare.mat;
+%load 15_evals_exp_sim_compare.mat;
+load blk_15_evals_exp_sim_compare.mat;
 num_logs = length(exp_record_set);
 num_methods = 4;
 num_train_splits = 4;
@@ -15,7 +16,7 @@ for ind_method = 1:1:4
 end
  group_name = {'5', '10', '20', '30'};
  h_exp = PlotBarsWithErrors(err_test_all_exp, group_name, 1);
-
+ImproveFigure(h_exp);
  
  % Sim test performance bar.
 err_test_all_sim = {};
@@ -28,3 +29,6 @@ for ind_method = 1:1:4
 end
  group_name = {'5', '10', '20', '30'};
  h_sim = PlotBarsWithErrors(err_test_all_sim, group_name, 1);
+ ImproveFigure(h_sim);
+ 
+ 

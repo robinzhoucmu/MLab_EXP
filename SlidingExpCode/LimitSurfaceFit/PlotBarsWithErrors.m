@@ -13,7 +13,7 @@ for i = 1:1:num_methods
 end
 barwitherr(BarWidth', MeanErr');
 if (flag_legend)
-    legend('poly4cvx','poly4','quad', 'gp', 'Location','best');
+    legend('poly4cvx','poly4','quad', 'gp', 'Location','northeast');
 end
 set(gca,'XTickLabel', group_name);
 xlabel('amount of training data');

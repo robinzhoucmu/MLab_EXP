@@ -7,7 +7,7 @@ figure(fig_h);
 numF = size(F,2);
 numV = size(V,2);
 avg_f_norm = mean(sqrt(sum(F.^2)));
-l = avg_f_norm * 0.1;
+l = avg_f_norm * 0.2;
 assert(numF == numV);
 % Plot Forces as red dots.
 plot3(F(1,:), F(2,:), F(3,:), 'r*', 'Markersize', 6);
