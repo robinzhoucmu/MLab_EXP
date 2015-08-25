@@ -6,7 +6,9 @@ flag_plot = 0;
 % weight for velocity matching is fixed at 1.
 w_vel = 1;
 % regularization of parameters w.r.t velocity matching.
+% for real robot data.(more regularization).
 %w_reg = [0.1, 2, 8, 16];
+% for simulation data.
 w_reg = [0, 0.1, 1];
 method = options.method;
 
@@ -24,7 +26,9 @@ if ~strcmp(method, 'gp')
     if (flag_dir)
         w_force = [0];
     else
+        % for real robot data.
         %w_force = [0.1, 0.5, 1, 4];
+        % for simulation data.
         w_force = [0.05, 0.1, 0.5, 1, 4, 8];
     end
     for ind_f = 1:length(w_force)
