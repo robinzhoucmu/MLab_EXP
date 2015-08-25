@@ -1,5 +1,5 @@
 clear all; close all;
-%rng(1);
+rng(1);
 
 %log_file_name = 'SensorLogs/10_90_10_10_30_130/exp_08_15_50.txt';
 %log_file_name = 'SensorLogs/30_90_30_30_30_90/exp_08_11_50_mixed.txt';
@@ -8,8 +8,8 @@ clear all; close all;
 
 %log_file_name = 'SensorLogs/wood_10_130_10_10_10_130/exp_08_17_50.txt';
 %log_file_name = 'SensorLogs/wood_patch/exp_08_17_0839_50.txt';
-%log_file_name = 'SensorLogs/wood_30_90_30_30_30_90/exp_08_17_0922_50.txt';
-log_file_name = 'SensorLogs/wood_10_90_10_10_30_130/exp_08_18_1100_50.txt';
+log_file_name = 'SensorLogs/wood_30_90_30_30_30_90/exp_08_17_0922_50.txt';
+%log_file_name = 'SensorLogs/wood_10_90_10_10_30_130/exp_08_18_1100_50.txt';
 
 Tri_V = [0,0.15,0;0,0,0.15];
 unit_scale = 1000;
@@ -31,8 +31,8 @@ Tri_com = [0.15/3; 0.15/3];
 
 % support Points
 
-%Tri_pts = [0.03    0.09    0.03; 0.03    0.03    0.09];
-Tri_pts = [0.01, 0.09,0.01;0.01,0.03,0.13];
+Tri_pts = [0.03    0.09    0.03; 0.03    0.03    0.09];
+%Tri_pts = [0.01, 0.09,0.01;0.01,0.03,0.13];
 %Tri_pts = [0.03, 0.06333, 0.04333; 0.03, 0.04333, 0.06333];
 %Tri_pts = [0.01, 0.01, 0.13; 0.01,0.13,0.01];
 %[Tri_pds, Tri_pho] = GetObjParaFromSupportPts(Tri_pts, Tri_com, Tri_mass);
@@ -41,19 +41,17 @@ Tri_pts_cp = Tri_pts;
 
 Tri_pts = bsxfun(@minus, Tri_pts, Tri_com);
 [Tri_pds, Tri_pho] = GetObjParaFromSupportPts(Tri_pts, [0;0], Tri_pressure);
-Tri_pho = 0.1;
+Tri_pho = 0.05;
 
 h_tri = DrawTriangle(Tri_V, Tri_com, Tri_pts_cp, Tri_pds);
 
-
 [pre_push_poses, post_push_poses, ft_readings, robot_pose_readings] = ParseLog(log_file_name);
 num_pushes = size(pre_push_poses, 2);
-
+num_pushes = num_pushes * (10/50);
 push_wrenches = zeros(num_pushes, 3);
 slider_velocities = zeros(num_pushes, 3);
 slider_vel_raw = zeros(num_pushes, 3);
-%i=2;
-%num_pushes = 15;
+
 for i = 1:1:num_pushes
     % Get object pre and post push pose.
     obj_start_pos = pre_push_poses(:,i);
@@ -172,8 +170,8 @@ options_gp.method = 'gp';
 
 % Sample from the ideal pressure distribution and evaluate how good each
 % predictor is. 
-Nc = 402;
-CORs = GenerateRandomCORs3(Tri_pts, Nc, 402/3);
+Nc = 603;
+CORs = GenerateRandomCORs3(Tri_pts, Nc, Nc/3);
 [F, bv] = GenFVPairsFromPD(Tri_pts, Tri_pds, CORs);
 % Change to row representation.
 F = F';
@@ -181,10 +179,13 @@ pho=Tri_pho;
 [bv, F] = NormalizeForceAndVelocities(bv, F, pho);
 F_dir = UnitNormalize(F);
 
-figure; plot3(F(:,1), F(:,2), F(:,3), '.');
+%figure; plot3(F(:,1), F(:,2), F(:,3), '.');
 h_lc_ideal = figure;
 k = convhull(F(:,1)', F(:,2)', F(:,3)');
-tmp = (bv(:,1)+bv(:,2)).*bv(:,3); trimesh(k, F(:,1)', F(:,2)', F(:,3)', tmp, 'EdgeColor', 'flat'); axis equal;view(-30,10);
+color_index = (bv(:,1)+bv(:,2)).*bv(:,3); 
+color_index = color_index / max(abs(color_index));
+trimesh(k, F(:,1)', F(:,2)', F(:,3)', color_index, 'EdgeColor', 'flat'); 
+axis equal;view(-30,10);
 %trimesh(k, F(:,1)', F(:,2)', F(:,3)');
 %axis equal;
 
@@ -194,5 +195,8 @@ tmp = (bv(:,1)+bv(:,2)).*bv(:,3); trimesh(k, F(:,1)', F(:,2)', F(:,3)', tmp, 'Ed
 [err_linear,dev_angle_linear] = EvaluateLinearPredictor(F_dir, bv, para_quadratic.coeffs)
 
 % Useful script to generate comparison plot.
-%a = 50; b=5; figure(10); view(a,b);figure(9); view(a, b); camlight(a,b);figure(4); view(a,b);camlight(a,b)
+ a = 50; b=10; figure(h_poly4); view(a,b);camlight(a,b); 
+ figure(h_lc_ideal); view(a, b); 
+ figure(h_poly4_plain); view(a,b);
+ figure(h_quadratic); view(a,b);camlight(a,b);
  
