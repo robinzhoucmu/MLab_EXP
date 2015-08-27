@@ -95,26 +95,7 @@ bool PushGenerator::checkPush(const PushObject obj, const PushAction push)
   return true;
 }
 
-bool PushGenerator::generateRandomPush(const PushObject obj, PushAction *push, std::string push_type) {
-  if (push_type == "Point") {
-    return generateRandomPointPush(obj, push);
-  } else if (push_type == "TwoPointTranslation") {
-    return generateRandomTwoPointsPushTrans(obj, push);
-  } else if (push_type == "TwoPointRotation") {
-    return generateRandomTwoPointsPushRot(obj, push);
-  }
-}
-
-bool PushGenerator::generateRandomTwoPointsPushTrans(const PushObject obj, PushAction *push) {
-  // Same push action logic generation, differs in how to generate trajectory.
-  return generateRandomPointPush(obj, push);
-}
-
-bool PushGenerator::generateRandomTwoPointsPushRot(const PushObject obj, PushAction *push) {
-  
-}
-
-bool PushGenerator::generateRandomPointPush(const PushObject obj, PushAction *push)
+bool PushGenerator::generateRandomPush(const PushObject obj, PushAction *push)
 {
   const std::vector<Edge>& edges = obj.GetEdges();
 
@@ -177,8 +158,6 @@ bool PushGenerator::generateRandomPointPush(const PushObject obj, PushAction *pu
   R.rotZ(angle / 180.0 * PI); // Convert from degrees to radians
   push->pushVector = R * edges[edge_idx].normal_dir * -1;
 
-  push->approachVector = edges[edge_idx].normal_dir * -1;
-
   // Finally let's set default parameters for pushing distances
   push->initialDist = PushGenerator::DEFAULT_INITIAL_DISTANCE;
   push->penetrationDist = PushGenerator::DEFAULT_PENETRATION_DISTANCE;
@@ -187,7 +166,7 @@ bool PushGenerator::generateRandomPointPush(const PushObject obj, PushAction *pu
   return true;
 }
 
-bool PushGenerator::generateTrajectoryPointPush(const PushAction push, const HomogTransf objectPose, const Vec tableNormal, 
+bool PushGenerator::generateTrajectory(const PushAction push, const HomogTransf objectPose, const Vec tableNormal, 
     std::vector<HomogTransf> *robotPoses)
 {
   robotPoses->clear();
@@ -232,55 +211,6 @@ bool PushGenerator::generateTrajectoryPointPush(const PushAction push, const Hom
   return true;
 }
 
-bool PushGenerator::generateTrajectoryTwoPointsPushTrans(const PushAction push, const HomogTransf objectPose, const Vec tableNormal, std::vector<HomogTransf> *robotPoses) {
-  robotPoses->clear();
-  // Compute the push point and push direction in the robot frame
-  Vec robotPoint = objectPose * push.pushPoint;
-  // Robot approaches the object in the direction of inward edge normal.
-  Vec robotXDir = objectPose.getRotation() * push.approachVector;
-  // Robot pushes the object (translational move) in the direction of pushvector 
-  // without changing the orientation.
-  Vec robotPushXDir = objectPose.getRotation() * push.pushVector;
-  // Eliminate the z component(exists due to perception error: XoY plane tilted a bit).
-  const int ind_z = 2;
-  robotXDir[ind_z] = 0;
-  robotXDir.normalize();
-  // Set z to be the same as object z. 
-  const double obj_position_z = objectPose.getTranslation()[ind_z];
-  robotPoint[ind_z] = obj_position_z; 
-  std::cout << "push point: " << push.pushPoint << std::endl;
-  std::cout << "robot Point: " << robotPoint << std::endl;
-  std::cout << "robotXDir: " << robotXDir << std::endl;
-  std::cout << "robotPushXDir: " << robotPushXDir << std::endl;
-  // Compute the frame of the robot pushing pose.
-  Vec robotZDir = tableNormal;
-  Vec robotYDir = robotZDir ^ robotXDir;
-
-  // Make sure the axes are normalized so we create our 
-  // rotation matrix correctly.
-  robotXDir.normalize();
-  robotYDir.normalize();
-  robotZDir.normalize();
-  robotPushXDir.normalize();
-  
-  RotMat robot_orient(robotXDir, robotYDir, robotZDir);
-
-  // Now find the 3 translations of the robot. 
-  Vec initialPoint = robotPoint - robotXDir * push.initialDist;
-  Vec moveClosePoint = robotPoint - robotXDir * push.moveCloseDist;
-  Vec penetrationPoint = robotPoint + robotPushXDir * push.penetrationDist;
-  Vec retractionPoint = penetrationPoint - robotPushXDir * push.retractionDist;
-
-  // Store the poses in our array, and we're done
-  robotPoses->resize(4);
-  (*robotPoses)[0] = HomogTransf(robot_orient, initialPoint);
-  (*robotPoses)[1] = HomogTransf(robot_orient, moveClosePoint);
-  (*robotPoses)[2] = HomogTransf(robot_orient, penetrationPoint);
-  (*robotPoses)[3] = HomogTransf(robot_orient, retractionPoint);
-
-  return true;
-
-}
 
 
 

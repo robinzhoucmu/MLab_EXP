@@ -17,12 +17,6 @@ struct PushAction{
   double penetrationDist;
   double retractionDist;
   double moveCloseDist;
-  // Added for two points pushing.
-  std::string pushType;
-  Vec approachVector;
-  // Added for stable pushing actions with rotation parts.
-  Vec cor;
-  double rotAngle;
 };
 
 class PushGenerator
@@ -64,11 +58,6 @@ class PushGenerator
      */
     bool checkPush(const PushObject obj, const PushAction push);
 
-    /** Generate a push action specified by type in the frame of object.
-     */
-    bool generateRandomPush(const PushObject obj, PushAction *push, 
-			    std::string push_type = "Point");
-
     /** Generates a push action in the frame of the object
      * 
      * \param[in] obj The object we will be pushing
@@ -79,11 +68,7 @@ class PushGenerator
      *            push action distances described in 'generateRandomPush'  
      * \return boolean for whether or not we successfully generated a push
      */
-    bool generateRandomPointPush(const PushObject obj, PushAction *push);
-    
-    bool generateRandomTwoPointsPushTrans(const PushObject obj, PushAction *push);
-
-    bool generateRandomTwoPointsPushRot(const PushObject obj, PushAction *push);
+    bool generateRandomPush(const PushObject obj, PushAction *push);
 
     /** Generates a series of Homogeneous Transforms for how the robot 
      * should move to push an object.
@@ -106,11 +91,10 @@ class PushGenerator
      *              z-axis is normal to the ground the object is resting on, 
      *              pointing upwards, and y-axis satisfies right hand rule. 
      */
-    bool generateTrajectoryPointPush(const PushAction push, const HomogTransf objectPose, 
-				     const Vec tableNormal, std::vector<HomogTransf> *robotPoses);
-    bool generateTrajectoryTwoPointsPushTrans(const PushAction push, const HomogTransf objectPose, const Vec tableNormal, std::vector<HomogTransf> *robotPoses);
-  
- private:
+    bool generateTrajectory(const PushAction push, const HomogTransf objectPose, const Vec tableNormal, 
+        std::vector<HomogTransf> *robotPoses);
+
+  private:
     // The distance off of an edge a point can be where check_push will
     // still return true (mm)
     const static double MAX_DIST_OFF_EDGE = 0.1;

@@ -44,7 +44,7 @@ int main(int argc, char** argv)
 
   std::vector<HomogTransf> robotPoses;
 
-  ret = pg.generateTrajectoryPointPush(push, objectPose, Vec("0 0 1",3), &robotPoses);
+  ret = pg.generateTrajectory(push, objectPose, Vec("0 0 1",3), &robotPoses);
 
   for (size_t i=0; i < robotPoses.size(); ++i)
   {
@@ -57,7 +57,7 @@ int main(int argc, char** argv)
   objectPose = HomogTransf(Quaternion("0 0 0 1"), Vec("-200 100 300",3));
   std::cout << "Push Point: " << push.pushPoint << " Push Dir: " << push.pushVector << " objectPose: " << objectPose.getTranslation() << objectPose.getQuaternion() << std::endl;
 
-  ret = pg.generateTrajectoryPointPush(push, objectPose, Vec("0 0 1",3), &robotPoses);
+  ret = pg.generateTrajectory(push, objectPose, Vec("0 0 1",3), &robotPoses);
 
   for (size_t i=0; i < robotPoses.size(); ++i)
   {

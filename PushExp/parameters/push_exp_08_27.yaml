@@ -10,24 +10,17 @@ min_height: 12.5,
 mocap_num_readings: 50, 
 mocap_read_duration: 2.0,
 
-num_pushes: 5,
+num_pushes: 50,
 
-# value set for point push.
+# value set for point contact.
 #min_edge_dist: 12.5,
-# value set for two points push.
+# value set for two points contact.
 min_edge_dist: 30,
-# value set for point push.
-#min_push_angle: 30.0,
-# value set for two points translational push.
-min_push_angle: 15.0,
-
+min_push_angle: 89.9,
 default_init_dist: 27.5,
 default_penetration_dist: 15,
 default_retraction_dist: 25.0,
-# value set for point push.
-#default_move_close_dist: 2.5,
-# value set for two points push.
-default_move_close_dist: 1.0,
+default_move_close_dist: 2.5,
 
 robot_tcp_speed: 40.0,
 robot_ori_speed: 15.0,
@@ -48,7 +41,7 @@ robot_set_tool: [-49.50, -49.50, 90.5, 0.0, -0.3827, 0.9239,0.0],
 #mocap_cali_tf: [715.42,-213.72,57.829,0.5007,0.50199,0.49812,0.49918],
 mocap_cali_tf:[754.55,-239.08,58.711,0.49582,0.49698,0.50252,0.50463],
 
-sensor_log_file: '../sensor_log/stablepush/30_90_30_30_30_90/exp_tmp_08_27.txt',
+sensor_log_file: '../sensor_log/stablepush/30_90_30_30_30_90/exp_08_18_1435_502.txt',
 
 workobj_file_cali: '../parameters/aluminium_triangle/obj_cali_08_15.txt',
 workobj_file_geometry: '../parameters/aluminium_triangle/obj_geo.txt'
