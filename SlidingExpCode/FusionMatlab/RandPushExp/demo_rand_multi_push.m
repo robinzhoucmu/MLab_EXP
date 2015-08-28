@@ -47,7 +47,7 @@ h_tri = DrawTriangle(Tri_V, Tri_com, Tri_pts_cp, Tri_pds);
 
 [pre_push_poses, post_push_poses, ft_readings, robot_pose_readings] = ParseLog(log_file_name);
 num_pushes = size(pre_push_poses, 2);
-num_pushes = num_pushes * (10/50);
+num_pushes = num_pushes * (20/50);
 push_wrenches = zeros(num_pushes, 3);
 slider_velocities = zeros(num_pushes, 3);
 slider_vel_raw = zeros(num_pushes, 3);
@@ -69,7 +69,7 @@ for i = 1:1:num_pushes
     force = - force;
     % Minus offset. 
     force = bsxfun(@minus, force, force(:,1));
-    %figure, plot(t, force');
+    %figure, plot(t, force', '-o');
     
     %Eliminate forces before the jump of the signal.
     avg_f = mean(force,2);
@@ -82,7 +82,7 @@ for i = 1:1:num_pushes
     index_rm = index_pre_touch | index_small;
     force(:, index_rm) = [];
     t(index_rm) = [];
-    %hold on; plot(t, force', 'y-*');
+    %hold on; plot(t, force', 'r-o');
     
     N = length(t); 
     
@@ -135,6 +135,8 @@ ratio_train = 0.5;
     SplitTrainTestData(slider_velocities, push_wrenches, ratio_train);
 push_wrenches_dir_train = UnitNormalize(push_wrenches_train);
 push_wrenches_dir_test = UnitNormalize(push_wrenches_test);
+
+h_train_data = figure; VisualizeForceVelPairs(push_wrenches_train', slider_velocities_train', h_train_data);
 
 options_poly4.flag_convex = 1;
 options_poly4.method = 'poly4';

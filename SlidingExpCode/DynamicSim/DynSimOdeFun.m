@@ -3,7 +3,10 @@
 % m: mass
 % pho: radius of gyration.
 % coeffs: Linear(Matrix A). 
-function [dy] = DynSimOdeFun(t, y, m, pho, coeffs)
+function [dy] = DynSimOdeFun(t, y, m, pho, coeffs, mode)
+if (nargin < 6)
+    mode = 'quadratic';
+end
 dy = zeros(6,1);
 % velocity def.
 % dy(1) = y(4);
@@ -20,7 +23,7 @@ v(3) = y(6);
 % angular velocity normalization.
 v(3) = v(3) * pho;
 % Get force.
-F = FindForceGivenVel(v, coeffs, 'quadratic');
+F = FindForceGivenVel(v, coeffs, mode);
 % Compute Acc in local frame.
 acc = - F / m;
 % un-normalize angular part.
@@ -29,6 +32,7 @@ acc(3) = acc(3) / pho;
 acc(1:2) = R * acc(1:2);
 % acc def.
 dy(4:6) = acc;
+y
 % dy(4) = acc(1);
 % dy(5) = acc(2);
 % dy(6) = acc(3);
