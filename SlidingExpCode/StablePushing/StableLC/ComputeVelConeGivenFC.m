@@ -11,7 +11,7 @@ if strcmp(lc_type, 'quadratic')
     dir_vel = bsxfun(@rdivide, vel, sqrt(sum(vel.^2, 1)));
     vc_edges = dir_vel;
 elseif strcmp(lc_type, 'poly4')
-    [dir_vel, vel] = GetFrom4thOrderPoly(lc_coeffs, fc_edges);
+    [dir_vel, vel] = GetVelFrom4thOrderPoly(lc_coeffs, fc_edges);
     vc_edges = dir_vel';
 end
 

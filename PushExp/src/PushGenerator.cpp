@@ -96,13 +96,18 @@ bool PushGenerator::checkPush(const PushObject obj, const PushAction push)
 }
 
 bool PushGenerator::generateRandomPush(const PushObject obj, PushAction *push, std::string push_type) {
+  bool flag = false;
   if (push_type == "Point") {
-    return generateRandomPointPush(obj, push);
+    flag = generateRandomPointPush(obj, push);
   } else if (push_type == "TwoPointTranslation") {
-    return generateRandomTwoPointsPushTrans(obj, push);
+    flag = generateRandomTwoPointsPushTrans(obj, push);
   } else if (push_type == "TwoPointRotation") {
-    return generateRandomTwoPointsPushRot(obj, push);
+    flag = generateRandomTwoPointsPushRot(obj, push);
   }
+  if (flag) {
+    push->pushType = push_type;
+  }
+  return flag;
 }
 
 bool PushGenerator::generateRandomTwoPointsPushTrans(const PushObject obj, PushAction *push) {

@@ -1,4 +1,9 @@
 function [record] = MethodComparision(train_data, validation_data, test_data)
+if (nargin < 3)
+    has_test_data = 0;
+else
+    has_test_data = 1;
+end
 record.method = {'poly4_convex', 'poly4_plain', 'quadratic' 'gp'};
 % record deviation angle.
 record.err_train = zeros(4,1);
@@ -11,9 +16,12 @@ V_train = train_data.V;
 F_valid = validation_data.F;
 F_valid_dir = UnitNormalize(F_valid);
 V_valid = validation_data.V;
-F_test = test_data.F;
-F_test_dir = UnitNormalize(F_test);
-V_test = test_data.V;
+
+if (has_test_data)
+    F_test = test_data.F;
+    F_test_dir = UnitNormalize(F_test);
+    V_test = test_data.V;
+end
 
 num_methods = 4;
 for i = 1:1:num_methods
@@ -42,18 +50,19 @@ for i = 1:1:num_methods
     record.err_train(i) = info.train_dev_angle_record;
     record.err_validation(i) = info.dev_angle;
     record.coeffs{i} = info.coeffs;
-    
-    if (i==1 || i== 2)
-        [err, dev_angle] = EvaluatePoly4Predictor(F_test, V_test, info.coeffs);
-    elseif (i==3)    
-        [err, dev_angle] = EvaluateLinearPredictor(F_test, V_test, info.coeffs);
-    else
-        F_train_gp = [F_train_dir; -F_train_dir];
-        V_train_gp = [V_train; -V_train];
-        [hyp, dev_angle_train, dev_angle] = GP_Fitting(F_train_gp, V_train_gp, F_test_dir, V_test, info.coeffs);
+    if (has_test_data)
+        if (i==1 || i== 2)
+            [err, dev_angle] = EvaluatePoly4Predictor(F_test, V_test, info.coeffs);
+        elseif (i==3)    
+            [err, dev_angle] = EvaluateLinearPredictor(F_test, V_test, info.coeffs);
+        else
+            F_train_gp = [F_train_dir; -F_train_dir];
+            V_train_gp = [V_train; -V_train];
+            [hyp, dev_angle_train, dev_angle] = GP_Fitting(F_train_gp, V_train_gp, F_test_dir, V_test, info.coeffs);
+        end
+        record.err_test(i) = dev_angle;
+        fprintf('%s, err:%f\n', record.method{i}, dev_angle);
     end
-    record.err_test(i) = dev_angle;
-    fprintf('%s, err:%f\n', record.method{i}, dev_angle);
 end
 
 end

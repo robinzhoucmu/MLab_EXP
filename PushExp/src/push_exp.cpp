@@ -2,7 +2,7 @@
 #include "geometry_msgs/WrenchStamped.h"
 #include "geometry_msgs/PoseStamped.h"
 #include <fstream>
-
+#include <ctime>
 // Global flag indicating whether the robot is pushing the object.
 bool flag_is_pushing = false;
 std::vector<geometry_msgs::WrenchStamped> ft_wrenches;
@@ -238,8 +238,8 @@ bool PushExp::GeneratePushPlan(HomogTransf pre_push_obj_pose) {
   bool flag_kinematic_feasible = false;
   while (!flag_kinematic_feasible) {
     // Generate a random local pushing direction.
-    PushAction push_action;
-    if (!push_plan_gen->generateRandomPush(*push_object, &push_action)) {
+    //PushAction push_action;
+    if (!push_plan_gen->generateRandomPush(*push_object, &push_action, GLParameters::push_type)) {
       std::cerr << "Cannot generate a random push direction" << std::endl;
       return false;  
     }
@@ -402,6 +402,21 @@ void PushExp::SerializeSensorInfo(std::ostream& fout) {
     
   }
 }
+void PushExp::SerializePushActionInfo(std::ostream& fout) {
+  // Output pushType.
+  fout << push_action.pushType << std::endl;
+  // Output pushPoint.
+  Vec v = push_action.pushPoint;
+  fout << v[0] << " " << v[1] << " " << v[2] << std::endl;
+  // Output pushVector.
+  v = push_action.pushVector;
+  fout << v[0] << " " << v[1] << " " << v[2] << std::endl;
+  // Output approachVector.
+  v = push_action.approachVector;
+  fout << v[0] << " " << v[1] << " " << v[2] << std::endl;
+  // Output penetration distance and moveClostDist.
+  fout << push_action.penetrationDist << " " << push_action.moveCloseDist << std::endl;
+}
 
 void PushExp::SerializeHomogTransf(const HomogTransf& tf, std::ostream& fout) {
   Vec trans = tf.getTranslation();
@@ -456,16 +471,38 @@ bool PushExp::ConfirmStart() {
 void PushExp::Run() {
   assert(num_pushes >= 1);      
   assert(RobotMoveToRestingState());
+  std::string file_name = GLParameters::sensor_log_file;
+  double secs = ros::Time::now().toSec();
+  std::stringstream convert;
+  std::time_t result = std::time(NULL);
+  std::string str_cur_time =  std::string(std::asctime(std::localtime(&result)));
+  str_cur_time = str_cur_time.substr(0, str_cur_time.size()-1);
+  //std::cout << str_cur_time;
+  convert << num_pushes;
+  std::string str_num_pushes = convert.str();
+
+  std::string file_name_sensor = 
+    file_name + str_cur_time + "_sensor" + str_num_pushes + ".txt";
+  std::string file_name_push_action = 
+    file_name + str_cur_time + "_pushaction" + str_num_pushes + ".txt";
+  //std::cout << file_name_sensor << std::endl;
+
   if (ConfirmStart()) {
-    std::ofstream fout(GLParameters::sensor_log_file.c_str());
+    std::ofstream fout(file_name_sensor.c_str());
+    std::ofstream fout_push_action(file_name_push_action.c_str());
+    
     fout << num_pushes << std::endl;
+    fout_push_action << num_pushes << std::endl;
+
     for (int i = 0; i < num_pushes; ++i) {
       std::cout << "Started to run push " << i << std::endl;
       SinglePushPipeline();
       SerializeSensorInfo(fout);
+      SerializePushActionInfo(fout_push_action);
       ros::Duration(4.0).sleep();
     }
     fout.close();
+    fout_push_action.close();
   }
 }
 

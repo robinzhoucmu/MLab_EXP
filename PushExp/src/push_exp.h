@@ -31,6 +31,7 @@ class PushExp {
   RobotComm* robot;
   PushGenerator* push_plan_gen;
   PushObject* push_object;
+  PushAction push_action;
 
   ros::AsyncSpinner* async_spinner; 
   // Force subscription.
@@ -94,6 +95,7 @@ class PushExp {
 
   // Serialize sensor information.
   void SerializeSensorInfo(std::ostream& fout);
+  void SerializePushActionInfo(std::ostream& fout);
   void SerializeHomogTransf(const HomogTransf& tf, std::ostream& fout);
 };
 

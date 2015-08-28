@@ -44,6 +44,8 @@ class GLParameters {
   // File that stores the sensor log.
   static std::string sensor_log_file;
 
+  static std::string push_type;
+
   static void ReadParameters() {
     ros::param::get("/PushExp/execution_mode", GLParameters::execution_flag);
     ros::param::get("/PushExp/safe_height", GLParameters::safe_height);
@@ -64,6 +66,8 @@ class GLParameters {
 
     ros::param::get("/PushExp/robot_tcp_speed", GLParameters::robot_tcp_speed);
     ros::param::get("/PushExp/robot_ori_speed", GLParameters::robot_ori_speed);
+
+    ros::param::get("/PushExp/push_type", GLParameters::push_type);
 
     // Read the robot resting position. 
     GLParameters::ReadList("/PushExp/robot_rest_cart", GLParameters::robot_rest_cart);
@@ -112,5 +116,6 @@ double GLParameters::mocap_cali_tf[7] = {668.54, -260.52, 56.021, 0.49366, 0.496
 std::string GLParameters::workobj_file_cali = "";
 std::string GLParameters::workobj_file_geometry = "";
 std::string GLParameters::sensor_log_file = "";
+std::string GLParameters::push_type = "Point";
 
 #endif

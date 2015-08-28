@@ -35,7 +35,7 @@ rosbuild_add_library(push_action src/PushGenerator.cpp)
 rosbuild_add_library(push_reset src/PushReset.cpp)
 #target_link_libraries(${PROJECT_NAME} another_library)
 #rosbuild_add_boost_directories()
-#rosbuild_link_boost(${PROJECT_NAME} thread)
+#rosbuild_link_boost(${PROJECT_NAME} thread posix_time)
 rosbuild_add_executable(push_exp src/push_exp.cpp)
 target_link_libraries(push_exp push_action)
 
