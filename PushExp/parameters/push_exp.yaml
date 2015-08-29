@@ -1,9 +1,9 @@
 PushExp: {
 # flag to decide whether to run robot (true) or just output cartesian goal for debugging (false).
-execution_mode: true,
+execution_mode: false,
 
 # Push type. 'Point', 'TwoPointTranslation', 'TwoPointRotation'.
-push_type: 'TwoPointTranslation',
+push_type: 'TwoPointRotation',
 
 # mm/ safe distance for robot to move above objects without touching.
 safe_height: 125.0,
