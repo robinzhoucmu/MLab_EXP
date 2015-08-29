@@ -256,8 +256,9 @@ bool PushExp::GeneratePushPlan(HomogTransf pre_push_obj_pose) {
     v[ind_z] = v[ind_z] + push_object->GetHeight() * height_lift_ratio;
     push_obj_pose_lifted.setTranslation(v);
     push_obj_pose_lifted.setQuaternion(q);
-    if (!push_plan_gen->generateTrajectoryTwoPointsPushTrans(
-	   push_action, push_obj_pose_lifted, tableNormal, &robot_push_traj)) {
+
+    if (!push_plan_gen->generateTrajectory(
+	     push_action, push_obj_pose_lifted, tableNormal, &robot_push_traj)) {
       std::cerr << "Cannot generate robot trajectory" << std::endl;
       return false;
     }

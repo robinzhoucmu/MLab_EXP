@@ -27,6 +27,10 @@ class GLParameters {
   static double default_penetration_dist; // in mm.
   static double default_retraction_dist; // in mm.
   static double default_move_close_dist; // in mm.
+  // Two points push about COR.
+  static double default_rot_angle; // in degree.
+  static double default_pho; // in mm.
+  static double default_cor_range; //multiples of pho to form a square for COR boundary.
 
   // Default robot resting position.
   static double robot_rest_cart[7]; // in mm.
@@ -58,6 +62,10 @@ class GLParameters {
     ros::param::get("/PushExp/min_push_angle", GLParameters::min_push_angle);
     ros::param::get("/PushExp/default_init_dist", GLParameters::default_init_dist);
     ros::param::get("/PushExp/default_penetration_dist", GLParameters::default_penetration_dist);
+    ros::param::get("/PushExp/default_rot_angle", GLParameters::default_rot_angle);
+    ros::param::get("/PushExp/default_pho", GLParameters::default_pho);
+    ros::param::get("/PushExp/default_cor_range", GLParameters::default_cor_range);
+
     ros::param::get("/PushExp/default_retraction_dist", GLParameters::default_retraction_dist);
     ros::param::get("/PushExp/default_move_close_dist", GLParameters::default_move_close_dist);
     ros::param::get("/PushExp/workobj_file_cali", GLParameters::workobj_file_cali);
@@ -107,6 +115,10 @@ double GLParameters::default_init_dist = 50.0;
 double GLParameters::default_penetration_dist = 25.0;
 double GLParameters::default_retraction_dist = 5.0;
 double GLParameters::default_move_close_dist = 15.0;
+double GLParameters::default_rot_angle = 10.0;
+double GLParameters::default_pho = 50.0;
+double GLParameters::default_cor_range = 8;
+
 double GLParameters::robot_tcp_speed = 10.0;
 double GLParameters::robot_ori_speed = 5.0;
 double GLParameters::robot_rest_cart[7] = {300, 0, 400.0, 1, 0, 0, 0};

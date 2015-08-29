@@ -42,6 +42,12 @@ class PushGenerator
     // The distance to move the robot close to the object (mm)
     double DEFAULT_MOVECLOSE_DISTANCE;
 
+    // The angle to rotate about a cor for two points push. (degree)
+    double DEFAULT_ROT_ANGLE;
+    // The characteristic length (e.g. radius of gyration) for sampling CORs.
+    double DEFAULT_PHO; 
+    // Range of COR samplings (multiples of pho).
+    double DEFAULT_COR_RANGE;
 
     PushGenerator() { 
       srand(time(NULL)); 
@@ -109,8 +115,23 @@ class PushGenerator
     bool generateTrajectoryPointPush(const PushAction push, const HomogTransf objectPose, 
 				     const Vec tableNormal, std::vector<HomogTransf> *robotPoses);
     bool generateTrajectoryTwoPointsPushTrans(const PushAction push, const HomogTransf objectPose, const Vec tableNormal, std::vector<HomogTransf> *robotPoses);
+    
+    bool generateTrajectoryTwoPointsPushRot(const PushAction push, const HomogTransf objectPose, const Vec tableNormal, std::vector<HomogTransf> *robotPoses);    
+
+    bool generateTrajectory(const PushAction push, const HomogTransf objectPose, const Vec tableNormal, std::vector<HomogTransf> *robotPoses);
+    
+    // Given original tool transform, change to the tool transform to rotate about the COR
+    // specified by push_action.
+    bool getToolTransformTwoPointsPush(const Vec tool_tf, const PushAction push_action, Vec* tcp_new);
+    
   
  private:
+    // Randomly sample an edge and push point on the edge, return the push point 
+    // and edge outward normal in the local object frame.
+    bool sampleEdgeAndPushPoint(const PushObject obj, Vec* pushPoint, Vec* EdgeNormal);
+    Vec sampleCORInPushFrame();
+    // Compute the push pose in object local frame given approach vector.
+    HomogTransf computePushPose(Vec pushPoint, Vec appoachVector);
     // The distance off of an edge a point can be where check_push will
     // still return true (mm)
     const static double MAX_DIST_OFF_EDGE = 0.1;

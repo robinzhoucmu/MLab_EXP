@@ -7,6 +7,9 @@ void PushGenerator::InitParameters() {
   DEFAULT_PENETRATION_DISTANCE = GLParameters::default_penetration_dist;
   DEFAULT_RETRACTION_DISTANCE = GLParameters::default_retraction_dist;
   DEFAULT_MOVECLOSE_DISTANCE = GLParameters::default_move_close_dist;
+  DEFAULT_ROT_ANGLE = GLParameters::default_rot_angle;
+  DEFAULT_PHO = GLParameters::default_pho;
+  DEFAULT_COR_RANGE = GLParameters::default_cor_range;
 }
 
 bool PushGenerator::checkPush(const PushObject obj, const PushAction push)
@@ -95,34 +98,28 @@ bool PushGenerator::checkPush(const PushObject obj, const PushAction push)
   return true;
 }
 
-bool PushGenerator::generateRandomPush(const PushObject obj, PushAction *push, std::string push_type) {
-  bool flag = false;
-  if (push_type == "Point") {
-    flag = generateRandomPointPush(obj, push);
-  } else if (push_type == "TwoPointTranslation") {
-    flag = generateRandomTwoPointsPushTrans(obj, push);
-  } else if (push_type == "TwoPointRotation") {
-    flag = generateRandomTwoPointsPushRot(obj, push);
-  }
-  if (flag) {
-    push->pushType = push_type;
-  }
-  return flag;
+Vec PushGenerator::sampleCORInPushFrame() {
+  double r_x = 2 * ((double)rand()) / ((double)RAND_MAX) - 1;
+  double r_y = 2 * ((double)rand()) / ((double)RAND_MAX) - 1;
+  Vec sampled_cor;
+  sampled_cor[0] = DEFAULT_PHO * DEFAULT_COR_RANGE * r_x;
+  sampled_cor[1] = DEFAULT_PHO * DEFAULT_COR_RANGE * r_y;
+  sampled_cor[2] = 0;
+  return sampled_cor;
 }
 
-bool PushGenerator::generateRandomTwoPointsPushTrans(const PushObject obj, PushAction *push) {
-  // Same push action logic generation, differs in how to generate trajectory.
-  return generateRandomPointPush(obj, push);
+HomogTransf PushGenerator::computePushPose(Vec pushPoint, Vec approachVector) {
+  // Form push frame.
+  Vec push_frame_x = approachVector;
+  double z[3] = {0,0,1};
+  Vec push_frame_z(z,3);
+  Vec push_frame_y = push_frame_z ^ push_frame_x;
+  RotMat R_push(push_frame_x, push_frame_y, push_frame_z);
+  return HomogTransf(R_push, pushPoint);
 }
 
-bool PushGenerator::generateRandomTwoPointsPushRot(const PushObject obj, PushAction *push) {
-  
-}
-
-bool PushGenerator::generateRandomPointPush(const PushObject obj, PushAction *push)
-{
+bool PushGenerator::sampleEdgeAndPushPoint(const PushObject obj, Vec* pushPoint, Vec* edgeNormal) {
   const std::vector<Edge>& edges = obj.GetEdges();
-
   // First, get the useable lengths of all of the edges
   size_t num_edges = edges.size();
   std::vector<double> edge_lengths(num_edges);
@@ -170,19 +167,88 @@ bool PushGenerator::generateRandomPointPush(const PushObject obj, PushAction *pu
   double ratio_on_edge = distance_along_edge / total_edge_length;
 
   // Generate our push point by using this ratio
-  push->pushPoint = edges[edge_idx].GetSample(ratio_on_edge);
+  *pushPoint =  edges[edge_idx].GetSample(ratio_on_edge);
+  *edgeNormal = edges[edge_idx].normal_dir;
+  return true;
 
+}
+bool PushGenerator::getToolTransformTwoPointsPush(const Vec tcp_old, const PushAction push_action, Vec* tcp_new) {
+  if (push_action.pushType!= "TwoPointRotation") {
+    std::cerr << "Wrong push type for resetting COR as tcp" << std::endl;
+    return false;
+  }
+  // Get COR in local object frame from push action.
+  Vec cor = push_action.cor;
+  HomogTransf push_pose = computePushPose(push_action.pushPoint, push_action.approachVector);
+  // Change COR to pusher frame. 
+  cor = push_pose.inv() * cor;
+  *tcp_new = tcp_old + cor;
+}
+
+bool PushGenerator::generateRandomPush(const PushObject obj, PushAction *push, std::string push_type) {
+  bool flag = false;
+  if (push_type == "Point") {
+    flag = generateRandomPointPush(obj, push);
+  } else if (push_type == "TwoPointTranslation") {
+    flag = generateRandomTwoPointsPushTrans(obj, push);
+  } else if (push_type == "TwoPointRotation") {
+    flag = generateRandomTwoPointsPushRot(obj, push);
+  }
+  if (flag) {
+    push->pushType = push_type;
+  }
+  return flag;
+}
+
+bool PushGenerator::generateRandomTwoPointsPushTrans(const PushObject obj, PushAction *push) {
+  // Same push action logic generation, differs in how to generate trajectory.
+  return generateRandomPointPush(obj, push);
+}
+
+bool PushGenerator::generateRandomTwoPointsPushRot(const PushObject obj, PushAction *push) {
+  // Sample push point and approach direction.
+  Vec edge_normal;
+  bool flag_sample = sampleEdgeAndPushPoint(obj, &(push->pushPoint), &edge_normal);
+  if (!flag_sample) {
+    return false;
+  }
+  push->approachVector = edge_normal * -1;
+  // Parameters for approaching close.
+  push->initialDist = PushGenerator::DEFAULT_INITIAL_DISTANCE;
+  push->moveCloseDist = PushGenerator::DEFAULT_MOVECLOSE_DISTANCE;
+
+  // Sample cor in push frame.
+  Vec cor = sampleCORInPushFrame();
+  // Check for y component to determine CCW or CW.
+  if (cor[1] > 0) {
+    // CCW rotation. 
+    push->rotAngle = DEFAULT_ROT_ANGLE;
+  } else {
+    // CW rotation.
+    push->rotAngle = -DEFAULT_ROT_ANGLE;
+  }
+  HomogTransf pushPose = computePushPose(push->pushPoint, push->approachVector);
+  push->cor = pushPose.getRotation() * cor;
+}
+
+bool PushGenerator::generateRandomPointPush(const PushObject obj, PushAction *push)
+{
+  Vec edge_normal;
+  bool flag_sample = sampleEdgeAndPushPoint(obj, &(push->pushPoint), &edge_normal);
+  if (!flag_sample) {
+    return false;
+  }
   // Now let's randomly pick a direction to push
   assert(PushGenerator::MIN_PUSH_ANGLE >= 0.0 && PushGenerator::MIN_PUSH_ANGLE < 90.0);
   double angle = ((double)rand()) / ((double)RAND_MAX) * (180 - 2 * PushGenerator::MIN_PUSH_ANGLE) - 90.0 + PushGenerator::MIN_PUSH_ANGLE;
 
   // The edge normal is outward facing, so we'll make it inward facing, 
-  //  and then rotate it by the randomly chosen amount
+  // and then rotate it by the randomly chosen amount.
   RotMat R;
   R.rotZ(angle / 180.0 * PI); // Convert from degrees to radians
-  push->pushVector = R * edges[edge_idx].normal_dir * -1;
+  push->pushVector = R * edge_normal * -1;
 
-  push->approachVector = edges[edge_idx].normal_dir * -1;
+  push->approachVector = edge_normal * -1;
 
   // Finally let's set default parameters for pushing distances
   push->initialDist = PushGenerator::DEFAULT_INITIAL_DISTANCE;
@@ -190,6 +256,18 @@ bool PushGenerator::generateRandomPointPush(const PushObject obj, PushAction *pu
   push->retractionDist = PushGenerator::DEFAULT_RETRACTION_DISTANCE;
   push->moveCloseDist = PushGenerator::DEFAULT_MOVECLOSE_DISTANCE;
   return true;
+}
+bool PushGenerator::generateTrajectory(const PushAction push, const HomogTransf objectPose, const Vec tableNormal, std::vector<HomogTransf> *robotPoses) {
+  bool flag = false;
+  std::string push_type = push.pushType;
+  if (push_type == "Point") {
+    flag = generateTrajectoryPointPush(push, objectPose, tableNormal, robotPoses);
+  } else if (push_type == "TwoPointTranslation") {
+    flag = generateTrajectoryTwoPointsPushTrans(push, objectPose, tableNormal, robotPoses);
+  } else if (push_type == "TwoPointRotation") {
+    flag = generateTrajectoryTwoPointsPushRot(push, objectPose, tableNormal, robotPoses);
+  }
+  return flag;
 }
 
 bool PushGenerator::generateTrajectoryPointPush(const PushAction push, const HomogTransf objectPose, const Vec tableNormal, 
@@ -282,9 +360,37 @@ bool PushGenerator::generateTrajectoryTwoPointsPushTrans(const PushAction push, 
   (*robotPoses)[1] = HomogTransf(robot_orient, moveClosePoint);
   (*robotPoses)[2] = HomogTransf(robot_orient, penetrationPoint);
   (*robotPoses)[3] = HomogTransf(robot_orient, retractionPoint);
-
   return true;
+}
 
+bool PushGenerator::generateTrajectoryTwoPointsPushRot(const PushAction push, const HomogTransf objectPose, const Vec tableNormal, std::vector<HomogTransf> *robotPoses) {
+  robotPoses->clear();
+  robotPoses->resize(4);
+  HomogTransf push_pose = computePushPose(push.pushPoint, push.approachVector);
+  Vec trans = push_pose.getTranslation();
+  RotMat rot = push_pose.getRotation();
+  // The very initial pose far from object.
+  Vec init_trans = trans - push.approachVector * push.initialDist;
+  HomogTransf push_init_pose(rot, init_trans);
+  // The move close pose.
+  Vec move_close_trans = trans - push.approachVector * push.moveCloseDist;
+  HomogTransf move_close_pose(rot, move_close_trans);
+  
+  // Note that we now enter into a new tcp point (COR) mode. We will perform a pure 
+  // rotation to command the robot to rotate about COR. 
+  // Caveat:: check that tcp point has been reset.
+  RotMat Rz;
+  Rz.rotZ(push.rotAngle / 180.0 * PI); // Convert from degrees to radians
+  RotMat cor_rot = rot * Rz; 
+  HomogTransf cor_pose_pushin(cor_rot, push.cor);
+  HomogTransf cor_pose_retract(rot, push.cor);
+
+  // Map to global frame.
+  (*robotPoses)[0] = objectPose * push_init_pose;
+  (*robotPoses)[1] = objectPose * move_close_pose;
+  (*robotPoses)[2] = objectPose * cor_pose_pushin;
+  (*robotPoses)[3] = objectPose * cor_pose_retract;
+  return true;
 }
 
 
