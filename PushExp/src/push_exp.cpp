@@ -434,6 +434,7 @@ void PushExp::SerializePushActionInfo(std::ostream& fout) {
     v = push_action.cor;
     dist = push_action.rotAngle;
   } else {
+    // Output COR.
     v = push_action.pushVector;
     dist = push_action.penetrationDist;
   }
