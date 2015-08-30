@@ -1,4 +1,5 @@
 clear all; close all;
+rng(1);
 log_file_stable_sensor = 'Logs/30_90_30_30_30_90/exp_Fri Aug 28 14:13:40 2015_sensor20.txt';
 log_file_stable_pushactions = 'Logs/30_90_30_30_30_90/exp_Fri Aug 28 14:13:40 2015_pushaction20.txt';
 log_file_poke = '../../FusionMatlab/RandPushExp/SensorLogs/30_90_30_30_30_90/exp_08_11_50_mixed.txt';
@@ -33,11 +34,14 @@ train_data.F = push_wrenches_train(1:num_train, :);
             
 [result_methods] = MethodComparision(train_data, validation_data);
 
+%-------------------------------------------------------------------------------------%
+%-------------------------------------------------------------------------------------%
+
 % Extract from two points pushing log. 
 R_tool_two_points = -R_tool_point;
 [record_log_two_points] = ExtractFromLog(log_file_stable_sensor, pho, R_tool_two_points, H_tf, unit_scale);
-
 [push_actions] = ParsePushActionLog(log_file_stable_pushactions);
+
 % Decide translational stability. Note that push_vectors do not need to be
 % normalized because angular part will be 0.
 dev_angles = acos(diag(record_log_two_points.slider_velocities * push_actions.push_vectors)) * 180 / pi;

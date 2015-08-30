@@ -32,7 +32,7 @@ acc(3) = acc(3) / pho;
 acc(1:2) = R * acc(1:2);
 % acc def.
 dy(4:6) = acc;
-y
+%y
 % dy(4) = acc(1);
 % dy(5) = acc(2);
 % dy(6) = acc(3);
