@@ -50,7 +50,8 @@ class PushGenerator
     double DEFAULT_COR_RANGE;
 
     PushGenerator() { 
-      srand(time(NULL)); 
+      //srand(time(NULL)); 
+      srand(-1);
       InitParameters();
     }
     ~PushGenerator(){}
@@ -122,7 +123,7 @@ class PushGenerator
     
     // Given original tool transform, change to the tool transform to rotate about the COR
     // specified by push_action.
-    bool getToolTransformTwoPointsPush(const Vec tool_tf, const PushAction push_action, Vec* tcp_new);
+    bool getToolTransformTwoPointsPush(const HomogTransf tool_tf, const PushAction push_action, HomogTransf* tcp_new);
     
   
  private:

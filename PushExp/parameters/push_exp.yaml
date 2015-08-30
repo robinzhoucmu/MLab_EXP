@@ -1,6 +1,6 @@
 PushExp: {
 # flag to decide whether to run robot (true) or just output cartesian goal for debugging (false).
-execution_mode: false,
+execution_mode: true,
 
 # Push type. 'Point', 'TwoPointTranslation', 'TwoPointRotation'.
 push_type: 'TwoPointRotation',
@@ -13,7 +13,7 @@ min_height: 12.5,
 mocap_num_readings: 50, 
 mocap_read_duration: 2.0,
 
-num_pushes: 2,
+num_pushes: 25,
 
 # value set for point push.
 #min_edge_dist: 12.5,
@@ -35,9 +35,9 @@ default_retraction_dist: 25.0,
 # value set for two points push.
 default_move_close_dist: 1.0,
 
-default_rot_angle: 10.0,
+default_rot_angle: 10,
 default_pho: 50.0,
-default_cor_range: 8,
+default_cor_range: 5,
 
 robot_tcp_speed: 40.0,
 robot_ori_speed: 15.0,

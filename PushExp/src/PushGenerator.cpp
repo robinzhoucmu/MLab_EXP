@@ -101,7 +101,7 @@ bool PushGenerator::checkPush(const PushObject obj, const PushAction push)
 Vec PushGenerator::sampleCORInPushFrame() {
   double r_x = 2 * ((double)rand()) / ((double)RAND_MAX) - 1;
   double r_y = 2 * ((double)rand()) / ((double)RAND_MAX) - 1;
-  Vec sampled_cor;
+  Vec sampled_cor(3);
   sampled_cor[0] = DEFAULT_PHO * DEFAULT_COR_RANGE * r_x;
   sampled_cor[1] = DEFAULT_PHO * DEFAULT_COR_RANGE * r_y;
   sampled_cor[2] = 0;
@@ -172,7 +172,7 @@ bool PushGenerator::sampleEdgeAndPushPoint(const PushObject obj, Vec* pushPoint,
   return true;
 
 }
-bool PushGenerator::getToolTransformTwoPointsPush(const Vec tcp_old, const PushAction push_action, Vec* tcp_new) {
+bool PushGenerator::getToolTransformTwoPointsPush(const HomogTransf tool_tf_old, const PushAction push_action, HomogTransf* tool_tf_new) {
   if (push_action.pushType!= "TwoPointRotation") {
     std::cerr << "Wrong push type for resetting COR as tcp" << std::endl;
     return false;
@@ -182,7 +182,11 @@ bool PushGenerator::getToolTransformTwoPointsPush(const Vec tcp_old, const PushA
   HomogTransf push_pose = computePushPose(push_action.pushPoint, push_action.approachVector);
   // Change COR to pusher frame. 
   cor = push_pose.inv() * cor;
-  *tcp_new = tcp_old + cor;
+  tool_tf_new->setRotation(tool_tf_old.getRotation());
+  Vec tcp_new = tool_tf_old * cor;
+  std::cout << tcp_new << std::endl;
+  tool_tf_new->setTranslation(tcp_new);
+  return true;
 }
 
 bool PushGenerator::generateRandomPush(const PushObject obj, PushAction *push, std::string push_type) {
@@ -219,6 +223,7 @@ bool PushGenerator::generateRandomTwoPointsPushRot(const PushObject obj, PushAct
 
   // Sample cor in push frame.
   Vec cor = sampleCORInPushFrame();
+  std::cout << "sampled COR in push frame: " << cor << std::endl;
   // Check for y component to determine CCW or CW.
   if (cor[1] > 0) {
     // CCW rotation. 
@@ -228,7 +233,10 @@ bool PushGenerator::generateRandomTwoPointsPushRot(const PushObject obj, PushAct
     push->rotAngle = -DEFAULT_ROT_ANGLE;
   }
   HomogTransf pushPose = computePushPose(push->pushPoint, push->approachVector);
-  push->cor = pushPose.getRotation() * cor;
+  std::cout << "pushPose in local obj frame: " << pushPose << std::endl;
+  push->cor = pushPose * cor;
+  std::cout << "push COR in local obj frame: " << push->cor << std::endl;
+  return true;
 }
 
 bool PushGenerator::generateRandomPointPush(const PushObject obj, PushAction *push)

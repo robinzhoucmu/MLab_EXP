@@ -308,9 +308,21 @@ bool PushExp::ExecRobotPushAndLogForce() {
   assert(SetCartesian(robot_push_traj[ind_close]));
   ros::Duration(2.0).sleep();
   const double slow_speed_tcp = 2.5;
-  const double slow_speed_ori = 5.0;
+  const double slow_speed_ori = 2.5;
   robot->SetSpeed(slow_speed_tcp, slow_speed_ori);
   flag_is_pushing = true;
+  // Reset tcp point for two point cor-based push.
+  if (push_action.pushType == "TwoPointRotation") {
+    double tf_tool[7];
+    memcpy(tf_tool, GLParameters::robot_set_tool, sizeof(GLParameters::robot_set_tool));
+    HomogTransf tool_tf_old = HomogTransf(tf_tool);
+    HomogTransf tool_tf_new;
+    assert(push_plan_gen->getToolTransformTwoPointsPush(tool_tf_old, push_action, &tool_tf_new ));
+    Vec tcp_new = tool_tf_new.getTranslation();
+    Quaternion q_new = tool_tf_new.getQuaternion();
+    robot->SetTool(tcp_new[0],tcp_new[1],tcp_new[2],
+		   q_new[0],q_new[1],q_new[2],q_new[3]);
+  }
   // Now start logging. 
   LogPushForceAndRobotPoseAsync();
   // Push the object.
@@ -326,6 +338,13 @@ bool PushExp::ExecRobotPushAndLogForce() {
   assert(SetCartesian(robot_push_traj[ind_retract]));
   // Robot Leave Contact.
   std::cout << "Move back to resting position" << std::endl;
+  // Reset back to original tool transform.
+  if (push_action.pushType == "TwoPointRotation") {
+    double tf_tool[7];
+    memcpy(tf_tool, GLParameters::robot_set_tool, sizeof(GLParameters::robot_set_tool));
+    robot->SetTool(tf_tool[0], tf_tool[1], tf_tool[2], 
+		   tf_tool[3], tf_tool[4], tf_tool[5], tf_tool[6]);
+  }
   assert(RobotMoveToRestingState());
   return true;
 }
@@ -409,14 +428,21 @@ void PushExp::SerializePushActionInfo(std::ostream& fout) {
   // Output pushPoint.
   Vec v = push_action.pushPoint;
   fout << v[0] << " " << v[1] << " " << v[2] << std::endl;
-  // Output pushVector.
-  v = push_action.pushVector;
+  double dist;
+  if (push_action.pushType == "TwoPointRotation") {
+    // Output pushVector.
+    v = push_action.cor;
+    dist = push_action.rotAngle;
+  } else {
+    v = push_action.pushVector;
+    dist = push_action.penetrationDist;
+  }
   fout << v[0] << " " << v[1] << " " << v[2] << std::endl;
   // Output approachVector.
   v = push_action.approachVector;
   fout << v[0] << " " << v[1] << " " << v[2] << std::endl;
-  // Output penetration distance and moveClostDist.
-  fout << push_action.penetrationDist << " " << push_action.moveCloseDist << std::endl;
+  // Output penetration distance/rotAngle and moveClostDist.
+  fout << dist << " " << push_action.moveCloseDist << std::endl;
 }
 
 void PushExp::SerializeHomogTransf(const HomogTransf& tf, std::ostream& fout) {
