@@ -8,13 +8,13 @@
 % lc_coeffs: coefficients for given limit surface.
 % lc_type: 'quadratic' or 'poly4'.
 function [resnorm, x] = IsStable(vel, pt_contacts, pt_outward_normals, mu, lc_coeffs, pho, lc_type)
-if nargin < 6 
-    if size(lc_coeffs, 1) == 3 && size(lc_coeffs,2) == 3
-        lc_type = 'quadratic';
-    else
-        lc_type = 'poly4';
-    end
-end
+% if nargin < 6 
+%     if size(lc_coeffs, 1) == 3 && size(lc_coeffs,2) == 3
+%         lc_type = 'quadratic';
+%     else
+%         lc_type = 'poly4';
+%     end
+% end
 % Compute Edges of friction cone. 
 [fc_edges] = ComputeFrictionConeEdges(pt_contacts, pt_outward_normals, mu, pho);
 % Compute Edges of velocity cone.

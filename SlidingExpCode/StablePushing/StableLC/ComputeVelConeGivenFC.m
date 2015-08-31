@@ -1,7 +1,9 @@
 % Input: 
-% fc_edges: 3*(2N) edges of the friction cone.
+% fc_edges: 3*(2N) edges of the friction cone, normalized.
 % lc_coeffs: limit surface coefficients.
-% lc_type: 'quadratic' or 'poly4'.
+% if 'gp', lc_coeffs would be a struct containing training data and
+% gp parameters.
+% lc_type: 'quadratic', 'poly4' or 'gp'.
 % Output:
 % vc_edges: 3*(2N) edges of the velocity cone.
 function [ vc_edges ] = ComputeVelConeGivenFC(fc_edges, lc_coeffs, lc_type)
@@ -13,7 +15,12 @@ if strcmp(lc_type, 'quadratic')
 elseif strcmp(lc_type, 'poly4')
     [dir_vel, vel] = GetVelFrom4thOrderPoly(lc_coeffs, fc_edges);
     vc_edges = dir_vel';
+elseif strcmp(lc_type, 'gp')
+    F_train = lc_coeffs.F_train;
+    V_train = lc_coeffs.V_train;
+    coeffs = lc_coeffs.coeffs;
+    [hyp, dev_angle_train, dev_angle, v_gp_test] = GP_Fitting(F_train, V_train, fc_edges', [], coeffs);
+    vc_edges = v_gp_test';
 end
-
 end
 

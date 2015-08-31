@@ -394,10 +394,17 @@ bool PushGenerator::generateTrajectoryTwoPointsPushRot(const PushAction push, co
   HomogTransf cor_pose_retract(rot, push.cor);
 
   // Map to global frame.
-  (*robotPoses)[0] = objectPose * push_init_pose;
-  (*robotPoses)[1] = objectPose * move_close_pose;
-  (*robotPoses)[2] = objectPose * cor_pose_pushin;
-  (*robotPoses)[3] = objectPose * cor_pose_retract;
+  // Project object pose onto the xoy plane.
+  Quaternion q_obj = objectPose.getQuaternion();
+  q_obj[1] = 0;
+  q_obj[2] = 0;
+  q_obj.normalize();
+  HomogTransf projected_objectPose(q_obj, objectPose.getTranslation());
+
+  (*robotPoses)[0] = projected_objectPose * push_init_pose;
+  (*robotPoses)[1] = projected_objectPose * move_close_pose;
+  (*robotPoses)[2] = projected_objectPose * cor_pose_pushin;
+  (*robotPoses)[3] = projected_objectPose * cor_pose_retract;
   return true;
 }
 

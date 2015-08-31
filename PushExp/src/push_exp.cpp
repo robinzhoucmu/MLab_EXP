@@ -527,7 +527,7 @@ void PushExp::Run() {
       SinglePushPipeline();
       SerializeSensorInfo(fout);
       SerializePushActionInfo(fout_push_action);
-      ros::Duration(4.0).sleep();
+      ros::Duration(3.0).sleep();
     }
     fout.close();
     fout_push_action.close();

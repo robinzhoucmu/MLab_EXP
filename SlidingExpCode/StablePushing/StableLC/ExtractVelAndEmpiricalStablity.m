@@ -2,7 +2,7 @@
 % push_actions: parsed action log.
 % trajectory_log: parsed and pre-processed trajectory log, contains slider
 % velocity information (w.r.t) to its initial body frame.
-function [push_vels,  flag_stable_empirical] = ExtractVelAndEmpiricalStablity(push_actions, trajectory_log, H_tf, pho,  unit_scale, eps_stable_angle)
+function [push_vels,  flag_stable_empirical, dev_angles] = ExtractVelAndEmpiricalStablity(push_actions, trajectory_log, H_tf, pho,  unit_scale, eps_stable_angle)
 if (nargin < 4)
     pho = 0.05;
 end
