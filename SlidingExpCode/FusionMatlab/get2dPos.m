@@ -23,6 +23,7 @@ for i = 1:1:N
     % theta.
     % pos_2d(i, 3) = atan2(q(4), q(1)) * 2 * 180 / pi;
     pos_2d(i, 3) = atan2(q(4), q(1)) * 2;
+    pos_2d(i,3) = mod(pos_2d(i,3), 2*pi);
 end
 
 end

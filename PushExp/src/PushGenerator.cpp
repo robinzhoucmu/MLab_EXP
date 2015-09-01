@@ -99,8 +99,10 @@ bool PushGenerator::checkPush(const PushObject obj, const PushAction push)
 }
 
 Vec PushGenerator::sampleCORInPushFrame() {
-  double r_x = 2 * ((double)rand()) / ((double)RAND_MAX) - 1;
-  double r_y = 2 * ((double)rand()) / ((double)RAND_MAX) - 1;
+  // -0.5 to 0.5.
+  double r_x =  ((double)rand()) / ((double)RAND_MAX) - 0.5;
+  // -1.5 to 1.5
+  double r_y = 3 * (((double)rand()) / ((double)RAND_MAX) - 0.5);
   Vec sampled_cor(3);
   sampled_cor[0] = DEFAULT_PHO * DEFAULT_COR_RANGE * r_x;
   sampled_cor[1] = DEFAULT_PHO * DEFAULT_COR_RANGE * r_y;

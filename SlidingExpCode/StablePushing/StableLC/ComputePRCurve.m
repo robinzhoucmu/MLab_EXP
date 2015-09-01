@@ -15,7 +15,7 @@ for i = 1:1:num_thresholds
     indices_pred_neg = find(flag_pred == 0);
     num_tp = length(intersect(indices_pred_pos, indices_pos));
     if (num_tp ==0 && length(indices_pred_pos) == 0)
-        precision = 1;
+        precision = 0;
     else
         precision = num_tp / length(indices_pred_pos);
     end

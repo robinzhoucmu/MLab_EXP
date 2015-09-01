@@ -9,7 +9,7 @@ record_log.post_push_poses = post_push_poses;
 push_wrenches = zeros(num_pushes, 3);
 slider_velocities = zeros(num_pushes, 3);
 slider_vel_raw = zeros(num_pushes, 3);
-
+disp_raw = zeros(num_pushes, 3);
 for i = 1:1:num_pushes
     % Get object pre and post push pose.
     obj_start_pos = pre_push_poses(:,i);
@@ -71,12 +71,13 @@ for i = 1:1:num_pushes
     R = [cos(theta), -sin(theta); ...
          sin(theta), cos(theta)];
     d(1:2) = (R' * d(1:2)')';
+    disp_raw(i,:) = d;
     slider_vel_raw(i,:) = d / norm(d);
     d(3) = d(3) * pho;
     slider_velocities(i,:) = d / norm(d);
 end
 record_log.push_wrenches = push_wrenches;
 record_log.slider_velocities = slider_velocities;
-
+record_log.disp_raw = disp_raw;
 end
 

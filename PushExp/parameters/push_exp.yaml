@@ -6,19 +6,20 @@ execution_mode: true,
 push_type: 'TwoPointRotation',
 
 # mm/ safe distance for robot to move above objects without touching.
-safe_height: 125.0,
+safe_height: 90.0,
 min_height: 12.5,
 
 # number of mocap readings to average.
 mocap_num_readings: 50, 
 mocap_read_duration: 2.0,
 
-num_pushes: 50,
+num_pushes: 20,
 
 # value set for point push.
 #min_edge_dist: 12.5,
 # value set for two points push.
-min_edge_dist: 30,
+min_edge_dist: 50,
+
 # value set for point push.
 #min_push_angle: 30.0,
 # value set for two points translational push.
@@ -33,14 +34,14 @@ default_retraction_dist: 25.0,
 # value set for point push.
 #default_move_close_dist: 2.5,
 # value set for two points push.
-default_move_close_dist: 1.0,
+default_move_close_dist: 0.5,
 
 default_rot_angle: 10,
 default_pho: 50.0,
-default_cor_range: 5,
+default_cor_range: 8,
 
-robot_tcp_speed: 50.0,
-robot_ori_speed: 10.0,
+robot_tcp_speed: 80.0,
+robot_ori_speed: 20.0,
 
 robot_rest_cart: [485.0, 0.0, 250.0, 1.0, 0.0, 0.0, 0.0],
 
@@ -58,7 +59,7 @@ robot_set_tool: [-49.50, -49.50, 90.5, 0.0, -0.3827, 0.9239,0.0],
 #mocap_cali_tf: [715.42,-213.72,57.829,0.5007,0.50199,0.49812,0.49918],
 mocap_cali_tf:[754.55,-239.08,58.711,0.49582,0.49698,0.50252,0.50463],
 
-sensor_log_file: '../sensor_log/stablepush/30_90_30_30_30_90/exp_',
+sensor_log_file: '../sensor_log/stablepush/30_63.33_43.33_30_43.33_63.33/exp_',
 
 workobj_file_cali: '../parameters/aluminium_triangle/obj_cali_08_15.txt',
 workobj_file_geometry: '../parameters/aluminium_triangle/obj_geo.txt'
