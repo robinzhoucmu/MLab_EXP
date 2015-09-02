@@ -70,7 +70,7 @@ class PushGenerator
      * MIN_PUSH_ANGLE, (3) any of the distances are negative
      */
     bool checkPush(const PushObject obj, const PushAction push);
-
+    
     /** Generate a push action specified by type in the frame of object.
      */
     bool generateRandomPush(const PushObject obj, PushAction *push, 

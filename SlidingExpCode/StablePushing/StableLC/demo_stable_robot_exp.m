@@ -12,8 +12,8 @@ log_file_stable_pushactions = '30_90_30_30_30_90/exp_Mon Aug 31 17:26:31 2015_pu
 %log_file_stable_sensor = 'patch/exp_Mon Aug 31 16:06:23 2015_sensor50.txt';
 %log_file_stable_pushactions = 'patch/exp_Mon Aug 31 16:06:23 2015_pushaction50.txt';
 
-%log_file_poke = '../../FusionMatlab/RandPushExp/SensorLogs/30_90_30_30_30_90/exp_08_11_50_mixed.txt';
-log_file_poke = '../../FusionMatlab/RandPushExp/SensorLogs/30_63.33_43.33_30_43.33_63.33/exp_08_17_50.txt';
+log_file_poke = '../../FusionMatlab/RandPushExp/SensorLogs/30_90_30_30_30_90/exp_08_11_50_mixed.txt';
+%log_file_poke = '../../FusionMatlab/RandPushExp/SensorLogs/30_63.33_43.33_30_43.33_63.33/exp_08_17_50.txt';
 %log_file_poke = '../../FusionMatlab/RandPushExp/SensorLogs/patch/exp_08_18_1435_50.txt';
 
 
@@ -44,7 +44,7 @@ validation_data.V = slider_velocities_val;
 validation_data.F = push_wrenches_val;
 
 num_train_all = size(slider_velocities_train, 1);
-ratio_train = 1.0;
+ratio_train = 0.5;
 num_train = floor(num_train_all * ratio_train);
 fprintf('*********\nUse training size:%d\n', num_train);
 train_data.V = slider_velocities_train(1:num_train, :);
@@ -54,17 +54,18 @@ train_data.F = push_wrenches_train(1:num_train, :);
 
 %-------------------------------------------------------------------------------------%
 %-------------------------------------------------------------------------------------%
-%log_file_stable_sensor = '30_90_30_30_30_90/exp_Mon Aug 31 22:04:48 2015_sensor15.txt';
-%log_file_stable_pushactions = '30_90_30_30_30_90/exp_Mon Aug 31 22:04:48 2015_pushaction15.txt';
-%flag_stable_empirical([4,5,6,8,14]) = 1;
+log_file_stable_sensor = '30_90_30_30_30_90/exp_Tue Sep  1 10:53:59 2015_sensor20.txt';
+log_file_stable_pushactions = '30_90_30_30_30_90/exp_Tue Sep  1 10:53:59 2015_pushaction20.txt';
+%flag_stable_empirical([5,9,13,15,16,20]) = 1; %30_90_30
 
 %log_file_stable_sensor = 'patch/exp_Mon Aug 31 23:08:46 2015_sensor20.txt';
 %log_file_stable_pushactions = 'patch/exp_Mon Aug 31 23:08:46 2015_pushaction20.txt';
-%flag_stable_empirical([3,5,12,16,17,19]) = 1;
+%flag_stable_empirical([3,5,12,16,17,19]) = 1;   %patch
 
 
-log_file_stable_sensor = '30_63.33_43.33_30_43.33_63.33/exp_Mon Aug 31 23:52:30 2015_sensor20.txt';
-log_file_stable_pushactions = '30_63.33_43.33_30_43.33_63.33/exp_Mon Aug 31 23:52:30 2015_pushaction20.txt';
+%log_file_stable_sensor = '30_63.33_43.33_30_43.33_63.33/exp_Mon Aug 31 23:52:30 2015_sensor20.txt';
+%log_file_stable_pushactions = '30_63.33_43.33_30_43.33_63.33/exp_Mon Aug 31 23:52:30 2015_pushaction20.txt';
+%flag_stable_empirical([3, 5,7,10,12,13,15,16,19]) = 1; %30_63.33_43.44
 
 
 eps_stable_angle = 5 * pi/180;
@@ -77,7 +78,7 @@ eps_stable_trans = 10 / 1000;
     push_actions, record_log_two_points, H_tf, pho,  unit_scale, eps_stable_angle, eps_stable_trans);
 
 flag_stable_empirical = zeros(size(push_vels,2), 1);
-flag_stable_empirical([3, 5,7,10,12,13,15,16,19]) = 1;
+flag_stable_empirical([5,9,13,15,16,20]) = 1; %30_90_30
 
 
 fprintf('Ratio of stable pushes:%f\n', length(find(flag_stable_empirical == 1)) / length(flag_stable_empirical));
@@ -89,6 +90,7 @@ fprintf('Ratio of stable pushes:%f\n', length(find(flag_stable_empirical == 1)) 
 h = figure;
 results = cell(4,1);
 % cvx_poly4.
+fprintf('Poly4CVX\n');
 lc_coeffs_poly4_cvx = result_methods.coeffs{1};
 [stable_pred_poly4_cvx] = PredictTwoPointsStable(...
      push_vels, pt_contacts, pt_outward_normals, mu, pho, lc_coeffs_poly4_cvx, 'poly4');
@@ -96,6 +98,7 @@ lc_coeffs_poly4_cvx = result_methods.coeffs{1};
 [result_poly4_cvx] = ComputePRCurve(stable_pred_poly4_cvx, flag_stable_empirical);
 results{1} = result_poly4_cvx;
 %poly4.
+fprintf('Poly4\n');
  lc_coeffs_poly4 = result_methods.coeffs{2};
  [stable_pred_poly4] = PredictTwoPointsStable(...
      push_vels, pt_contacts, pt_outward_normals, mu, pho, lc_coeffs_poly4, 'poly4');

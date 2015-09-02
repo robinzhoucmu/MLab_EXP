@@ -7,6 +7,7 @@
 #define PUSH_EXP_H
 
 #include <iostream>
+#include <fstream>
 #include <vector>
 // ROS related. 
 #include <ros/ros.h>
@@ -27,6 +28,8 @@ class PushExp {
 
  private:
   bool execution_flag;
+  bool read_pushaction_flag;
+  std::ifstream fin_pushaction;
   ros::NodeHandle *nh;
   RobotComm* robot;
   PushGenerator* push_plan_gen;
@@ -97,6 +100,7 @@ class PushExp {
   void SerializeSensorInfo(std::ostream& fout);
   void SerializePushActionInfo(std::ostream& fout);
   void SerializeHomogTransf(const HomogTransf& tf, std::ostream& fout);
+  bool DeserializePushAction(std::istream& fin, PushAction *push); 
 };
 
 #endif

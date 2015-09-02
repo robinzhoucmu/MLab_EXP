@@ -1,7 +1,6 @@
 #include "push_exp.h"
 #include "geometry_msgs/WrenchStamped.h"
 #include "geometry_msgs/PoseStamped.h"
-#include <fstream>
 #include <ctime>
 // Global flag indicating whether the robot is pushing the object.
 bool flag_is_pushing = false;
@@ -47,6 +46,7 @@ PushExp::PushExp(ros::NodeHandle *n) {
 void PushExp::Initialize() {
   // Extract the flag indicating whether to execute the robot to goal position.
   execution_flag = GLParameters::execution_flag;
+  read_pushaction_flag = GLParameters::read_pushaction_flag;
 
   num_pushes = GLParameters::num_pushes;
   kNumMocapReadings = GLParameters::mocap_num_readings;
@@ -239,9 +239,14 @@ bool PushExp::GeneratePushPlan(HomogTransf pre_push_obj_pose) {
   while (!flag_kinematic_feasible) {
     // Generate a random local pushing direction.
     //PushAction push_action;
-    if (!push_plan_gen->generateRandomPush(*push_object, &push_action, GLParameters::push_type)) {
-      std::cerr << "Cannot generate a random push direction" << std::endl;
-      return false;  
+    if (!read_pushaction_flag) {
+      if (!push_plan_gen->generateRandomPush(
+	    *push_object, &push_action, GLParameters::push_type)) {
+	std::cerr << "Cannot generate a random push direction" << std::endl;
+	return false;  
+      }
+    } else {
+      DeserializePushAction(fin_pushaction, &push_action);
     }
     // Generate robot trajectory in global robot frame.
     const Vec tableNormal = Vec("0 0 1", 3);
@@ -430,11 +435,11 @@ void PushExp::SerializePushActionInfo(std::ostream& fout) {
   fout << v[0] << " " << v[1] << " " << v[2] << std::endl;
   double dist;
   if (push_action.pushType == "TwoPointRotation") {
-    // Output pushVector.
+    // Output COR.
     v = push_action.cor;
     dist = push_action.rotAngle;
   } else {
-    // Output COR.
+    // Output pushVector.
     v = push_action.pushVector;
     dist = push_action.penetrationDist;
   }
@@ -444,6 +449,32 @@ void PushExp::SerializePushActionInfo(std::ostream& fout) {
   fout << v[0] << " " << v[1] << " " << v[2] << std::endl;
   // Output penetration distance/rotAngle and moveClostDist.
   fout << dist << " " << push_action.moveCloseDist << std::endl;
+}
+
+bool PushExp::DeserializePushAction(std::istream& fin, PushAction *push) {
+  fin >> push->pushType;
+  Vec push_point(3);
+  fin >> push_point[0] >> push_point[1] >> push_point[2];
+  push->pushPoint = push_point;
+  double move_amount;
+  double moveClose_dist;
+  Vec move_vector(3);
+  fin >> move_vector[0] >> move_vector[1] >> move_vector[2];
+  Vec approach_vector(3);
+  fin >> approach_vector[0] >> approach_vector[1] >> approach_vector[2];
+  fin >> move_amount >> moveClose_dist;
+  if (push->pushType == "TwoPointRotation") {
+    push->cor = move_vector;
+    push->rotAngle = move_amount;
+  } else {
+    push->pushVector = move_vector;
+    push->penetrationDist = move_amount;
+  }
+  push->approachVector = approach_vector;
+  push->moveCloseDist = moveClose_dist;
+  push->initialDist = GLParameters::default_init_dist;
+  push->retractionDist = GLParameters::default_retraction_dist;
+  return true;
 }
 
 void PushExp::SerializeHomogTransf(const HomogTransf& tf, std::ostream& fout) {
@@ -521,7 +552,13 @@ void PushExp::Run() {
     
     fout << num_pushes << std::endl;
     fout_push_action << num_pushes << std::endl;
-
+    if (read_pushaction_flag) {
+      fin_pushaction.open(GLParameters::pushaction_file.c_str());
+      int total_input_pushes;
+      fin_pushaction >> total_input_pushes;
+      std::cout << total_input_pushes << std::endl;
+      assert(total_input_pushes >= num_pushes);
+    }
     for (int i = 0; i < num_pushes; ++i) {
       std::cout << "Started to run push " << i << std::endl;
       SinglePushPipeline();

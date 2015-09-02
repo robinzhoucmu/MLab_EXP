@@ -19,8 +19,13 @@ function [resnorm, x] = IsStable(vel, pt_contacts, pt_outward_normals, mu, lc_co
 [fc_edges] = ComputeFrictionConeEdges(pt_contacts, pt_outward_normals, mu, pho);
 % Compute Edges of velocity cone.
 [vc_edges] = ComputeVelConeGivenFC(fc_edges, lc_coeffs, lc_type);
-
+if (strcmp(lc_type, 'poly4') || strcmp(lc_type, 'poly4'))
+    [Fd] = FindForceGivenVel(vel, lc_coeffs, lc_type);
+    Fd = Fd / norm(Fd);
+    [x,resnorm] = lsqnonneg(fc_edges, Fd);
+else
 % Check if desired velocity is in the motion cone.
 [x,resnorm] = lsqnonneg(vc_edges,  vel);
+end
 end
 

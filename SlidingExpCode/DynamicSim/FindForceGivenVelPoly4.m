@@ -11,7 +11,8 @@ d = [x^4; y^4; z^4; ...
         x^3*y; x^3*z; y^3*x; y^3*z; z^3*x; z^3*y; ...
         x^2*y^2; x^2*z^2; y^2*z^2; ...
         x^2*y*z; y^2*x*z; z^2*x*y;];
-s = (1 / (d'*coeffs))^(1/4);
+%d'*coeffs
+s = (1 / abs((d'*coeffs)))^(1/4);
 F = f*s;
 end
 
