@@ -13,7 +13,7 @@ log_file_stable_pushactions = '30_90_30_30_30_90/exp_Mon Aug 31 17:26:31 2015_pu
 %log_file_stable_pushactions = 'patch/exp_Mon Aug 31 16:06:23 2015_pushaction50.txt';
 
 log_file_poke = '../../FusionMatlab/RandPushExp/SensorLogs/30_90_30_30_30_90/exp_08_11_50_mixed.txt';
-%log_file_poke = '../../FusionMatlab/RandPushExp/SensorLogs/30_63.33_43.33_30_43.33_63.33/exp_08_17_50.txt';
+log_file_poke = '../../FusionMatlab/RandPushExp/SensorLogs/30_63.33_43.33_30_43.33_63.33/exp_08_17_50.txt';
 %log_file_poke = '../../FusionMatlab/RandPushExp/SensorLogs/patch/exp_08_18_1435_50.txt';
 
 
@@ -54,8 +54,8 @@ train_data.F = push_wrenches_train(1:num_train, :);
 
 %-------------------------------------------------------------------------------------%
 %-------------------------------------------------------------------------------------%
-log_file_stable_sensor = '30_90_30_30_30_90/exp_Tue Sep  1 10:53:59 2015_sensor20.txt';
-log_file_stable_pushactions = '30_90_30_30_30_90/exp_Tue Sep  1 10:53:59 2015_pushaction20.txt';
+%log_file_stable_sensor = '30_90_30_30_30_90/exp_Tue Sep  1 10:53:59 2015_sensor20.txt';
+%log_file_stable_pushactions = '30_90_30_30_30_90/exp_Tue Sep  1 10:53:59 2015_pushaction20.txt';
 %flag_stable_empirical([5,9,13,15,16,20]) = 1; %30_90_30
 
 %log_file_stable_sensor = 'patch/exp_Mon Aug 31 23:08:46 2015_sensor20.txt';
@@ -63,8 +63,8 @@ log_file_stable_pushactions = '30_90_30_30_30_90/exp_Tue Sep  1 10:53:59 2015_pu
 %flag_stable_empirical([3,5,12,16,17,19]) = 1;   %patch
 
 
-%log_file_stable_sensor = '30_63.33_43.33_30_43.33_63.33/exp_Mon Aug 31 23:52:30 2015_sensor20.txt';
-%log_file_stable_pushactions = '30_63.33_43.33_30_43.33_63.33/exp_Mon Aug 31 23:52:30 2015_pushaction20.txt';
+log_file_stable_sensor = '30_63.33_43.33_30_43.33_63.33/exp_Mon Aug 31 23:52:30 2015_sensor20.txt';
+log_file_stable_pushactions = '30_63.33_43.33_30_43.33_63.33/exp_Mon Aug 31 23:52:30 2015_pushaction20.txt';
 %flag_stable_empirical([3, 5,7,10,12,13,15,16,19]) = 1; %30_63.33_43.44
 
 
@@ -78,8 +78,8 @@ eps_stable_trans = 10 / 1000;
     push_actions, record_log_two_points, H_tf, pho,  unit_scale, eps_stable_angle, eps_stable_trans);
 
 flag_stable_empirical = zeros(size(push_vels,2), 1);
-flag_stable_empirical([5,9,13,15,16,20]) = 1; %30_90_30
-
+%flag_stable_empirical([5,9,13,15,16,20]) = 1; %30_90_30
+flag_stable_empirical([3, 5,7,10,12,13,15,16,19]) = 1 %30_63.33_43.44
 
 fprintf('Ratio of stable pushes:%f\n', length(find(flag_stable_empirical == 1)) / length(flag_stable_empirical));
 

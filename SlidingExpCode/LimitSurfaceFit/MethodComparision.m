@@ -16,11 +16,15 @@ V_train = train_data.V;
 F_valid = validation_data.F;
 F_valid_dir = UnitNormalize(F_valid);
 V_valid = validation_data.V;
+record.F_train = F_train;
+record.V_train = V_train;
 
 if (has_test_data)
     F_test = test_data.F;
     F_test_dir = UnitNormalize(F_test);
     V_test = test_data.V;
+    record.F_test = F_test;
+    record.V_test = V_test;
 end
 
 num_methods = 4;

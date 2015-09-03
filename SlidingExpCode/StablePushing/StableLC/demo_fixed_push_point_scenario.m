@@ -1,5 +1,5 @@
 load results_lc;  % load result_methods cell array.
-index_lc = 3;
+index_lc = 2;
 rng(1);
 
 pho = 0.05;
@@ -15,7 +15,7 @@ R_tool_two_points = -R_tool_point;
 unit_scale = 1000;
 
 num_gen_cors = 600;
-range_cor = 2;
+range_cor = 5;
 rot_angle = 20; % in degree.
 moveclose_dist = 0.5; % in mm. 
 ContactInfo.approach_vectors = [-0.707107;-0.707107;0];
@@ -55,19 +55,21 @@ h_quad = figure;
 finger_pts = bsxfun(@plus, pt_contacts{1} * unit_scale, trans(1:2));
 DrawStableCOR(finger_pts, push_actions.cors, flag_stable_threshold_quad, h_quad)
 
-% fprintf('gaussianprocess\n');
-% gp_record.F_train = bsxfun(@rdivide, train_data.F, sqrt(sum(train_data.F.^2)));
-% gp_record.V_train = train_data.V;
-% gp_record.coeffs = result_methods.coeffs{4};
-% lc_coeffs_gp = result_methods{index_lc}.coeffs{4};
-% [stable_pred_gp] = PredictTwoPointsStable(...
-%      push_vels, pt_contacts, pt_outward_normals, mu, pho, lc_coeffs_gp, 'gp', eps_norm);
-% 
-% flag_stable_threshold_gp = stable_pred_gp.flag_stable_pred{eps_threshold_index}; 
-% % Draw the stable prediction results.
-% h_gp = figure;
-% finger_pts = bsxfun(@plus, pt_contacts{1} * unit_scale, trans(1:2));
-% DrawStableCOR(finger_pts, push_actions.cors, flag_stable_threshold_gp, h_gp)
+fprintf('gaussianprocess\n');
+lc_coeffs_gp = result_methods{index_lc}.coeffs{4};
+F_train = result_methods{index_lc}.F_train;
+V_train = result_methods{index_lc}.V_train;
+gp_record.F_train = bsxfun(@rdivide, F_train, sqrt(sum(F_train.^2)));
+gp_record.V_train = V_train;
+gp_record.coeffs = result_methods{index_lc}.coeffs{4};
+[stable_pred_gp] = PredictTwoPointsStable(...
+     push_vels, pt_contacts, pt_outward_normals, mu, pho, gp_record, 'gp', eps_norm);
+
+flag_stable_threshold_gp = stable_pred_gp.flag_stable_pred{eps_threshold_index}; 
+% Draw the stable prediction results.
+h_gp = figure;
+finger_pts = bsxfun(@plus, pt_contacts{1} * unit_scale, trans(1:2));
+DrawStableCOR(finger_pts, push_actions.cors, flag_stable_threshold_gp, h_gp)
 
 
 flag_diff = xor(flag_stable_threshold_poly4_cvx, flag_stable_threshold_quad);

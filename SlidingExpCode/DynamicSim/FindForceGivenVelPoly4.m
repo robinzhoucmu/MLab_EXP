@@ -31,7 +31,15 @@ while ( err_norm > eps_norm)
     ct = ct + 1;
     err_norm = norm(vp - V);
 end
-F = fp / norm(fp);
+% Scale force to be back on the 1-level set.
+x = fp(1); y = fp(2); z = fp(3);
+d = [x^4; y^4; z^4; ... 
+        x^3*y; x^3*z; y^3*x; y^3*z; z^3*x; z^3*y; ...
+        x^2*y^2; x^2*z^2; y^2*z^2; ...
+        x^2*y*z; y^2*x*z; z^2*x*y;];
+%d'*coeffs
+s = (1 / abs((d'*coeffs)))^(1/4);
+F = fp*s;
 end
 
 
