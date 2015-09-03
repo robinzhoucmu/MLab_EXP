@@ -1,5 +1,5 @@
 % Input:
-% finger_width 
+% finger_width (in mm)
 % H_tf: com frame w.r.t. lower left corner.
 function [pt_contacts, pt_outward_normals] = ExtractPushContacts(push_actions, fingers_width, H_tf, unit_scale)
 if (nargin < 4)

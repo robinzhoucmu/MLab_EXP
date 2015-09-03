@@ -26,7 +26,7 @@ pho = 0.05;
 trans = [50;50;0];
 H_tf = [eye(3,3), trans;
         0,0,0,1];
-fingers_width = 0.05;
+fingers_width = 50;
 mu = 1.0;
 R_tool_point = [sqrt(2)/2, sqrt(2)/2;
                 sqrt(2)/2, -sqrt(2)/2]';

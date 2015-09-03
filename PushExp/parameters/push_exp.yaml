@@ -2,7 +2,7 @@ PushExp: {
 # flag to decide whether to run robot (true) or just output cartesian goal for debugging (false).
 execution_mode: true,
 read_pushaction_flag: true,
-pushaction_file: '../parameters/push_actions/push_actions.txt',
+pushaction_file: '../parameters/push_actions/push_action_diff_range2.txt',
 
 # Push type. 'Point', 'TwoPointTranslation', 'TwoPointRotation'.
 push_type: 'TwoPointRotation',

@@ -4,7 +4,7 @@
 % mu: coefficient of friction at contact.
 function [record] = PredictTwoPointsStable(push_vels, pt_contacts, pt_outward_normals, mu, pho, lc_coeffs, lc_type, eps_norm)
 if (nargin < 8)
-    eps_norm = 0.01:0.001:0.25;
+    eps_norm = 0.001;
 end
 num_pushes = size(push_vels, 2);
 record.eps_norm = eps_norm;

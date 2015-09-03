@@ -11,7 +11,7 @@ num_contacts = length(ContactInfo);
 ct = 1;
 for ind_contact = 1:1:num_contacts
     % sample ratios -0.5 to 0.5 in the direction (vertical) of approach vector/edge normals.
-    rx = rand([num_cor_per_push 1]) - 0.5;
+    rx = 2 * (rand([num_cor_per_push 1]) - 0.5);
     % sample ratios -1 to 1 in the direction of edges.
     ry = 2 * (rand([num_cor_per_push 1]) - 0.5);
     dir_x = ContactInfo.approach_vectors(:, ind_contact);
