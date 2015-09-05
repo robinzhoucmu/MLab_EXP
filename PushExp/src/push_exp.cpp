@@ -276,12 +276,14 @@ bool PushExp::GeneratePushPlan(HomogTransf pre_push_obj_pose) {
       tmp_flag = false;
     }
     // Check for trajectory kinematic feasiblity.
+    /*
     for (int i = 0; i < robot_push_traj.size(); ++i) {
       if (!robot->GetIK(robot_push_traj[i], dummy_joints)) {
 	tmp_flag = false;
 	break;
       }
     }
+    */
     flag_kinematic_feasible = tmp_flag;
   } // While
   return true;
@@ -311,7 +313,7 @@ bool PushExp::ExecRobotPushAndLogForce() {
   // Move close to the object to prepare pushing.
   std::cout << "Getting close" << std::endl;
   assert(SetCartesian(robot_push_traj[ind_close]));
-  ros::Duration(2.0).sleep();
+  ros::Duration(1.0).sleep();
   const double slow_speed_tcp = 2.5;
   const double slow_speed_ori = 2.5;
   robot->SetSpeed(slow_speed_tcp, slow_speed_ori);
@@ -564,7 +566,7 @@ void PushExp::Run() {
       SinglePushPipeline();
       SerializeSensorInfo(fout);
       SerializePushActionInfo(fout_push_action);
-      ros::Duration(3.0).sleep();
+      ros::Duration(2.0).sleep();
     }
     fout.close();
     fout_push_action.close();

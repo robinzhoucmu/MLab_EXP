@@ -1,4 +1,4 @@
-% push_points: 3*n;
+% pt_contacts: contact points for the two fingers (need to mulitiply unit_scale)
 % cors: 3*m.
 function [] = DrawStableCOR(pt_contacts, cors, flag_stable, h)
 figure(h); 

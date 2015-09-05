@@ -7,10 +7,10 @@
 % rot_angle, moveclose_dist. 
 % NOTES: Assume metric is in mm and degree.
 function [PushActions] = GenerateRandomPushCORActionsGivenPushLocations(ContactInfo, num_cor_per_push, pho, range_pho, rot_angle, moveclose_dist)
-num_contacts = length(ContactInfo);
+num_contacts = size(ContactInfo.push_points, 2);
 ct = 1;
 for ind_contact = 1:1:num_contacts
-    % sample ratios -0.5 to 0.5 in the direction (vertical) of approach vector/edge normals.
+    % sample ratios -1 to 1 in the direction (vertical) of approach vector/edge normals.
     rx = 2 * (rand([num_cor_per_push 1]) - 0.5);
     % sample ratios -1 to 1 in the direction of edges.
     ry = 2 * (rand([num_cor_per_push 1]) - 0.5);

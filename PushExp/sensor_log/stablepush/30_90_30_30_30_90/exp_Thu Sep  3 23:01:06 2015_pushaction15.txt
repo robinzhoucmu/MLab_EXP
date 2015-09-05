@@ -1,0 +1,76 @@
+15
+TwoPointRotation
+75 0 0
+-49.7435 180.07 0
+0 1 0
+20 0
+TwoPointRotation
+75 75 0
+302.116 108.634 0
+-0.707107 -0.707107 0
+20 0
+TwoPointRotation
+75 75 0
+-94.4111 30.5014 0
+-0.707107 -0.707107 0
+-20 0
+TwoPointRotation
+75 75 0
+151.917 118.136 0
+-0.707107 -0.707107 0
+20 0
+TwoPointRotation
+75 0 0
+37.9953 170.473 0
+0 1 0
+20 0
+TwoPointRotation
+0 75 0
+-168.645 112.749 0
+1 0 0
+20 0
+TwoPointRotation
+0 75 0
+-13.9994 117.838 0
+1 0 0
+20 0
+TwoPointRotation
+75 0 0
+75.1663 2.26487 0
+0 1 0
+-20 0
+TwoPointRotation
+75 0 0
+-25.069 11.0859 0
+0 1 0
+20 0
+TwoPointRotation
+0 75 0
+-149.743 16.2024 0
+1 0 0
+-20 0
+TwoPointRotation
+0 75 0
+-39.6505 144.54 0
+1 0 0
+20 0
+TwoPointRotation
+75 0 0
+156.067 27.5432 0
+0 1 0
+-20 0
+TwoPointRotation
+0 75 0
+13.4613 132.744 0
+1 0 0
+20 0
+TwoPointRotation
+0 75 0
+-100.06 183.06 0
+1 0 0
+20 0
+TwoPointRotation
+0 75 0
+162.161 -120.645 0
+1 0 0
+-20 0
