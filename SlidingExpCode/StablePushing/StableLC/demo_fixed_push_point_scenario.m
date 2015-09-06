@@ -1,8 +1,11 @@
 clear all;
+close all;
+%load results_lc; % black paper tested on poster paper.
+load results_lc_2;  
 
-load results_lc;  % load result_methods cell array.
-index_lc = 1;
-rng(1);
+index_lc = 3;
+rng(50)  %
+
 flag_output = 1;
 pho = 0.05;
 % Transformation from lower left corner to com. 
@@ -17,7 +20,7 @@ R_tool_two_points = -R_tool_point;
 unit_scale = 1000;
 
 num_gen_cors = 100;
-num_verify = 10;
+num_verify = 20;
 range_cor = 4;
 rot_angle = 20; % in degree.
 moveclose_dist = 0; % in mm. 
@@ -54,11 +57,12 @@ for ind_contact = 1:1:size(ContactInfo.push_points,2)
 end
 DrawStableCOR(finger_pts, push_actions.cors, flag_stable_threshold_poly4_cvx, h_polycvx);
 if (flag_output)
-    file_name_poly4_stable = 'push_actions_range4_poly4_stable.txt';
-    [indices_poly4_stable_output] = WritePushActionToDisk(push_actions, file_name_poly4_stable, flag_stable_threshold_poly4_cvx, num_verify);
-    file_name_poly4_nonstable = 'push_actions_range4_poly4_nonstable.txt';  
-    [indices_poly4_nonstable_output] = WritePushActionToDisk(push_actions, file_name_poly4_nonstable, ~flag_stable_threshold_poly4_cvx, num_verify);
+    file_name_poly4_stable = 'push_actions_range4_random.txt';
+    [indices_output] = WritePushActionToDisk(push_actions, file_name_poly4_stable, ones(num_gen_cors * 3, 1), num_verify);
+    %file_name_poly4_nonstable = 'push_actions_range4_poly4_nonstable.txt';  
+    %[indices_poly4_nonstable_output] = WritePushActionToDisk(push_actions, file_name_poly4_nonstable, ones(num_gen_cors, 1), num_verify);
 end
+result_compare(:,1) = flag_stable_threshold_poly4_cvx(indices_output)
 
 %--------------------------------------------------%
 
@@ -71,9 +75,10 @@ flag_stable_threshold_poly4 = stable_pred_poly4.flag_stable_pred{eps_threshold_i
 % Draw the stable prediction results.
 h_poly4 = figure;
 DrawStableCOR(finger_pts, push_actions.cors, flag_stable_threshold_poly4, h_poly4);
+ 
 % Check what the poly4 model will agree with the poly4_cvx model.
-flag_stable_threshold_poly4(indices_poly4_stable_output)
-flag_stable_threshold_poly4(indices_poly4_nonstable_output)
+result_compare(:,2) = flag_stable_threshold_poly4(indices_output)
+%flag_stable_threshold_poly4(indices_poly4_nonstable_output)
 
 
 
@@ -87,17 +92,11 @@ flag_stable_threshold_quad = stable_pred_quad.flag_stable_pred{eps_threshold_ind
 % Draw the stable prediction results.
 h_quad = figure;
 DrawStableCOR(finger_pts, push_actions.cors, flag_stable_threshold_quad, h_quad);
-if (flag_output)
-    file_name_quadratic_stable = 'push_actions_range4_quadratic_stable.txt';
-    WritePushActionToDisk(push_actions, file_name_quadratic_stable, flag_stable_threshold_quad, num_verify);
-    file_name_quadratic_nonstable = 'push_actions_range4_quadratic_nonstable.txt';  
-    WritePushActionToDisk(push_actions, file_name_quadratic_nonstable, ~flag_stable_threshold_quad, num_verify);
-end
 
 %--------------------------------------------------%
 % Check what the qp model will agree with the poly4_cvx model.
-flag_stable_threshold_quad(indices_poly4_stable_output)
-flag_stable_threshold_quad(indices_poly4_nonstable_output)
+result_compare(:,3) = flag_stable_threshold_quad(indices_output)
+%flag_stable_threshold_quad(indices_poly4_nonstable_output)
 
 fprintf('gaussianprocess\n');
 lc_coeffs_gp = result_methods{index_lc}.coeffs{4};
@@ -113,10 +112,12 @@ flag_stable_threshold_gp = stable_pred_gp.flag_stable_pred{eps_threshold_index};
 % Draw the stable prediction results.
 h_gp = figure;
 DrawStableCOR(finger_pts, push_actions.cors, flag_stable_threshold_gp, h_gp)
-flag_stable_threshold_gp(indices_poly4_stable_output)
-flag_stable_threshold_gp(indices_poly4_nonstable_output)
+result_compare(:,4) = flag_stable_threshold_gp(indices_output)
+%flag_stable_threshold_gp(indices_poly4_nonstable_output)
+result_compare = int32(result_compare);
 
-
+length(find(flag_stable_threshold_poly4_cvx == 1)) / length(flag_stable_threshold_poly4_cvx)
+length(find(flag_stable_threshold_poly4_cvx(indices_output) == 1)) / length(flag_stable_threshold_poly4_cvx(indices_output))
 % flag_diff = xor(flag_stable_threshold_poly4_cvx, flag_stable_threshold_quad);
 % ind_diff = find(flag_diff == 1);
 % length(ind_diff)

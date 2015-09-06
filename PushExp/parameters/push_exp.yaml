@@ -2,7 +2,7 @@ PushExp: {
 # flag to decide whether to run robot (true) or just output cartesian goal for debugging (false).
 execution_mode: true,
 read_pushaction_flag: true,
-pushaction_file: '../parameters/push_actions/30_90_30_30_30_90/push_actions_range4_poly4_nonstable.txt',
+pushaction_file: '../parameters/push_actions/wood_patch/push_actions_range4_random.txt',
 
 # Push type. 'Point', 'TwoPointTranslation', 'TwoPointRotation'.
 push_type: 'TwoPointRotation',
@@ -15,7 +15,7 @@ min_height: 12.5,
 mocap_num_readings: 50, 
 mocap_read_duration: 2.0,
 
-num_pushes: 10,
+num_pushes: 20,
 
 # value set for point push.
 #min_edge_dist: 12.5,
