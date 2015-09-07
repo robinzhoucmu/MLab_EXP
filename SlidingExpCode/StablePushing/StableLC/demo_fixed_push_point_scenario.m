@@ -1,5 +1,5 @@
 clear all;
-close all;
+%close all;
 %load results_lc; % black paper tested on poster paper.
 load results_lc_2;  
 
@@ -19,17 +19,25 @@ R_tool_point = [sqrt(2)/2, sqrt(2)/2;
 R_tool_two_points = -R_tool_point;
 unit_scale = 1000;
 
-num_gen_cors = 100;
+num_gen_cors = 500;
 num_verify = 20;
-range_cor = 4;
+range_cor = 10;
 rot_angle = 20; % in degree.
 moveclose_dist = 0; % in mm. 
-ContactInfo.approach_vectors = [-0.707107, 0, 1;
-                                -0.707107, 1, 0;
-                                0,0, 0];
-ContactInfo.push_points = [75, 75, 0;
-                            75, 0, 75;
-                            0, 0, 0];
+% One push scenario.
+ContactInfo.approach_vectors = [-0.707107;
+                                -0.707107;
+                                0];
+ContactInfo.push_points = [75;
+                           75;
+                           0];
+% Three push scenario.                        
+% ContactInfo.approach_vectors = [-0.707107, 0, 1;
+%                                 -0.707107, 1, 0;
+%                                 0,0, 0];
+% ContactInfo.push_points = [75, 75, 0;
+%                             75, 0, 75;
+%                             0, 0, 0];
 
 [push_actions] = GenerateRandomPushCORActionsGivenPushLocations(ContactInfo, num_gen_cors, pho * unit_scale, range_cor, rot_angle, moveclose_dist);
 [pt_contacts, pt_outward_normals] = ExtractPushContacts(push_actions, fingers_width, H_tf, unit_scale);
@@ -56,6 +64,7 @@ for ind_contact = 1:1:size(ContactInfo.push_points,2)
     finger_pts(:,2*ind_contact-1:2*ind_contact) = bsxfun(@plus, pt_contacts{1+(ind_contact-1) * num_gen_cors} * unit_scale, trans(1:2));
 end
 DrawStableCOR(finger_pts, push_actions.cors, flag_stable_threshold_poly4_cvx, h_polycvx);
+indices_out = [];
 if (flag_output)
     file_name_poly4_stable = 'push_actions_range4_random.txt';
     [indices_output] = WritePushActionToDisk(push_actions, file_name_poly4_stable, ones(num_gen_cors * 3, 1), num_verify);

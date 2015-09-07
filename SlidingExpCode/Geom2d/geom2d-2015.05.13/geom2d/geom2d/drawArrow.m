@@ -116,7 +116,7 @@ xa3 = x2 - r.*l.*cos(theta);
 ya3 = y2 - r.*l.*sin(theta);
 
 % draw main edge
-h1 = line([x1'; x2'], [y1'; y2'], 'color', [0 0 1]);
+h1 = line([x1'; x2'], [y1'; y2'], 'color', [0 0 1], 'LineWidth', 2);
 
 % draw only 2 wings
 ind = find(r==0);
