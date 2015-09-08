@@ -3,8 +3,9 @@
 
 h = figure;
 hold on;
-%axis equal;
 axis([-1000 1000 -1000 1000]);
+axis_length_x = 500;
+axis_length_y = 400;
 %axis manual;
 %xlim([-400 400]);
 %ylim([-400 400]);
@@ -22,7 +23,7 @@ for ind_tri_line = 1:1:3
 end
 
 % Plot the COM. 
-plot([0;0], 'Marker', 'o', 'MarkerSize', 5, 'MarkerFaceColor', 'y');
+plot(0, 0, 'Marker', 'o', 'MarkerSize', 5, 'MarkerFaceColor', 'k');
 
 % Plot the fingers. 
 dir_edge = [sqrt(2)/2; -sqrt(2)/2];
@@ -43,11 +44,11 @@ drawArrow([pos_fingers(:,2)', v_fc_edges(:,1)' + pos_fingers(:,2)'], arrow_len, 
 drawArrow([pos_fingers(:,2)', v_fc_edges(:,2)' + pos_fingers(:,2)'], arrow_len, arrow_width, .5);
 
 % bound at left point on the long edge. 
-drawRay([tri_p(:,2)',-sqrt(2)/2, sqrt(2)/2]);
-drawRay([tri_p(:,2)',-sqrt(2)/2, -sqrt(2)/2]);
+drawRay([tri_p(:,2)',-sqrt(2)/2, sqrt(2)/2], 'LineStyle', '--');
+drawRay([tri_p(:,2)',-sqrt(2)/2, -sqrt(2)/2], 'LineStyle', '--');
 % bound at right point on the long edge.
-drawRay([tri_p(:,3)',sqrt(2)/2, sqrt(2)/2]);
-drawRay([tri_p(:,3)',sqrt(2)/2, -sqrt(2)/2]);
+drawRay([tri_p(:,3)',sqrt(2)/2, sqrt(2)/2], 'LineStyle', '--');
+drawRay([tri_p(:,3)',sqrt(2)/2, -sqrt(2)/2], 'LineStyle', '--');
 
 r = sqrt((25*sqrt(2))^2 + (75*sqrt(2))^2);
 p = sqrt(25^2 + (25*sqrt(2))^2);
@@ -59,17 +60,32 @@ l_f2 = createLine(pos_fingers(:,2)', [0;0]');
 bisec_l_f1 = orthogonalLine(l_f1, pos_fingers(:,1)'/2);
 bisec_l_f2 = orthogonalLine(l_f2, pos_fingers(:,2)'/2);
 line_width_bound = 0.25;
-color_line_bound = 'g';
-drawLine(bisec_l_f1, 'Color', color_line_bound, 'LineWidth', line_width_bound);
-drawLine(bisec_l_f2, 'Color', color_line_bound, 'LineWidth', line_width_bound);
+color_line_bound = 'b';
+drawLine(bisec_l_f1, 'Color', color_line_bound, 'LineWidth', line_width_bound, 'LineStyle', '--');
+drawLine(bisec_l_f2, 'Color', color_line_bound, 'LineWidth', line_width_bound, 'LineStyle', '--');
 
 % Draw dual bisection line.
 dir_f1 = -pos_fingers(:,1)/norm(pos_fingers(:,1));
 dir_f2 = -pos_fingers(:,2)/norm(pos_fingers(:,2));
 dual_bisec_l_f1 = orthogonalLine(l_f1, dir_f1'*d);
 dual_bisec_l_f2 = orthogonalLine(l_f2, dir_f2'*d);
-drawLine(dual_bisec_l_f1, 'Color', color_line_bound, 'LineWidth', line_width_bound);
-drawLine(dual_bisec_l_f2, 'Color', color_line_bound, 'LineWidth', line_width_bound);
+drawLine(dual_bisec_l_f1, 'Color', color_line_bound, 'LineWidth', line_width_bound, 'LineStyle', '--');
+drawLine(dual_bisec_l_f2, 'Color', color_line_bound, 'LineWidth', line_width_bound, 'LineStyle', '--');
+
+%Intersect bisect dual line with ray.
+ray_line_r = createLine(tri_p(:,3)', tri_p(:,3)' + [sqrt(2)/2, sqrt(2)/2]);
+p_dual_ray_r = intersectLines(ray_line_r, dual_bisec_l_f1);
+p_bisec_ray_r = intersectLines(ray_line_r, bisec_l_f2);
+wall_line = createLine([axis_length_x, 0], [axis_length_x, 1]);
+p_wall_dual_r = intersectLines(wall_line, dual_bisec_l_f1);
+p_wall_bisec_r = intersectLines(wall_line, bisec_l_f2);
+patch_vertices = [p_dual_ray_r',p_bisec_ray_r',p_wall_bisec_r',p_wall_dual_r'];
+patch_r = patch(patch_vertices(1,:), patch_vertices(2,:), 'c');
+patch_l = patch(-patch_vertices(1,:), patch_vertices(2,:), 'c');
+hatchfill(patch_r, 'single', -45, 3);
+hatchfill(patch_l, 'single', 45, 3);
+set(patch_r, 'LineStyle', 'none');
+set(patch_l, 'LineStyle', 'none');
 
 %------------------------------------------------------------------------%
 load results_lc;  
@@ -91,7 +107,7 @@ R_tool_point = [sqrt(2)/2, sqrt(2)/2;
 R_tool_two_points = -R_tool_point;
 unit_scale = 1000;
 
-num_gen_cors = 3000;
+num_gen_cors = 1500;
 range_cor = 10;
 rot_angle = 20; % in degree.
 moveclose_dist = 0; % in mm. 
@@ -130,12 +146,14 @@ cors = H_tf_2 \ [push_actions.cors;ones(1, size(push_actions.cors,2))];
 for i = 1:1:size(cors, 2)
     if flag_stable(i)
         color = 'r';
+        marker_type = '^';
     else 
-        color = [0.5 0.5 0.5];
+        color = [0.5  0.5  0.5];
+        marker_type = '*';
     end
-    plot(cors(1,i), cors(2,i), 'Marker', '.', 'MarkerEdgeColor', color, 'MarkerSize', 5);
+    plot(cors(1,i), cors(2,i), 'Marker', marker_type, 'MarkerEdgeColor', color, 'MarkerSize', 6);
 end
-axis_length = 450;
-axis([-axis_length axis_length -axis_length axis_length]);
+axis equal;
+axis([-axis_length_x axis_length_x -axis_length_y axis_length_y]);
 
 

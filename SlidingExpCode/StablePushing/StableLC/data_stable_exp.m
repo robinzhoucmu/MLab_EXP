@@ -141,4 +141,4 @@ for ind = 1:1:4
     confusion_mat_rand(ind,3) = length(find(result_stable_data_rand(:,ind) == 0 & result_stable_data_rand(:,5) == 1));
     confusion_mat_rand(ind,4) = length(find(result_stable_data_rand(:,ind) == 0 & result_stable_data_rand(:,5) == 0));
 end
-accuracy_rand = (confusion_mat_rand(:,2) + confusion_mat_rand(:,3)) ./ (confusion_mat_rand(:,1) + confusion_mat_rand(:,4))
+accuracy_rand = (confusion_mat_rand(:,1) + confusion_mat_rand(:,4)) / 60;
