@@ -20,7 +20,7 @@ axis equal;
 %cord_V_y = zeros(num_poses, num_vertices);
 colors = ['r', 'g', 'b'];
 ct = 1;
-num_interval_plot = 50;
+num_interval_plot = 25;
 t_interval = (t(end) - t(1)) / num_interval_plot;
 ind_interval = 1;
 for i = 1:1:num_poses
@@ -46,13 +46,17 @@ for i = 1:1:num_poses
         nxt_y = cord_xy(2) + V(2,nxt_ind_j);
         if (i == 1)
         plot([x, nxt_x], [y, nxt_y], 'Color', colors(mod(j-1,3) + 1), ...
-            'LineStyle', '-', 'LineWidth', 2);
+            'LineStyle', '-', 'LineWidth', 3);
+         cord_com = pos_2d(1:2,i);
+         plot(cord_com(1,:), cord_com(2,:), 'k.', 'MarkerSize', 6);
         elseif (i == num_poses)
         plot([x, nxt_x], [y, nxt_y], 'Color', colors(mod(j-1,3) + 1), ...
-            'LineStyle', '--', 'LineWidth', 2);   
+            'LineStyle', '-', 'LineWidth', 3);   
         elseif (t(i+1) > (t_interval * ind_interval) && t(i) <= (t_interval * ind_interval))
             plot([x, nxt_x], [y, nxt_y], 'Color', colors(mod(j-1,3) + 1), ...
-                'LineStyle', ':', 'LineWidth', 1);
+                'LineStyle', ':', 'LineWidth', 1.1);
+            cord_com = pos_2d(1:2,i);
+            plot(cord_com(1,:), cord_com(2,:), 'k.', 'MarkerSize', 6);
             flag_draw_intermediate = 1;
         end
         %plot(x,y, 'Color', colors(mod(j-1,3) + 1), 'Marker', '^', 'MarkerSize', 5);   
@@ -73,8 +77,8 @@ margin_y = 0.025;
 %xlim([x_min-margin_x, x_max + margin_x]);
 %ylim([y_min-margin_x, y_max + margin_y]);
 % Plot point of origin trajectory.
-cord_com = pos_2d(1:2,:);
-plot(cord_com(1,:), cord_com(2,:), 'k.', 'MarkerSize', 5);
+%cord_com = pos_2d(1:2,:);
+%plot(cord_com(1,:), cord_com(2,:), 'k.', 'MarkerSize', 6);
 
 % Add marker to vertices.
 for i = 1:1:num_vertices

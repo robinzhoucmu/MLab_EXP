@@ -15,7 +15,8 @@ hold on;
 V = V * l;
 %Plot Velocities as arrows from force points.
 for i = 1:1:numF
-    quiver3(F(1,i), F(2,i), F(3,i), V(1,i), V(2,i), V(3,i), 'b-', 'LineWidth', 1.5);
+    arrow = quiver3(F(1,i), F(2,i), F(3,i), V(1,i), V(2,i), V(3,i), 'b-', 'LineWidth', 1.5);
+    adjust_quiver_arrowhead_size(arrow, 8.0);
 end
 % Something weird about arrow size.
 %quiver3(F(1,:)', F(2,:)', F(3,:)', V(1,:)', V(2,:)', V(3,:)', 'b-');

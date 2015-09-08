@@ -28,7 +28,8 @@ if ~strcmp(method, 'gp')
         % for real robot data.
         %w_force = [0.1, 0.5, 1, 4];
         %w_force = [0.1, 1, 4, 8];
-        w_force = [0.1, 0.5, 1, 2, 4, 8];
+        %w_force = [0.1, 0.5, 1, 2, 4, 8];
+        w_force = [0.5, 1, 2, 4, 8];
     end
     for ind_f = 1:length(w_force)
         for ind_r = 1:length(w_reg)
