@@ -5,6 +5,9 @@ pho = 0.05;
 A = [0.0499    0.0045   -0.0033;
      0.0045    0.0456   -0.0033;
     -0.0033   -0.0033    0.2320];
+A = [0.0499    0.0045   0;
+     0.0045    0.0456    0;
+    0   0   0.2320];
 
 poly4_coeffs = [ 0.0012
     0.0015
@@ -22,9 +25,10 @@ poly4_coeffs = [ 0.0012
    -0.0036
     0.0061];
 
-V0 = [0.5;-0.4;pi/2];
+%V0 = [0.5;-0.4;pi/2];
 V0 = [1;1; pi];
-%V0 = [1.5;-0.5;pi/2];
+%V0 = [5;0;0];
+%V0 = [0;0;pi];
 %V0 = [2.5;2.5;pi];
 % Pose0 = eye(3,3);
 % 
@@ -33,7 +37,7 @@ V0 = [1;1; pi];
 % [T_record, pos_2d, Time] = DynamicSimulation2(mass, pho, A, V0, Pose0, dt, mode);
 
 y0 = [0;0;0;V0];
-tspan = 0:0.001:1.0;
+tspan = 0:0.0005:1.0;
 mode = 'poly4';
 options = odeset('Events', @StopEvent);
 [Time,pos_2d] = ode45(@(t,y)DynSimOdeFun(t,y,mass,pho,poly4_coeffs, mode), tspan, y0, options);

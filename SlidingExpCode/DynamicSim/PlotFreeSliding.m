@@ -54,7 +54,7 @@ for i = 1:1:num_poses
             'LineStyle', '-', 'LineWidth', 3);   
         elseif (t(i+1) > (t_interval * ind_interval) && t(i) <= (t_interval * ind_interval))
             plot([x, nxt_x], [y, nxt_y], 'Color', colors(mod(j-1,3) + 1), ...
-                'LineStyle', ':', 'LineWidth', 1.1);
+                'LineStyle', ':', 'LineWidth', 1.5);
             cord_com = pos_2d(1:2,i);
             plot(cord_com(1,:), cord_com(2,:), 'k.', 'MarkerSize', 6);
             flag_draw_intermediate = 1;

@@ -30,6 +30,7 @@ acc = - F / m;
 acc(3) = acc(3) / pho;
 % Represent acc in global frame.
 acc(1:2) = R * acc(1:2);
+acc
 % acc def.
 dy(4:6) = acc;
 %y
