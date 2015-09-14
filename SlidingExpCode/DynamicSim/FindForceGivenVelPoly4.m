@@ -20,7 +20,7 @@ eta = 0.5;
 fp = [1;0;0];
 [dir_vp, vp] = GetVelFrom4thOrderPoly(coeffs, fp);
 vp = vp';
-eps_norm = 1e-4;
+eps_norm = 1e-5;
 ct = 1;
 err_norm = norm(vp - V); 
 while ( err_norm > eps_norm)

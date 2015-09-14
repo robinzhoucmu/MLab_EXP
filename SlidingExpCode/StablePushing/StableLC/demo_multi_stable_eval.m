@@ -23,7 +23,7 @@ flag_gt1 = [
 0
 0
 0];
-[multi_eval_results1, acc1] = MultiStableActionEval(log_file_poke1, log_push_action1, flag_gt, num_per_eval);
+[multi_eval_results1, acc1] = MultiStableActionEval(log_file_poke1, log_push_action1, flag_gt1, num_per_eval);
 
 log_file_poke2 = '../../FusionMatlab/RandPushExp/SensorLogs/wood_10_90_10_10_30_130/exp_08_18_1100_50.txt';
 log_push_action2 = 'Logs2/wood_10_90_10_10_30_130/push_actions_range4_random.txt';

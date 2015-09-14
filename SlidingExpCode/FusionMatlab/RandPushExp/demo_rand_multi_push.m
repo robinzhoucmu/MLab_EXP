@@ -7,8 +7,8 @@ rng(1);
 %log_file_name = 'SensorLogs/10_130_10_10_10_130/exp_08_17_50.txt';
 
 %log_file_name = 'SensorLogs/wood_10_130_10_10_10_130/exp_08_17_50.txt';
-log_file_name = 'SensorLogs/wood_patch/exp_08_17_0839_50.txt';
-%log_file_name = 'SensorLogs/wood_30_90_30_30_30_90/exp_08_17_0922_50.txt';
+%log_file_name = 'SensorLogs/wood_patch/exp_08_17_0839_50.txt';
+log_file_name = 'SensorLogs/wood_30_90_30_30_30_90/exp_08_17_0922_50.txt';
 %log_file_name = 'SensorLogs/wood_10_90_10_10_30_130/exp_08_18_1100_50.txt';
 
 Tri_V = [0,0.15,0;0,0,0.15];
@@ -47,7 +47,7 @@ h_tri = DrawTriangle(Tri_V, Tri_com, Tri_pts_cp, Tri_pds);
 
 [pre_push_poses, post_push_poses, ft_readings, robot_pose_readings] = ParseLog(log_file_name);
 num_pushes = size(pre_push_poses, 2);
-num_pushes = num_pushes * (30/50);
+num_pushes = num_pushes * (10/50);
 push_wrenches = zeros(num_pushes, 3);
 slider_velocities = zeros(num_pushes, 3);
 slider_vel_raw = zeros(num_pushes, 3);
@@ -130,7 +130,7 @@ end
 push_wrenches_dir = bsxfun(@rdivide, push_wrenches, sqrt(sum(push_wrenches.^2, 2)));
 
 % Split training and testing data.
-ratio_train = 0.75;
+ratio_train = 0.5;
 [slider_velocities_train, slider_velocities_test, push_wrenches_train, push_wrenches_test] = ...
     SplitTrainTestData(slider_velocities, push_wrenches, ratio_train);
 push_wrenches_dir_train = UnitNormalize(push_wrenches_train);

@@ -1,6 +1,9 @@
 % F, V: 3*N. 
 % Assume V is normalized velocity.
-function [] = VisualizeForceVelPairs(F, V, fig_h)
+function [] = VisualizeForceVelPairs(F, V, fig_h, mk_size)
+if (nargin < 4)
+    mk_size = 8;
+end
 %fig = figure;
 hold on;
 figure(fig_h);
@@ -10,7 +13,7 @@ avg_f_norm = mean(sqrt(sum(F.^2)));
 l = avg_f_norm * 0.2;
 assert(numF == numV);
 % Plot Forces as red dots.
-plot3(F(1,:), F(2,:), F(3,:), 'Marker', 'o', 'MarkerFaceColor', 'r', 'Markersize', 5, 'LineStyle', 'none');
+plot3(F(1,:), F(2,:), F(3,:), 'Marker', 'o', 'MarkerFaceColor', 'r', 'Markersize', mk_size, 'LineStyle', 'none');
 hold on;
 V = V * l;
 %Plot Velocities as arrows from force points.

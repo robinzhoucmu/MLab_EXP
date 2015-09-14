@@ -12,7 +12,7 @@ group_name = {'7', '15', '22', '45'};
 data = exp_record_3pts_noisy.err_test;
 [h] = PlotBarsWithErrors(data, group_name, 1);
 h = ImproveFigure(h);
-file_name_fig = 'ExpRecord/BarPlotsNew/3pts_noisy';
+file_name_fig = 'ExpRecord/BarPlotsNew/3pts_noisy2';
 %savefig(h, file_name_fig);
 print(h, file_name_fig, '-deps');
 
@@ -20,7 +20,7 @@ print(h, file_name_fig, '-deps');
 data = exp_record_3pts_noisefree.err_test;
 [h] = PlotBarsWithErrors(data, group_name,1);
 h = ImproveFigure(h);
-file_name_fig = 'ExpRecord/BarPlotsNew/3pts_noise_free';
+file_name_fig = 'ExpRecord/BarPlotsNew/3pts_noise_free2';
 %savefig(h, file_name_fig);
 print(h, file_name_fig, '-deps');
 
@@ -58,7 +58,7 @@ print(h, file_name_fig, '-deps');
 data = exp_record_360_ring_noisy.err_test;
 [h] = PlotBarsWithErrors(data, group_name, 1);
 h = ImproveFigure(h);
-file_name_fig = 'ExpRecord/BarPlotsNew/ring_noisy';
+file_name_fig = 'ExpRecord/BarPlotsNew/ring_noisy2';
 %savefig(h, file_name_fig);
 print(h, file_name_fig, '-deps');
 
@@ -68,7 +68,7 @@ data = exp_record_360_ring_noisefree.err_test;
 % Adjust y axis to put in legend.
 ylim([0,11]);
 h = ImproveFigure(h);
-file_name_fig = 'ExpRecord/BarPlotsNew/ring_noise_free';
+file_name_fig = 'ExpRecord/BarPlotsNew/ring_noise_free2';
 %savefig(h, file_name_fig);
 print(h, file_name_fig, '-deps');
 

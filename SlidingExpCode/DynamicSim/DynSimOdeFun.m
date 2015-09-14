@@ -23,7 +23,7 @@ v(3) = y(6);
 % angular velocity normalization.
 v(3) = v(3) * pho;
 % Get force.
-F = FindForceGivenVel(v, coeffs, mode);
+F = FindForceGivenVel(v/norm(v), coeffs, mode);
 % Compute Acc in local frame.
 acc = - F / m;
 % un-normalize angular part.

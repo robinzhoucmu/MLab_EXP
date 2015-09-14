@@ -2,10 +2,19 @@ close all;
 % Extract all the fig files.
 k = dir('*.fig');
 filenames = {k.name}';
+font_size = 16;
 for i =1:1:length(filenames)
     file_name = filenames{i}(1:end-4);
     h = openfig(file_name);
-    saveas(h, [file_name, '.eps'], 'epsc');
+    xlabel('F_x', 'FontSize', font_size);ylabel('F_y', 'FontSize', font_size);zlabel('F_z', 'FontSize', font_size);
+    set(findall(gcf,'-property','FontName'),'FontName','Times New Roman');
+    set(findall(gcf,'-property','FontSize'),'FontSize', font_size);
+    %pause;
+    save2pdf(file_name, gcf, 200);
+    %export_fig(gcf, file_name, '-eps');
+    %saveas(h, [file_name, '.eps'], 'eps');
+    %print(gcf, '-depsc', '-painters', [file_name, '.eps']);
+    close all;
 end
 
 % file_name_fig = '50_10_ideal'; 
