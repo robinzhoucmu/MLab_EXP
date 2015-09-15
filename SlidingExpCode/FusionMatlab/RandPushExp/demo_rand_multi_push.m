@@ -47,7 +47,7 @@ h_tri = DrawTriangle(Tri_V, Tri_com, Tri_pts_cp, Tri_pds);
 
 [pre_push_poses, post_push_poses, ft_readings, robot_pose_readings] = ParseLog(log_file_name);
 num_pushes = size(pre_push_poses, 2);
-num_pushes = num_pushes * (10/50);
+num_pushes = num_pushes * (20/50);
 push_wrenches = zeros(num_pushes, 3);
 slider_velocities = zeros(num_pushes, 3);
 slider_vel_raw = zeros(num_pushes, 3);
