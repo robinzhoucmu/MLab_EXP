@@ -1,4 +1,4 @@
-num_per_eval = 10;
+num_per_eval = 25;
 rng(1);
 log_file_poke1 = '../../FusionMatlab/RandPushExp/SensorLogs/wood_30_90_30_30_30_90/exp_08_17_0922_50.txt';
 log_push_action1 = 'Logs2/wood_30_90_30_30_30_90/push_actions_range4_random.txt';
@@ -96,14 +96,19 @@ for ind_train_ratio = 1:1:3
         method_recall{ind_train_ratio}(1:num_per_eval*3, ind_method) = [r1';r2';r3'];
         method_precision{ind_train_ratio}(1:num_per_eval*3, ind_method) = [p1';p2';p3'];
     end
+    alpha = 0.95;
     fprintf('accuracy\n');
     mean(method_accuracy{ind_train_ratio})
-    std(method_accuracy{ind_train_ratio})
+    std(method_accuracy{ind_train_ratio});
     fprintf('recall\n');
     mean(method_recall{ind_train_ratio})
-    std(method_recall{ind_train_ratio})
+    std(method_recall{ind_train_ratio});
     fprintf('precision\n');
-    mean(method_precision{ind_train_ratio})
-    std(method_precision{ind_train_ratio})
+    mean(method_precision{ind_train_ratio});
+    std(method_precision{ind_train_ratio});
     fprintf('------------\n');
+    [mu_acc, sigma_acc, muci_acc, sigmaci_acc] = normfit(method_accuracy{ind_train_ratio}, 1 - alpha);
+    muci_acc(2,:) - mu_acc
+    [mu_recall, sigma_recall, muci_recall, sigmaci_recall] = normfit(method_recall{ind_train_ratio}, 1 - alpha);
+    muci_recall(2,:) - mu_recall
 end
