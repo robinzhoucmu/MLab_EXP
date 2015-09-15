@@ -79,5 +79,5 @@ dir_Vel = bsxfun(@rdivide, Vel,sqrt(sum(Vel.^2)));
 [h_traj3] = PlotFreeSliding(pos_2d', Time, vertices, shift);
 figure(h_poly);
 hold on;
-plot3(Force(1,:), Force(2,:), Force(3,:) , 'm.');
+plot3(Force(1,:), Force(2,:), Force(3,:) , 'k.');
 plot3(Force(1, end), Force(2, end), Force(3,end), 'Marker', 'o', 'MarkerSize', 10, 'MarkerFaceColor', 'k');
