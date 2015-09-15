@@ -36,8 +36,8 @@ plot(pos_fingers(1,:), pos_fingers(2,:), 'Marker', 'o', 'MarkerSize', 5, 'Marker
 fc_edges = [-sqrt(2)/2, sqrt(2)/2; sqrt(2)/2, sqrt(2)/2];
 fc_len = 35;
 v_fc_edges = fc_edges * fc_len;
-arrow_len = 20;
-arrow_width = 10;
+arrow_len = 22;
+arrow_width = 11;
 drawArrow([pos_fingers(:,1)', v_fc_edges(:,1)' + pos_fingers(:,1)'], arrow_len, arrow_width, .5);
 drawArrow([pos_fingers(:,1)', v_fc_edges(:,2)' + pos_fingers(:,1)'], arrow_len, arrow_width, .5);
 drawArrow([pos_fingers(:,2)', v_fc_edges(:,1)' + pos_fingers(:,2)'], arrow_len, arrow_width, .5);
@@ -82,8 +82,8 @@ p_wall_bisec_r = intersectLines(wall_line, bisec_l_f2);
 patch_vertices = [p_dual_ray_r',p_bisec_ray_r',p_wall_bisec_r',p_wall_dual_r'];
 patch_r = patch(patch_vertices(1,:), patch_vertices(2,:), 'c');
 patch_l = patch(-patch_vertices(1,:), patch_vertices(2,:), 'c');
-hatchfill(patch_r, 'single', -45, 3);
-hatchfill(patch_l, 'single', 45, 3);
+hatchfill(patch_r, 'single', -45, 2.5);
+hatchfill(patch_l, 'single', 45, 2.5);
 set(patch_r, 'LineStyle', 'none');
 set(patch_l, 'LineStyle', 'none');
 
@@ -154,6 +154,12 @@ for i = 1:1:size(cors, 2)
     plot(cors(1,i), cors(2,i), 'Marker', marker_type, 'MarkerEdgeColor', color, 'MarkerSize', 6);
 end
 axis equal;
+xlabel('X/mm', 'FontSize', 12);
+ylabel('Y/mm', 'FontSize', 12);
 axis([-axis_length_x axis_length_x -axis_length_y axis_length_y]);
 
+font_size = 16;
+set(findall(gcf,'-property','FontName'),'FontName','Times New Roman');
+set(findall(gcf,'-property','FontSize'),'FontSize', font_size);
+save2pdf('Figures/tmp'm gcf, 200);
 

@@ -2,7 +2,11 @@ close all;
 % Extract all the fig files.
 k = dir('*.fig');
 filenames = {k.name}';
+<<<<<<< HEAD
 font_size = 18.5;
+=======
+font_size = 18;
+>>>>>>> 90c3f3600ff451db042443bb9c5eb7c196a1bbb3
 for i =1:1:length(filenames)
     file_name = filenames{i}(1:end-4);
     h = openfig(file_name);
